@@ -1,7 +1,7 @@
 import Topbar from "@/components/Topbar";
 import { useChatStore } from "@/stores/useChatStore";
 import { useUser } from "@clerk/clerk-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import UsersList from "./components/UsersList";
 import ChatHeader from "./components/ChatHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,6 +19,7 @@ const formatTime = (date: string) => {
 const ChatPage = () => {
 	const { user } = useUser();
 	const { messages, selectedUser, fetchUsers, fetchMessages } = useChatStore();
+	const messagesEndRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (user) fetchUsers();
@@ -27,6 +28,14 @@ const ChatPage = () => {
 	useEffect(() => {
 		if (selectedUser) fetchMessages(selectedUser.clerkId);
 	}, [selectedUser, fetchMessages]);
+
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
+
+	useEffect(() => {
+		scrollToBottom();
+	}, [messages]);
 
 	console.log({ messages });
 
@@ -75,6 +84,7 @@ const ChatPage = () => {
 											</div>
 										</div>
 									))}
+									<div ref={messagesEndRef} />
 								</div>
 							</ScrollArea>
 
