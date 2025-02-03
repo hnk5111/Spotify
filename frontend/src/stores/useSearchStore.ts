@@ -19,6 +19,10 @@ interface SearchStore {
   setSearchQuery: (query: string) => void;
   searchSongs: (query: string) => Promise<void>;
   clearSearch: () => void;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  recentSearches: string[];
+  addRecentSearch: (term: string) => void;
 }
 
 export const useSearchStore = create<SearchStore>((set) => ({
@@ -45,4 +49,14 @@ export const useSearchStore = create<SearchStore>((set) => ({
     }
   },
   clearSearch: () => set({ searchQuery: "", searchResults: [] }),
+  searchTerm: '',
+  setSearchTerm: (term) => set({ searchTerm: term }),
+  recentSearches: [],
+  addRecentSearch: (term) => 
+    set((state) => ({
+      recentSearches: [
+        term,
+        ...state.recentSearches.filter(t => t !== term)
+      ].slice(0, 5)
+    })),
 })); 
