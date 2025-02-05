@@ -98,55 +98,41 @@ const Topbar = () => {
                   </div>
                 )}
                 {Array.isArray(searchResults) &&
-                  searchResults.map((song) => {
-                    const songData = {
-                      _id: song.id,
-                      title: song.name,
-                      artist: song.artists.all[0].name,
-                      imageUrl: song.image[2] || "", // Handle if image[2] is undefined
-                      audioUrl: song.downloadUrl[0] || "", // Handle if downloadUrl[0] is undefined
-                      albumId: "",
-                      duration: Number(song.duration) || 0,
-                      createdAt: "",
-                      updatedAt: "",
-                    };
-
-                    return (
-                      <div
-                        key={song.id}
-                        className="flex items-center gap-3 p-3 hover:bg-zinc-700 transition-colors"
-                        onClick={() => {
-                          setShowResults(false);
-                          clearSearch();
-                        }}
-                      >
-                        <img
-                          src={song.image[2]?.url || "/default-image.png"} // Default fallback
-                          alt={song.name}
-                          className="h-12 w-12 object-cover rounded"
-                        />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-white">
-                            {song.name}
-                          </p>
-                          <p className="text-xs text-zinc-400">
-                            {song.artists.all[0].name}
-                          </p>
-                          <PlayButton song={{
-                            _id: song.id,
-                            title: song.name,
-                            artist: song.artists.all[0].name,
-                            imageUrl: song.image[2]?.url || "", 
-                            audioUrl: song.downloadUrl[0] || "",
-                            albumId: "",
-                            duration: Number(song.duration) || 0,
-                            createdAt: "",
-                            updatedAt: ""
-                          }} />
-                        </div>
+                  searchResults.map((song) => (
+                    <div
+                      key={song.id}
+                      className="flex items-center gap-3 p-3 hover:bg-zinc-700 transition-colors"
+                      onClick={() => {
+                        setShowResults(false);
+                        clearSearch();
+                      }}
+                    >
+                      <img
+                        src={song.image[2]?.url || "/default-image.png"} // Default fallback
+                        alt={song.name}
+                        className="h-12 w-12 object-cover rounded"
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-white">
+                          {song.name}
+                        </p>
+                        <p className="text-xs text-zinc-400">
+                          {song.artists.all[0].name}
+                        </p>
+                        <PlayButton song={{
+                          _id: song.id,
+                          title: song.name,
+                          artist: song.artists.all[0].name,
+                          imageUrl: song.image[2]?.url || "", 
+                          audioUrl: song.downloadUrl[0] || "",
+                          albumId: "",
+                          duration: Number(song.duration) || 0,
+                          createdAt: "",
+                          updatedAt: ""
+                        }} />
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
               </div>
             )}
           </div>
