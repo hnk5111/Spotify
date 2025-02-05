@@ -21,7 +21,11 @@ const LeftSidebar = () => {
 
 			<div className='rounded-lg bg-zinc-900 p-4'>
 				<div className='space-y-2'>
-					<UserButton />
+					<UserButton appearance={{
+						elements: {
+							avatarBox: "h-10 w-10 lg:hidden"
+						}
+					}} />
 					<Link
 						to={"/"}
 						className={cn(
