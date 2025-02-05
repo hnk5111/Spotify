@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useDebounce } from "@/hooks/useDebounce";
 import SearchResultsSkeleton from "@/components/skeletons/SearchResultsSkeleton";
 

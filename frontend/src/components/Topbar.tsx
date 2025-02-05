@@ -26,13 +26,13 @@ const Topbar = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  const playSong = {
-    _id: "",
-    title: "",
-    artist: "",
-    imageUrl: "",
-    audioUrl: "",
-  };
+  // const playSong = {
+  //   _id: "",
+  //   title: "",
+  //   artist: "",
+  //   imageUrl: "",
+  //   audioUrl: "",
+  // };
 
   useEffect(() => {
     if (debouncedSearch) {
@@ -132,7 +132,17 @@ const Topbar = () => {
                           <p className="text-xs text-zinc-400">
                             {song.artists.all[0].name}
                           </p>
-                          <PlayButton song={songData} />
+                          <PlayButton song={{
+                            _id: song.id,
+                            title: song.name,
+                            artist: song.artists.all[0].name,
+                            imageUrl: song.image[2]?.url || "", 
+                            audioUrl: song.downloadUrl[0] || "",
+                            albumId: "",
+                            duration: Number(song.duration) || 0,
+                            createdAt: "",
+                            updatedAt: ""
+                          }} />
                         </div>
                       </div>
                     );

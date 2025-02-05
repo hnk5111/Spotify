@@ -13,7 +13,9 @@ interface Song {
   albumId: string;
   duration: number;
   url: string;
-  image: string;
+  image: {
+    url: string;
+  }[];
   // Add other song properties as needed
 }
 
