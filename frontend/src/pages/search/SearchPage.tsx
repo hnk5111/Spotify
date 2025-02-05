@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useDebounce } from '@/hooks/useDebounce';
-import SearchResultsSkeleton from '@/components/skeletons/SearchResultsSkeleton';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useDebounce } from "@/hooks/useDebounce";
+import SearchResultsSkeleton from "@/components/skeletons/SearchResultsSkeleton";
 
 interface Song {
   id: string;
@@ -14,10 +14,10 @@ interface Song {
 }
 
 const SearchPage = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const debouncedQuery = useDebounce(query, 500);
 
   useEffect(() => {
@@ -29,10 +29,17 @@ const SearchPage = () => {
 
       setIsLoading(true);
       try {
-        const response = await axios.get(`/api/search?q=${debouncedQuery}`);
-        setResults(response.data);
+        // const response = await axios.get(`/api/search?q=${debouncedQuery}`);
+        // setResults(response.data);
+        const responseData = await fetch(
+          `https://saavn.dev/api/search/songs?query=${encodeURIComponent(
+            query
+          )}`
+        );
+        const response = await responseData.json();
+        setResults(response.data.results);
       } catch (error) {
-        console.error('Search error:', error);
+        console.error("Search error:", error);
       } finally {
         setIsLoading(false);
       }
@@ -58,12 +65,12 @@ const SearchPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {results.map((song) => (
-            <div 
+            <div
               key={song.id}
               className="flex items-center gap-3 p-3 rounded-lg bg-card"
             >
-              <img 
-                src={song.imageUrl} 
+              <img
+                src={song.imageUrl}
                 alt={song.title}
                 className="w-12 h-12 rounded-md object-cover"
               />
@@ -79,4 +86,4 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage; 
+export default SearchPage;

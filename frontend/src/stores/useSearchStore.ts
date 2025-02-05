@@ -1,14 +1,19 @@
 import { create } from "zustand";
-import axios from "axios";
+// import axios from "axios";
 
 interface Song {
+  downloadUrl: any;
   id: string;
-  title: string;
-  artist: string;
+  name: string;
+  artists: {
+    all: {
+      name: string;
+    }[];
+  };
   albumId: string;
   duration: number;
   url: string;
-  imageUrl: string;
+  image: string;
   // Add other song properties as needed
 }
 
@@ -38,10 +43,15 @@ export const useSearchStore = create<SearchStore>((set) => ({
 
     set({ isLoading: true });
     try {
-      const response = await axios.get(`/api/search?q=${encodeURIComponent(query)}`);
-      set({ 
-        searchResults: Array.isArray(response.data) ? response.data : [], 
-        isLoading: false 
+      // const response = await axios.get(`https://saavn.dev/api/search/songs?q=${encodeURIComponent(query)}`);
+      const responseData = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}`);
+      const response = await responseData.json();
+      console.log(response.data.results[0].downloadUrl[0].url);
+      console.log(response.data.results[0].name);
+
+      set({
+        searchResults: Array.isArray(response.data.results) ? response.data.results : [],
+        isLoading: false
       });
     } catch (error) {
       console.error("Search error:", error);
@@ -52,7 +62,7 @@ export const useSearchStore = create<SearchStore>((set) => ({
   searchTerm: '',
   setSearchTerm: (term) => set({ searchTerm: term }),
   recentSearches: [],
-  addRecentSearch: (term) => 
+  addRecentSearch: (term) =>
     set((state) => ({
       recentSearches: [
         term,

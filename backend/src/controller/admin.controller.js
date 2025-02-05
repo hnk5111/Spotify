@@ -7,6 +7,9 @@ const uploadToCloudinary = async (file) => {
 	try {
 		const result = await cloudinary.uploader.upload(file.tempFilePath, {
 			resource_type: "auto",
+			format: 'mp3', // Force MP3 format
+			audio_codec: "mp3", // Ensure audio codec is MP3
+			bit_rate: "128k" // Set a standard bit rate
 		});
 		return result.secure_url;
 	} catch (error) {
