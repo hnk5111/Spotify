@@ -3,14 +3,20 @@ import { Album } from "../models/album.model.js";
 import cloudinary from "../lib/cloudinary.js";
 
 // helper function for cloudinary uploads
-const uploadToCloudinary = async (file) => {
+const uploadToCloudinary = async (file, isAudio = false) => {
 	try {
-		const result = await cloudinary.uploader.upload(file.tempFilePath, {
+		const options = {
 			resource_type: "auto",
-			format: 'mp3', // Force MP3 format
-			audio_codec: "mp3", // Ensure audio codec is MP3
-			bit_rate: "128k" // Set a standard bit rate
-		});
+		};
+
+		if (isAudio) {
+			options.format = 'mp3';
+			options.audio_codec = "mp3";
+			options.bit_rate = "128k";
+			options.raw_transform = "f_mp3"; // Force MP3 format
+		}
+
+		const result = await cloudinary.uploader.upload(file.tempFilePath, options);
 		return result.secure_url;
 	} catch (error) {
 		console.log("Error in uploadToCloudinary", error);
@@ -28,7 +34,7 @@ export const createSong = async (req, res, next) => {
 		const audioFile = req.files.audioFile;
 		const imageFile = req.files.imageFile;
 
-		const audioUrl = await uploadToCloudinary(audioFile);
+		const audioUrl = await uploadToCloudinary(audioFile, true);
 		const imageUrl = await uploadToCloudinary(imageFile);
 
 		const song = new Song({

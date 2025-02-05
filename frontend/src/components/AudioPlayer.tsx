@@ -34,9 +34,15 @@ const AudioPlayer = ({ url, isPlaying, onError }: AudioPlayerProps) => {
         console.error("Audio error:", e);
         if (onError) onError();
       }}
+      onCanPlayThrough={() => {
+        console.log("Audio can play through");
+      }}
       controls={false}
       crossOrigin="anonymous"
-    />
+    >
+      <source src={url} type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
   );
 };
 

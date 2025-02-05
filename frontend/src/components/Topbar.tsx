@@ -66,7 +66,7 @@ const Topbar = () => {
       <div className="flex items-center justify-between p-4 sticky top-0 bg-zinc-900/75 backdrop-blur-md z-10">
         <div className="flex gap-2 items-center">
           <img src="/spotify.png" className="size-8" alt="Spotify logo" />
-          <span className="xs:inline md:hidden font-semi-bold">
+          <span className="xs:inline font-semi-bold">
             Spotify But Better
           </span>
         </div>
@@ -101,14 +101,15 @@ const Topbar = () => {
                   searchResults.map((song) => (
                     <div
                       key={song.id}
-                      className="flex items-center gap-3 p-3 hover:bg-zinc-700 transition-colors"
+                     className='flex items-center gap-3 p-3 bg-zinc-800/50 rounded-md overflow-hidden
+         hover:bg-zinc-700/50 transition-colors group cursor-pointer relative'
                       onClick={() => {
                         setShowResults(false);
                         clearSearch();
                       }}
                     >
                       <img
-                        src={song.image[2]?.url || "/default-image.png"} // Default fallback
+                        src={song.image[2]?.url || "/default-image.png"}
                         alt={song.name}
                         className="h-12 w-12 object-cover rounded"
                       />

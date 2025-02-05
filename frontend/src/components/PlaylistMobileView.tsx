@@ -29,6 +29,11 @@ const PlaylistMobileView = ({
         return;
       }
 
+      // Add audio format check
+      if (!audioUrl.includes('.mp3')) {
+        console.warn("Audio format may not be supported");
+      }
+
       // Check if the audio URL is valid
       const response = await fetch(audioUrl, { method: "HEAD" });
       if (!response.ok) {

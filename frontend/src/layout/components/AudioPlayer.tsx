@@ -6,12 +6,13 @@ const AudioPlayer = () => {
 	const prevSongRef = useRef<string | null>(null);
 
 	const { currentSong, isPlaying, playNext } = usePlayerStore();
-
+	console.log(currentSong);
 	// handle play/pause logic
 	useEffect(() => {
 		if (isPlaying) audioRef.current?.play();
 		else audioRef.current?.pause();
 	}, [isPlaying]);
+
 
 	// handle song ends
 	useEffect(() => {
