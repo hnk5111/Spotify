@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AudioPlayerProps {
   url: string;
@@ -8,14 +8,19 @@ interface AudioPlayerProps {
 
 const AudioPlayer = ({ url, isPlaying, onError }: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (audioRef.current) {
-      if (isPlaying) {
+      // Reset error state when URL changes
+      setHasError(false);
+      
+      if (isPlaying && !hasError) {
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch((error) => {
             console.error("Playback error:", error);
+            setHasError(true);
             if (onError) onError();
           });
         }
@@ -23,26 +28,29 @@ const AudioPlayer = ({ url, isPlaying, onError }: AudioPlayerProps) => {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, url]);
+  }, [isPlaying, url, hasError]);
+
+  const handleError = (e: any) => {
+    console.error("Audio error:", e);
+    setHasError(true);
+    if (onError) onError();
+  };
+
+  const handleCanPlay = () => {
+    setHasError(false);
+    console.log("Audio can play");
+  };
 
   return (
     <audio
       ref={audioRef}
       src={url}
-      preload="metadata"
-      onError={(e) => {
-        console.error("Audio error:", e);
-        if (onError) onError();
-      }}
-      onCanPlayThrough={() => {
-        console.log("Audio can play through");
-      }}
+      preload="auto"
+      onError={handleError}
+      onCanPlay={handleCanPlay}
       controls={false}
       crossOrigin="anonymous"
-    >
-      <source src={url} type="audio/mpeg" />
-      Your browser does not support the audio element.
-    </audio>
+    />
   );
 };
 

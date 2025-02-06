@@ -102,7 +102,7 @@ const Topbar = () => {
                     <div
                       key={song.id}
                      className='flex items-center gap-3 p-3 bg-zinc-800/50 rounded-md overflow-hidden
-         hover:bg-zinc-700/50 transition-colors group cursor-pointer relative'
+                                hover:bg-zinc-700/50 transition-colors group cursor-pointer relative'
                       onClick={() => {
                         setShowResults(false);
                         clearSearch();
@@ -123,10 +123,10 @@ const Topbar = () => {
                         <PlayButton song={{
                           _id: song.id,
                           title: song.name,
-                          artist: song.artists.all[0].name,
-                          imageUrl: song.image[2]?.url || "", 
-                          audioUrl: song.downloadUrl[0] || "",
-                          albumId: "",
+                          artist: song.artists?.all?.[0]?.name || "Unknown Artist",
+                          imageUrl: song.image?.[2]?.url || song.image?.[1]?.url || song.image?.[0]?.url || "/default-image.png",
+                          audioUrl: song.downloadUrl?.[0]?.url || "",
+                          albumId: song.albumId || "",
                           duration: Number(song.duration) || 0,
                           createdAt: "",
                           updatedAt: ""

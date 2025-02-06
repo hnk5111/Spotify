@@ -45,14 +45,25 @@ export const useSearchStore = create<SearchStore>((set) => ({
 
     set({ isLoading: true });
     try {
-      // const response = await axios.get(`https://saavn.dev/api/search/songs?q=${encodeURIComponent(query)}`);
       const responseData = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}`);
       const response = await responseData.json();
-      console.log(response.data.results[0].downloadUrl[0].url);
-      console.log(response.data.results[0].name);
+      
+      const transformedResults = response.data.results.map((song: any) => {
+        const downloadUrl = song.downloadUrl.reduce((prev: any, curr: any) => {
+          return (prev.quality > curr.quality) ? prev : curr;
+        });
+
+        return {
+          ...song,
+          downloadUrl: [{
+            url: downloadUrl.url, // Use the original URL without conversion
+            quality: downloadUrl.quality
+          }]
+        };
+      });
 
       set({
-        searchResults: Array.isArray(response.data.results) ? response.data.results : [],
+        searchResults: transformedResults,
         isLoading: false
       });
     } catch (error) {
