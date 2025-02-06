@@ -47,7 +47,8 @@ export const useSearchStore = create<SearchStore>((set) => ({
     try {
       const responseData = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}`);
       const response = await responseData.json();
-      
+      console.log(response.data.results)
+
       const transformedResults = response.data.results.map((song: any) => {
         const downloadUrl = song.downloadUrl.reduce((prev: any, curr: any) => {
           return (prev.quality > curr.quality) ? prev : curr;
