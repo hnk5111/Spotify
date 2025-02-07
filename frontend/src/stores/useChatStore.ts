@@ -2,6 +2,7 @@ import { axiosInstance } from "@/lib/axios";
 import { Message, User } from "@/types";
 import { create } from "zustand";
 import { io } from "socket.io-client";
+import { useNotificationStore } from "./useNotificationStore";
 
 interface ChatStore {
 	users: User[];
@@ -87,6 +88,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 				set((state) => ({
 					messages: [...state.messages, message],
 				}));
+
+				// Add notification if message is from someone other than selected user
+				if (message.senderId !== get().selectedUser?.clerkId) {
+					const sender = get().users.find(u => u.clerkId === message.senderId);
+					if (sender) {
+						useNotificationStore.getState().addNotification({
+							message: `New message from ${sender.fullName}`,
+							type: "message",
+							read: false,
+							data: { message, sender }
+						});
+					}
+				}
 			});
 
 			socket.on("message_sent", (message: Message) => {

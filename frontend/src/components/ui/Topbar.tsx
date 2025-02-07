@@ -1,13 +1,15 @@
-import { SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignInButton, SignOutButton, UserButton, useUser } from "@clerk/clerk-react";
 import { LayoutDashboardIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import SignInOAuthButtons from "./SignInOAuthButtons";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { buttonVariants } from "./button";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "../NotificationBell";
 
 const Topbar = () => {
     const { isAdmin } = useAuthStore();
+	const { isSignedIn } = useUser();
 	console.log({ isAdmin }); 
 
   return (
@@ -25,11 +27,16 @@ const Topbar = () => {
           </Link>
         )}
 
-        <SignedOut>
-          <SignInOAuthButtons />
-        </SignedOut>
-
-        <UserButton />
+        {isSignedIn ? (
+          <>
+            <NotificationBell />
+            <UserButton afterSignOutUrl='/' />
+          </>
+        ) : (
+          <SignInButton mode='modal'>
+            <Button>Sign in</Button>
+          </SignInButton>
+        )}
       </div>
     </div>
   );
