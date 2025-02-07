@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { Message } from "../models/message.model.js";
+import { Notification } from "../models/notification.model.js";
 
 export const initializeSocket = (server) => {
 	const io = new Server(server, {
@@ -41,10 +42,18 @@ export const initializeSocket = (server) => {
 					content,
 				});
 
-				// send to receiver in realtime, if they're online
+				// Create notification for the receiver
+				await Notification.create({
+					userId: receiverId,
+					message: `New message from ${senderId}`,
+					type: 'message'
+				});
+
+				// send to receiver in realtime
 				const receiverSocketId = userSockets.get(receiverId);
 				if (receiverSocketId) {
 					io.to(receiverSocketId).emit("receive_message", message);
+					io.to(receiverSocketId).emit("new_notification");
 				}
 
 				socket.emit("message_sent", message);

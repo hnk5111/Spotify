@@ -50,9 +50,41 @@ export const PlaybackControls = () => {
 	};
 
 	return (
-		<footer className='h-20 sm:h-24 bg-zinc-900 border-t border-zinc-800 px-4'>
-			<div className='flex justify-between items-center h-full max-w-[1800px] mx-auto'>
-				{/* currently playing song */}
+		<footer className='h-auto sm:h-24 bg-zinc-900 border-t border-zinc-800 px-4'>
+			<div className='flex flex-col sm:flex-row justify-between items-center h-full max-w-[1800px] mx-auto'>
+				{/* Mobile Song Details and Controls - Only visible on mobile and when a song is playing */}
+				{currentSong && (
+					<div className='w-full sm:hidden py-2 px-2'>
+						<div className='flex items-center gap-3'>
+							<img
+								src={currentSong.imageUrl}
+								alt={currentSong.title}
+								className='w-12 h-12 object-cover rounded-md'
+							/>
+							<div className='flex-1 min-w-0'>
+								<div className='font-medium truncate'>{currentSong.title}</div>
+								<div className='text-sm text-zinc-400 truncate'>{currentSong.artist}</div>
+							</div>
+						</div>
+						
+						{/* Mobile Slider - Always visible */}
+						<div className='mt-3 flex flex-col w-full px-1'>
+							<Slider
+								value={[currentTime]}
+								max={duration || 100}
+								step={1}
+								className='w-full hover:cursor-grab active:cursor-grabbing'
+								onValueChange={handleSeek}
+							/>
+							<div className='flex justify-between mt-1'>
+								<div className='text-xs text-zinc-400'>{formatTime(currentTime)}</div>
+								<div className='text-xs text-zinc-400'>{formatTime(duration)}</div>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* Desktop Song Details */}
 				<div className='hidden sm:flex items-center gap-4 min-w-[180px] w-[30%]'>
 					{currentSong && (
 						<>
@@ -74,7 +106,7 @@ export const PlaybackControls = () => {
 				</div>
 
 				{/* player controls*/}
-				<div className='flex flex-col items-center gap-2 flex-1 max-w-full sm:max-w-[45%]'>
+				<div className='flex flex-col items-center gap-2 flex-1 max-w-full sm:max-w-[45%] py-2'>
 					<div className='flex items-center gap-4 sm:gap-6'>
 						<Button
 							size='icon'
@@ -132,6 +164,7 @@ export const PlaybackControls = () => {
 						<div className='text-xs text-zinc-400'>{formatTime(duration)}</div>
 					</div>
 				</div>
+
 				{/* volume controls */}
 				<div className='hidden sm:flex items-center gap-4 min-w-[180px] w-[30%] justify-end'>
 					<Button size='icon' variant='ghost' className='hover:text-white text-zinc-400'>
