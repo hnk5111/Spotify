@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { Message } from "@/types";
 
 interface Notification {
   id: string;

@@ -1,9 +1,8 @@
-import { SignInButton, SignOutButton, UserButton, useUser } from "@clerk/clerk-react";
+import { SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import { LayoutDashboardIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import SignInOAuthButtons from "./SignInOAuthButtons";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { buttonVariants } from "./button";
+import { Button, buttonVariants } from "./button";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "../NotificationBell";
 
