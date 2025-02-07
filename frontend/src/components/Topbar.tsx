@@ -66,7 +66,7 @@ const Topbar = () => {
       <div className="flex items-center justify-between p-4 sticky top-0 bg-zinc-900/75 backdrop-blur-md z-10">
         <div className="flex gap-2 items-center">
           <img src="/spotify.png" className="size-8" alt="Spotify logo" />
-          <span className="xs:inline font-semi-bold">Spotify But Better</span>
+          <span className="xs:inline font-semi-bold">Chatunes</span>
         </div>
 
         {/* Desktop Search */}

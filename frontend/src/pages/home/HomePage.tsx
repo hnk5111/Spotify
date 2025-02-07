@@ -32,12 +32,18 @@ const HomePage = () => {
 		}
 	}, [initializeQueue, madeForYouSongs, trendingSongs, featuredSongs]);
 
+	const Greeting = () => {
+		const hour = new Date().getHours();
+		if (hour < 12) return "Good morning";
+		if (hour < 18) return "Good afternoon";
+		return "Good evening";
+	};
 	return (
 		<main className='rounded-md overflow-hidden h-full bg-gradient-to-b from-zinc-800 to-zinc-900'>
 			<Topbar />
 			<ScrollArea className='h-[calc(100vh-180px)]'>
 				<div className='p-4 sm:p-6'>
-					<h1 className='text-2xl sm:text-3xl font-bold mb-6'>Good afternoon</h1>
+					<h1 className='text-2xl sm:text-3xl font-bold mb-6'>{Greeting()}</h1>
 					<FeaturedSection />
 
 					<div className='space-y-8'>
