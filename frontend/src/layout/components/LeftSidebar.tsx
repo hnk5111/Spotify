@@ -4,20 +4,26 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
-import { HomeIcon, Library, MessageCircle } from "lucide-react";
+import { HomeIcon, Library, MessageCircle, Users } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const LeftSidebar = () => {
-  const { albums, fetchAlbums, isLoading } = useMusicStore();
+	const { albums, fetchAlbums, isLoading } = useMusicStore();
 
-  useEffect(() => {
-    fetchAlbums();
-  }, [fetchAlbums]);
+	useEffect(() => {
+		fetchAlbums();
+	}, [fetchAlbums]);
 
-  return (
-    <div className="h-full flex flex-col gap-2">
-      {/* Navigation menu */}
+	const navItems = [
+		{ icon: HomeIcon, label: "Home", path: "/" },
+		{ icon: Users, label: "Users", path: "/users" },
+		{ icon: MessageCircle, label: "Chat", path: "/chat" },
+	];
+
+	return (
+		<div className="h-full flex flex-col gap-2">
+			{/* Navigation menu */}
 
 			<div className='rounded-lg bg-zinc-900 p-4'>
 				<div className='space-y-2'>
@@ -39,6 +45,7 @@ const LeftSidebar = () => {
 					>
 						<HomeIcon className='mr-2 size-5' />
 						<span className='md:inline'>Home</span>
+
 					</Link>
 
 					<SignedIn>
@@ -55,6 +62,18 @@ const LeftSidebar = () => {
 							<span className='md:inline'>Messages</span>
 						</Link>
 					</SignedIn>
+					<Link
+						to={"/users"}
+						className={cn(
+							buttonVariants({
+								variant: "ghost",
+								className: "w-full justify-start text-white hover:bg-zinc-800",
+							})
+						)}
+					>
+						<Users className='mr-2 size-5' />
+						<span className='md:inline'>Search Users</span>
+					</Link>
 				</div>
 			</div>
 
@@ -67,22 +86,22 @@ const LeftSidebar = () => {
 					</div>
 				</div>
 
-        <ScrollArea className="h-[calc(100vh-300px)]">
-          <div className="space-y-2">
-            {isLoading ? (
-              <PlaylistSkeleton />
-            ) : (
-              albums.map((album) => (
-                <Link
-                  to={`/albums/${album._id}`}
-                  key={album._id}
-                  className="p-2 hover:bg-zinc-800 rounded-md flex items-center gap-3 group cursor-pointer"
-                >
-                  <img
-                    src={album.imageUrl}
-                    alt="Playlist img"
-                    className="size-12 rounded-md flex-shrink-0 object-cover"
-                  />
+				<ScrollArea className="h-[calc(100vh-300px)]">
+					<div className="space-y-2">
+						{isLoading ? (
+							<PlaylistSkeleton />
+						) : (
+							albums.map((album) => (
+								<Link
+									to={`/albums/${album._id}`}
+									key={album._id}
+									className="p-2 hover:bg-zinc-800 rounded-md flex items-center gap-3 group cursor-pointer"
+								>
+									<img
+										src={album.imageUrl}
+										alt="Playlist img"
+										className="size-12 rounded-md flex-shrink-0 object-cover"
+									/>
 
 									<div className='flex-1 min-w-0 md:block'>
 										<p className='font-medium truncate'>{album.title}</p>

@@ -28,3 +28,24 @@ export const getMessages = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const searchUsers = async (req, res, next) => {
+	try {
+		const { q } = req.query;
+		const currentUserId = req.auth.userId;
+
+		if (!q) {
+			return res.status(200).json([]);
+		}
+
+		const users = await User.find({
+			clerkId: { $ne: currentUserId },
+			fullName: { $regex: q, $options: 'i' }
+		}).select('clerkId fullName imageUrl');
+
+		res.status(200).json(users);
+	} catch (error) {
+		console.error("Search users error:", error);
+		next(error);
+	}
+};

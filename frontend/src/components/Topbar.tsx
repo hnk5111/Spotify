@@ -65,7 +65,7 @@ const Topbar = () => {
       {/* Regular Topbar */}
       <div className="flex items-center justify-between p-4 sticky top-0 bg-zinc-900/75 backdrop-blur-md z-10">
         <div className="flex gap-2 items-center">
-          <img src="/chat.png" className="size-10" alt="Spotify logo" />
+          <img src="/logo.png" className="size-10" alt="BeatBond logo" />
           <span className="xs:inline font-semi-bold">BeatBond</span>
         </div>
 

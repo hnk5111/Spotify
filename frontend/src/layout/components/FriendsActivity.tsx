@@ -65,7 +65,11 @@ const FriendsActivity = () => {
 												</div>
 											</div>
 										) : (
-											<div className='mt-1 text-xs text-zinc-400'>Idle</div>
+											<div className='mt-1 text-xs text-zinc-400'>
+												{
+													activity ? "Online" :"Listening to " + activity ? "Offline" : "Listening to " + activity
+												}
+											</div>
 										)}
 									</div>
 								</div>
