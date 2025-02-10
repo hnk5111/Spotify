@@ -5,6 +5,10 @@ export default {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
 	theme: {
     	extend: {
+			colors: {
+				'custom-indigo': '#6D28D9',
+				'custom-light-purple': '#D4BCE5',
+			  },
     		borderRadius: {
     			lg: 'var(--radius)',
     			md: 'calc(var(--radius) - 2px)',
