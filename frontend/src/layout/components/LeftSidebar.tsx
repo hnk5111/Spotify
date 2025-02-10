@@ -15,11 +15,6 @@ const LeftSidebar = () => {
 		fetchAlbums();
 	}, [fetchAlbums]);
 
-	const navItems = [
-		{ icon: HomeIcon, label: "Home", path: "/" },
-		{ icon: Users, label: "Users", path: "/users" },
-		{ icon: MessageCircle, label: "Chat", path: "/chat" },
-	];
 
 	return (
 		<div className="h-full flex flex-col gap-2">
