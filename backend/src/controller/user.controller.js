@@ -15,15 +15,34 @@ export const getMessages = async (req, res, next) => {
 	try {
 		const myId = req.auth.userId;
 		const { userId } = req.params;
+		const page = parseInt(req.query.page) || 1;
+		const limit = 20;
+
+		const totalMessages = await Message.countDocuments({
+			$or: [
+				{ senderId: userId, receiverId: myId },
+				{ senderId: myId, receiverId: userId },
+			],
+		});
 
 		const messages = await Message.find({
 			$or: [
 				{ senderId: userId, receiverId: myId },
 				{ senderId: myId, receiverId: userId },
 			],
-		}).sort({ createdAt: 1 });
+		})
+			.sort({ createdAt: -1 })
+			.skip((page - 1) * limit)
+			.limit(limit)
+			.lean();
 
-		res.status(200).json(messages);
+		const hasNextPage = totalMessages > page * limit;
+
+		res.status(200).json({
+			messages: messages.reverse(),
+			nextPage: hasNextPage ? page + 1 : undefined,
+			totalPages: Math.ceil(totalMessages / limit),
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -50,14 +69,14 @@ export const searchUsers = async (req, res, next) => {
 	}
 };
 
-export const updateUserProfile = async (req, res) => {
+export const updateUserProfile = async (req, res, next) => {
 	try {
 		const { clerkId } = req.params;
-		const { fullName, username, bio, imageUrl } = req.body;
+		const { fullName, username, bio, imageUrl, email } = req.body;
 
 		const user = await User.findOne({ clerkId });
 		if (!user) {
-			return res.status(404).json({ error: "User not found" });
+			return res.status(404).json({ message: "User not found" });
 		}
 
 		// Update user fields
@@ -65,6 +84,7 @@ export const updateUserProfile = async (req, res) => {
 		if (username) user.username = username;
 		if (bio !== undefined) user.bio = bio;
 		if (imageUrl) user.imageUrl = imageUrl;
+		if (email) user.email = email;
 
 		await user.save();
 
@@ -73,23 +93,21 @@ export const updateUserProfile = async (req, res) => {
 			user
 		});
 	} catch (error) {
-		console.error("Error updating profile:", error);
-		res.status(500).json({ error: "Error updating profile" });
+		next(error);
 	}
 };
 
-export const getUserProfile = async (req, res) => {
+export const getUserProfile = async (req, res, next) => {
 	try {
-		const { clerkId } = req.params;
-		const user = await User.findOne({ clerkId });
-
+		const { userId } = req.params;
+		const user = await User.findOne({ clerkId: userId }).select('clerkId fullName username imageUrl bio email');
+		
 		if (!user) {
-			return res.status(404).json({ error: "User not found" });
+			return res.status(404).json({ message: "User not found" });
 		}
 
 		res.status(200).json(user);
 	} catch (error) {
-		console.error("Error fetching profile:", error);
-		res.status(500).json({ error: "Error fetching profile" });
+		next(error);
 	}
 };

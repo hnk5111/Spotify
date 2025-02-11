@@ -1,30 +1,51 @@
 import { Server } from "socket.io";
 import { Message } from "../models/message.model.js";
 import { Notification } from "../models/notification.model.js";
+import { User } from "../models/user.model.js";
+
+const userSockets = new Map();
 
 export const initializeSocket = (server) => {
 	const io = new Server(server, {
 		cors: {
 			origin: "http://localhost:3000",
+			methods: ["GET", "POST"],
 			credentials: true,
+			allowedHeaders: ["Content-Type", "Authorization"],
 		},
 	});
 
-	const userSockets = new Map(); // { userId: socketId}
 	const userActivities = new Map(); // {userId: activity}
 
+	io.use(async (socket, next) => {
+		const userId = socket.handshake.auth.userId;
+		if (!userId) {
+			return next(new Error("Authentication error"));
+		}
+		
+		try {
+			const user = await User.findOne({ clerkId: userId });
+			if (!user) {
+				return next(new Error("User not found"));
+			}
+			socket.user = user;
+			next();
+		} catch (error) {
+			next(error);
+		}
+	});
+
 	io.on("connection", (socket) => {
-		socket.on("user_connected", (userId) => {
-			userSockets.set(userId, socket.id);
-			userActivities.set(userId, "Idle");
+		const userId = socket.user.clerkId;
+		userSockets.set(userId, socket.id);
+		userActivities.set(userId, "Online");
 
-			// broadcast to all connected sockets that this user just logged in
-			io.emit("user_connected", userId);
+		// broadcast to all connected sockets that this user just logged in
+		io.emit("user_connected", userId);
 
-			socket.emit("users_online", Array.from(userSockets.keys()));
+		io.emit("users_online", Array.from(userSockets.keys()));
 
-			io.emit("activities", Array.from(userActivities.entries()));
-		});
+		io.emit("activities", Array.from(userActivities.entries()));
 
 		socket.on("update_activity", ({ userId, activity }) => {
 			console.log("activity updated", userId, activity);
@@ -32,51 +53,56 @@ export const initializeSocket = (server) => {
 			io.emit("activity_updated", { userId, activity });
 		});
 
-		socket.on("send_message", async (data) => {
+		socket.on("sendMessage", async (data) => {
 			try {
-				const { senderId, receiverId, content } = data;
+				const { receiverId, content } = data;
+				if (!content.trim()) {
+					throw new Error("Message cannot be empty");
+				}
+
+				// Check if receiver exists
+				const receiver = await User.findOne({ clerkId: receiverId });
+				if (!receiver) {
+					throw new Error("Recipient not found");
+				}
 
 				const message = await Message.create({
-					senderId,
+					senderId: socket.user.clerkId,
 					receiverId,
-					content,
+					content: content.trim(),
 				});
 
-				// Create notification for the receiver
+				// Create notification
 				await Notification.create({
 					userId: receiverId,
-					message: `New message from ${senderId}`,
-					type: 'message'
+					message: `New message from ${socket.user.fullName}`,
+					type: 'message',
+					metadata: { messageId: message._id }
 				});
 
-				// send to receiver in realtime
+				// Send to receiver
 				const receiverSocketId = userSockets.get(receiverId);
 				if (receiverSocketId) {
-					io.to(receiverSocketId).emit("receive_message", message);
+					io.to(receiverSocketId).emit("receiveMessage", message);
 					io.to(receiverSocketId).emit("new_notification");
 				}
 
-				socket.emit("message_sent", message);
+				// Send back to sender
+				socket.emit("receiveMessage", message);
 			} catch (error) {
-				console.error("Message error:", error);
-				socket.emit("message_error", error.message);
+				console.error("Error sending message:", error);
+				socket.emit("messageError", { 
+					message: error.message || "Failed to send message" 
+				});
 			}
 		});
 
 		socket.on("disconnect", () => {
-			let disconnectedUserId;
-			for (const [userId, socketId] of userSockets.entries()) {
-				// find disconnected user
-				if (socketId === socket.id) {
-					disconnectedUserId = userId;
-					userSockets.delete(userId);
-					userActivities.delete(userId);
-					break;
-				}
-			}
-			if (disconnectedUserId) {
-				io.emit("user_disconnected", disconnectedUserId);
-			}
+			userSockets.delete(userId);
+			userActivities.delete(userId);
+			io.emit("user_disconnected", userId);
 		});
 	});
+
+	return io;
 };

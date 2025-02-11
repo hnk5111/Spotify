@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { axiosInstance } from "@/lib/axios";
 
 interface User {
   clerkId: string;
@@ -22,7 +22,7 @@ const UserSearchPage = () => {
     queryKey: ["users", searchQuery],
     queryFn: async () => {
       if (!searchQuery) return [];
-      const { data } = await axios.get(`/api/users/search?q=${searchQuery}`);
+      const { data } = await axiosInstance.get(`/users/search?q=${searchQuery}`);
       return data;
     },
     enabled: searchQuery.length > 0,
@@ -57,7 +57,10 @@ const UserSearchPage = () => {
                 key={user.clerkId}
                 className="flex items-center justify-between p-4 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors"
               >
-                <div className="flex items-center gap-3">
+                <Link
+                  to={`/profile/${user.clerkId}`}
+                  className="flex items-center gap-3 flex-1"
+                >
                   <Avatar>
                     <AvatarImage src={user.imageUrl} alt={user.fullName} />
                     <AvatarFallback>
@@ -67,11 +70,14 @@ const UserSearchPage = () => {
                   <div>
                     <p className="font-medium">{user.fullName}</p>
                   </div>
-                </div>
+                </Link>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleStartChat(user.clerkId)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleStartChat(user.clerkId);
+                  }}
                 >
                   <MessageCircle className="h-5 w-5" />
                 </Button>

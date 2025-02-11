@@ -1,113 +1,78 @@
-import Topbar from "@/components/Topbar";
-import { useChatStore } from "@/stores/useChatStore";
-import { useUser } from "@clerk/clerk-react";
-import { useEffect, useRef } from "react";
-import UsersList from "./components/UsersList";
-import ChatHeader from "./components/ChatHeader";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "@/lib/axios";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import MessageInput from "./components/MessageInput";
+import { useSearchParams, Link } from "react-router-dom";
+import { DirectMessageChat } from "@/components/chat/DirectMessageChat";
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
-const formatTime = (date: string) => {
-  return new Date(date).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-};
+interface Friend {
+  clerkId: string;
+  fullName: string;
+  imageUrl: string;
+}
 
 const ChatPage = () => {
-  const { user } = useUser();
-  const { messages, selectedUser, fetchUsers, fetchMessages } = useChatStore();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [searchParams] = useSearchParams();
+  const selectedUserId = searchParams.get("userId");
 
-  useEffect(() => {
-    if (user) fetchUsers();
-  }, [fetchUsers, user]);
-
-  useEffect(() => {
-    if (selectedUser) fetchMessages(selectedUser.clerkId);
-  }, [selectedUser, fetchMessages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  console.log({ messages });
+  const { data: friends = [] } = useQuery<Friend[]>({
+    queryKey: ["friends"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/friends");
+      return data;
+    },
+  });
 
   return (
-    <main className="h-full rounded-lg bg-gradient-to-b from-zinc-800 to-zinc-900 overflow-hidden">
-      <Topbar />
+    <ErrorBoundary>
+      <div className="grid lg:grid-cols-[320px,1fr] h-full">
+        <div className="flex flex-col h-full border-r border-zinc-800">
+          <div className="sticky top-0 bg-background z-10 p-4 border-b border-zinc-800">
+            <h2 className="font-semibold">Messages</h2>
+          </div>
+          
+          <ScrollArea className="flex-1">
+            <div className="p-4 space-y-2">
+              {friends.map((friend) => (
+                <Link
+                  key={friend.clerkId}
+                  to={`/chat?userId=${friend.clerkId}`}
+                  className={`flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-800/50 transition-colors ${
+                    selectedUserId === friend.clerkId ? "bg-zinc-800" : ""
+                  }`}
+                >
+                  <Avatar>
+                    <AvatarImage src={friend.imageUrl} alt={friend.fullName} />
+                    <AvatarFallback>{friend.fullName.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{friend.fullName}</p>
+                  </div>
+                </Link>
+              ))}
 
-      <div className="grid lg:grid-cols-[300px_1fr] grid-cols-[80px_1fr] h-[calc(100vh-180px)]">
-        <UsersList />
+              {friends.length === 0 && (
+                <p className="text-center text-zinc-400">
+                  Add friends to start chatting
+                </p>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
 
-        {/* chat message */}
         <div className="flex flex-col h-full">
-          {selectedUser ? (
-            <>
-              <ChatHeader />
-
-              {/* Messages */}
-              <ScrollArea className="h-[calc(100vh-340px)]">
-                <div className="p-4 space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message._id}
-                      className={`flex items-start gap-3 ${
-                        message.senderId === user?.id ? "flex-row-reverse" : ""
-                      }`}
-                    >
-                      <Avatar className="size-8">
-                        <AvatarImage
-                          src={
-                            message.senderId === user?.id
-                              ? user.imageUrl
-                              : selectedUser.imageUrl
-                          }
-                        />
-                      </Avatar>
-
-                      <div
-                        className={`rounded-lg p-3 max-w-[70%]
-													${message.senderId === user?.id ? "bg-green-500" : "bg-zinc-800"}
-												`}
-                      >
-                        <p className="text-sm">{message.content}</p>
-                        <span className="text-xs text-zinc-300 mt-1 block">
-                          {formatTime(message.createdAt)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
-
-              <MessageInput />
-            </>
+          {selectedUserId ? (
+            <DirectMessageChat userId={selectedUserId} />
           ) : (
-            <NoConversationPlaceholder />
+            <div className="flex items-center justify-center h-full text-zinc-400">
+              Select a friend to start chatting
+            </div>
           )}
         </div>
       </div>
-    </main>
+    </ErrorBoundary>
   );
 };
-export default ChatPage;
 
-const NoConversationPlaceholder = () => (
-  <div className="flex flex-col items-center justify-center h-full space-y-6">
-    <img src="logo.png" alt="BeatBond" className="size-20 animate-pulse" />
-    <div className="text-center">
-      <h3 className="text-zinc-300 text-lg font-medium mb-1">
-        No conversation selected
-      </h3>
-      <p className="text-zinc-500 text-sm">Choose a friend to start chatting</p>
-    </div>
-  </div>
-);
+export default ChatPage;

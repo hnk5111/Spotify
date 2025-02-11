@@ -6,19 +6,27 @@ import { useMusicStore } from "@/stores/useMusicStore";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import { HomeIcon, Library, MessageCircle, Users } from "lucide-react";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { FriendsActivity } from "./FriendsActivity";
 
 const LeftSidebar = () => {
   const { albums, fetchAlbums, isLoading } = useMusicStore();
+  const location = useLocation();
 
   useEffect(() => {
     fetchAlbums();
   }, [fetchAlbums]);
 
+  const navItems = [
+    { icon: HomeIcon, label: "Home", path: "/" },
+    { icon: MessageCircle, label: "Messages", path: "/chat" },
+    { icon: Users, label: "Search Users", path: "/users" },
+    { icon: Users, label: "Friends", path: "/friends" },
+  ];
+
   return (
     <div className="h-full flex flex-col gap-2">
       {/* Navigation menu */}
-
       <div className="rounded-lg bg-zinc-900 p-4">
         <div className="space-y-2">
           <UserButton
@@ -28,47 +36,26 @@ const LeftSidebar = () => {
               },
             }}
           />
-          <Link
-            to={"/"}
-            className={cn(
-              buttonVariants({
-                variant: "ghost",
-                className: "w-full justify-start text-white hover:bg-zinc-800",
-              })
-            )}
-          >
-            <HomeIcon className="mr-2 size-5" />
-            <span className="md:inline">Home</span>
-          </Link>
 
           <SignedIn>
-            <Link
-              to={"/chat"}
-              className={cn(
-                buttonVariants({
-                  variant: "ghost",
-                  className:
-                    "w-full justify-start text-white hover:bg-zinc-800",
-                })
-              )}
-            >
-              <MessageCircle className="mr-2 size-5" />
-              <span className="md:inline">Messages</span>
-            </Link>
-
-            <Link
-              to={"/users"}
-              className={cn(
-                buttonVariants({
-                  variant: "ghost",
-                  className:
-                    "w-full justify-start text-white hover:bg-zinc-800",
-                })
-              )}
-            >
-              <Users className="mr-2 size-5" />
-              <span className="md:inline">Search Users</span>
-            </Link>
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  buttonVariants({
+                    variant: "ghost",
+                    className: cn(
+                      "w-full justify-start text-white hover:bg-zinc-800",
+                      location.pathname === item.path && "bg-zinc-800"
+                    ),
+                  })
+                )}
+              >
+                <item.icon className="mr-2 size-5" />
+                <span className="md:inline">{item.label}</span>
+              </Link>
+            ))}
           </SignedIn>
         </div>
       </div>
@@ -111,7 +98,13 @@ const LeftSidebar = () => {
           </div>
         </ScrollArea>
       </div>
+
+      {/* Mobile Friends Activity */}
+      <div className="lg:hidden">
+        <FriendsActivity isMobile={true} />
+      </div>
     </div>
   );
 };
+
 export default LeftSidebar;

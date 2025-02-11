@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,30 +25,48 @@ export function EditProfileDialog() {
     username: user?.username || "",
     bio: "",
     imageUrl: user?.imageUrl || "",
+    email: user?.primaryEmailAddress?.emailAddress || "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: user.fullName || "",
+        username: user.username || "",
+        imageUrl: user.imageUrl || "",
+        email: user.primaryEmailAddress?.emailAddress || "",
+      }));
+    }
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.id) {
+      toast.error("User not found");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await axiosInstance.put(
-        `/users/profile/${user?.id}`,
+        `/users/profile/${user.id}`,
         formData
       );
 
       if (response.status === 200) {
         toast.success("Profile updated successfully");
         setIsOpen(false);
-        // Update Clerk user data if needed
-        await user?.update({
+        
+        await user.update({
           firstName: formData.fullName.split(" ")[0],
           lastName: formData.fullName.split(" ").slice(1).join(" "),
           username: formData.username,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
+      toast.error(error.response?.data?.message || "Failed to update profile");
     } finally {
       setIsLoading(false);
     }
@@ -94,6 +112,18 @@ export function EditProfileDialog() {
               value={formData.username}
               onChange={handleChange}
               disabled={isLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={isLoading}
+              placeholder="Enter your email"
             />
           </div>
           <div className="space-y-2">

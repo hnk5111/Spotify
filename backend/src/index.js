@@ -19,6 +19,7 @@ import albumRoutes from "./routes/album.route.js";
 import statRoutes from "./routes/stat.route.js";
 import searchRoutes from "./routes/search.route.js";
 import notificationRoutes from "./routes/notification.route.js";
+import friendRoutes from "./routes/friend.route.js";
 
 dotenv.config();
 
@@ -32,7 +33,9 @@ initializeSocket(httpServer);
 app.use(
   cors({
     origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -65,6 +68,8 @@ cron.schedule("0 * * * *", () => {
   }
 });
 
+app.options('*', cors()); // Enable preflight requests for all routes
+
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
@@ -73,6 +78,7 @@ app.use("/api/albums", albumRoutes);
 app.use("/api/stats", statRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/friends", friendRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));

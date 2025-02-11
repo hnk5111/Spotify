@@ -111,7 +111,7 @@ export const PlaybackControls = () => {
 						<Button
 							size='icon'
 							variant='ghost'
-							className='hidden sm:inline-flex hover:text-white text-zinc-400'
+							className='sm:inline-flex hover:text-white text-zinc-400'
 						>
 							<Shuffle className='h-4 w-4' />
 						</Button>
@@ -146,7 +146,7 @@ export const PlaybackControls = () => {
 						<Button
 							size='icon'
 							variant='ghost'
-							className='hidden sm:inline-flex hover:text-white text-zinc-400'
+							className='sm:inline-flex hover:text-white text-zinc-400'
 						>
 							<Repeat className='h-4 w-4' />
 						</Button>
