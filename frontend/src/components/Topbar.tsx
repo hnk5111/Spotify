@@ -1,4 +1,4 @@
-import { SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedOut, UserButton, SignedIn } from "@clerk/clerk-react";
 import { LayoutDashboardIcon, Search, Loader2, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import SignInOAuthButtons from "./SignInOAuthButtons";
@@ -10,6 +10,7 @@ import { Input } from "./ui/input";
 import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import PlayButton from "@/pages/home/components/PlayButton";
+import { EditProfileDialog } from "./profile/EditProfileDialog";
 
 const Topbar = () => {
   const { isAdmin } = useAuthStore();
@@ -100,7 +101,7 @@ const Topbar = () => {
                     <div
                       key={song.id}
                       className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-md overflow-hidden
-                                hover:bg-zinc-700/50 transition-colors group cursor-pointer relative"
+                                  hover:bg-zinc-700/50 transition-colors group cursor-pointer relative"
                       onClick={() => {
                         setShowResults(false);
                         clearSearch();
@@ -170,7 +171,12 @@ const Topbar = () => {
             <SignInOAuthButtons />
           </SignedOut>
 
-          <UserButton />
+          <SignedIn>
+            <div className="flex items-center gap-2">
+              <EditProfileDialog />
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          </SignedIn>
         </div>
       </div>
 

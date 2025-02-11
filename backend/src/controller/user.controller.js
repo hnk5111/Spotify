@@ -49,3 +49,47 @@ export const searchUsers = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const updateUserProfile = async (req, res) => {
+	try {
+		const { clerkId } = req.params;
+		const { fullName, username, bio, imageUrl } = req.body;
+
+		const user = await User.findOne({ clerkId });
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		// Update user fields
+		if (fullName) user.fullName = fullName;
+		if (username) user.username = username;
+		if (bio !== undefined) user.bio = bio;
+		if (imageUrl) user.imageUrl = imageUrl;
+
+		await user.save();
+
+		res.status(200).json({
+			message: "Profile updated successfully",
+			user
+		});
+	} catch (error) {
+		console.error("Error updating profile:", error);
+		res.status(500).json({ error: "Error updating profile" });
+	}
+};
+
+export const getUserProfile = async (req, res) => {
+	try {
+		const { clerkId } = req.params;
+		const user = await User.findOne({ clerkId });
+
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		res.status(200).json(user);
+	} catch (error) {
+		console.error("Error fetching profile:", error);
+		res.status(500).json({ error: "Error fetching profile" });
+	}
+};
