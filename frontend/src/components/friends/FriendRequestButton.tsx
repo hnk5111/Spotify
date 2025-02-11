@@ -11,16 +11,14 @@ interface FriendRequestButtonProps {
 export const FriendRequestButton = ({ userId }: FriendRequestButtonProps) => {
   const queryClient = useQueryClient();
 
-  const { data: friendshipStatus, isLoading, error } = useQuery({
+  const { data: friendshipStatus, isLoading } = useQuery({
     queryKey: ["friendshipStatus", userId],
     queryFn: async () => {
       const { data } = await axiosInstance.get(`/friends/status/${userId}`);
       return data;
     },
     retry: false,
-    onError: (error: any) => {
-      console.error("Error fetching friendship status:", error);
-    }
+    enabled: !!userId
   });
 
   const { mutate: sendRequest, isPending: isSending } = useMutation({
