@@ -42,12 +42,15 @@ const HomePage = () => {
     if (hour < 18) return "Good afternoon";
     return "Good evening";
   };
+
   return (
-    <main className="rounded-md overflow-hidden h-full bg-gradient-to-b from-zinc-800 to-zinc-900">
+    <main className="rounded-lg overflow-hidden h-full bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur-sm">
       <Topbar />
       <ScrollArea className="h-[calc(100vh-180px)]">
         <div className="p-4 sm:p-6">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6">{Greeting()}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-foreground tracking-tight">
+            {Greeting()}
+          </h1>
           <FeaturedSection />
 
           <div className="space-y-8">

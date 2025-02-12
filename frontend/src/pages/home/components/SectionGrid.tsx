@@ -14,10 +14,12 @@ const SectionGrid = ({ songs, title, isLoading }: SectionGridProps) => {
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
+          {title}
+        </h2>
         <Button
           variant="link"
-          className="text-sm text-zinc-400 hover:text-white"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           Show all
         </Button>
@@ -27,21 +29,27 @@ const SectionGrid = ({ songs, title, isLoading }: SectionGridProps) => {
         {songs.map((song) => (
           <div
             key={song._id}
-            className="bg-zinc-800/40 p-4 rounded-md hover:bg-zinc-700/40 transition-all group cursor-pointer"
+            className="bg-card/50 p-4 rounded-lg hover:bg-secondary/50 
+                     transition-all duration-200 group cursor-pointer
+                     border border-border/50 shadow-sm hover:shadow-md"
           >
             <div className="relative mb-4">
-              <div className="aspect-square rounded-md shadow-lg overflow-hidden">
+              <div className="aspect-square rounded-lg shadow-lg overflow-hidden bg-background">
                 <img
                   src={song.imageUrl}
                   alt={song.title}
                   className="w-full h-full object-cover transition-transform duration-300 
-									group-hover:scale-105"
+                           group-hover:scale-105"
                 />
               </div>
               <PlayButton song={song} />
             </div>
-            <h3 className="font-medium mb-2 truncate">{song.title}</h3>
-            <p className="text-sm text-zinc-400 truncate">{song.artist}</p>
+            <h3 className="font-medium mb-2 truncate text-foreground">
+              {song.title}
+            </h3>
+            <p className="text-sm text-muted-foreground truncate">
+              {song.artist}
+            </p>
           </div>
         ))}
       </div>

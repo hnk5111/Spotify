@@ -1,4 +1,8 @@
-import { useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -6,8 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2, ChevronDown } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useUser } from '@clerk/clerk-react';
-import { useSocket } from '@/hooks/useSocket';
+import { useUser } from "@clerk/clerk-react";
+import { useSocket } from "@/hooks/useSocket";
 import { toast } from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
 
@@ -45,16 +49,18 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { ref: topRef, inView: isTopVisible } = useInView();
 
-  const { 
-    data: messages, 
+  const {
+    data: messages,
     isLoading: isLoadingMessages,
     isFetchingNextPage,
     hasNextPage,
-    fetchNextPage 
+    fetchNextPage,
   } = useInfiniteQuery<MessagePage>({
     queryKey: ["messages", userId],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await axiosInstance.get(`/users/messages/${userId}?page=${pageParam}`);
+      const { data } = await axiosInstance.get(
+        `/users/messages/${userId}?page=${pageParam}`
+      );
       return data;
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -78,10 +84,10 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
       setIsSending(false);
     };
 
-    socket.on('messageError', handleMessageError);
+    socket.on("messageError", handleMessageError);
 
     return () => {
-      socket.off('messageError', handleMessageError);
+      socket.off("messageError", handleMessageError);
     };
   }, [socket]);
 
@@ -93,11 +99,20 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
       }
     };
     // Scroll to bottom on initial load
-    if (!isLoadingMessages && messages?.pages && messages.pages[0]?.messages?.length > 0) {
+    if (
+      !isLoadingMessages &&
+      messages?.pages &&
+      messages.pages[0]?.messages?.length > 0
+    ) {
       scrollToBottom();
     }
     // Scroll to bottom when new messages arrive
-    if (autoScroll && messages?.pages && messages.pages.length > 0 && messages.pages[messages.pages.length - 1]?.messages?.length > 0) {
+    if (
+      autoScroll &&
+      messages?.pages &&
+      messages.pages.length > 0 &&
+      messages.pages[messages.pages.length - 1]?.messages?.length > 0
+    ) {
       scrollToBottom();
     }
   }, [messages, isLoadingMessages]);
@@ -112,10 +127,10 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
       }
     };
 
-    socket.on('receiveMessage', handleNewMessage);
+    socket.on("receiveMessage", handleNewMessage);
 
     return () => {
-      socket.off('receiveMessage', handleNewMessage);
+      socket.off("receiveMessage", handleNewMessage);
     };
   }, [socket, userId, queryClient]);
 
@@ -123,26 +138,26 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
     if (!socket) return;
 
     const handleConnect = () => {
-      console.log('Socket connected');
+      console.log("Socket connected");
     };
 
     const handleConnectError = (error: Error) => {
-      console.error('Socket connection error:', error);
-      toast.error('Connection error. Trying to reconnect...');
+      console.error("Socket connection error:", error);
+      toast.error("Connection error. Trying to reconnect...");
     };
 
     const handleDisconnect = () => {
-      console.log('Socket disconnected');
+      console.log("Socket disconnected");
     };
 
-    socket.on('connect', handleConnect);
-    socket.on('connect_error', handleConnectError);
-    socket.on('disconnect', handleDisconnect);
+    socket.on("connect", handleConnect);
+    socket.on("connect_error", handleConnectError);
+    socket.on("disconnect", handleDisconnect);
 
     return () => {
-      socket.off('connect', handleConnect);
-      socket.off('connect_error', handleConnectError);
-      socket.off('disconnect', handleDisconnect);
+      socket.off("connect", handleConnect);
+      socket.off("connect_error", handleConnectError);
+      socket.off("disconnect", handleDisconnect);
     };
   }, [socket]);
 
@@ -167,7 +182,7 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
     setAutoScroll(isNearBottom);
   };
 
-  const allMessages = messages?.pages.flatMap(page => page.messages) ?? [];
+  const allMessages = messages?.pages.flatMap((page) => page.messages) ?? [];
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,7 +190,7 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
 
     try {
       setIsSending(true);
-      
+
       socket.emit("sendMessage", {
         receiverId: userId,
         content: message.trim(),
@@ -196,28 +211,27 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
   return (
     <div className="flex flex-col h-full">
       {/* Sticky Header */}
-      <div className="sticky top-0 bg-background z-10 p-4 border-b border-zinc-800">
+      <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <Avatar>
+          <Avatar className="border border-border/50">
             <AvatarImage src={userData?.imageUrl} alt={userData?.fullName} />
             <AvatarFallback>{userData?.fullName?.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="font-semibold">{userData?.fullName}</h2>
+            <h2 className="font-semibold text-foreground">
+              {userData?.fullName}
+            </h2>
           </div>
         </div>
       </div>
 
       {/* Scrollable Messages Area */}
-      <ScrollArea 
-        className="flex-1" 
-        onScroll={handleScroll}
-      >
+      <ScrollArea className="flex-1" onScroll={handleScroll}>
         <div className="p-4 space-y-4">
           {/* Loading indicator for older messages */}
           {isFetchingNextPage && (
             <div className="flex justify-center py-2">
-              <Loader2 className="h-6 w-6 animate-spin" />
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           )}
 
@@ -226,7 +240,7 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
 
           {isLoadingMessages ? (
             <div className="flex justify-center">
-              <Loader2 className="h-6 w-6 animate-spin" />
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : (
             <>
@@ -238,64 +252,67 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
                   }`}
                 >
                   <div
-                    className={`max-w-[70%] rounded-lg p-3 ${
+                    className={`max-w-[70%] rounded-lg p-3 shadow-sm ${
                       msg.senderId === user?.id
-                        ? "bg-blue-600"
-                        : "bg-zinc-800"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-secondary-foreground"
                     }`}
                   >
                     <p className="break-words">{msg.content}</p>
-                    <span className="text-xs text-zinc-400 mt-1 block">
+                    <span className="text-xs opacity-70 mt-1 block">
                       {new Date(msg.createdAt).toLocaleTimeString()}
                     </span>
                   </div>
                 </div>
               ))}
-
-              {/* Auto-scroll anchor */}
               <div ref={messagesEndRef} />
-
-              {/* New message indicator when auto-scroll is disabled */}
-              {!autoScroll && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="fixed bottom-20 right-4 z-10"
-                  onClick={() => {
-                    setAutoScroll(true);
-                    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                >
-                  <ChevronDown className="h-4 w-4 mr-1" />
-                  New Messages
-                </Button>
-              )}
             </>
           )}
         </div>
       </ScrollArea>
 
-      {/* Sticky Message Input */}
-      <div className="sticky bottom-0 bg-background border-t border-zinc-800">
-        <form onSubmit={handleSendMessage} className="p-4">
-          <div className="flex gap-2">
-            <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-1"
-              disabled={isSending}
-            />
-            <Button type="submit" disabled={isSending}>
-              {isSending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        </form>
-      </div>
+      {/* Scroll to bottom button */}
+      {!autoScroll && (
+        <Button
+          size="icon"
+          variant="outline"
+          className="absolute bottom-20 right-4 rounded-full bg-card border-border shadow-lg hover:bg-secondary/80 transition-all duration-200"
+          onClick={() => {
+            setAutoScroll(true);
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      )}
+
+      {/* Message Input */}
+      <form
+        onSubmit={handleSendMessage}
+        className="p-4 border-t border-border bg-background/95 backdrop-blur-sm"
+      >
+        <div className="flex gap-2">
+          <Input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type a message..."
+            className="bg-secondary/50 border-border focus:ring-primary"
+            disabled={isSending}
+          />
+          <Button
+            type="submit"
+            size="icon"
+            disabled={isSending || !message.trim()}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
+          >
+            {isSending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   );
-}; 
+};

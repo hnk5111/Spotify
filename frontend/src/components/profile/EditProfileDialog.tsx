@@ -82,40 +82,46 @@ export function EditProfileDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="bg-card hover:bg-secondary/80 border-border transition-all duration-200 shadow-sm hover:shadow-md"
+        >
           Edit Profile
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-card border border-border shadow-lg">
         <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-foreground">Edit Profile</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Make changes to your profile here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
+            <Label htmlFor="fullName" className="text-foreground">Full Name</Label>
             <Input
               id="fullName"
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
               disabled={isLoading}
+              className="bg-background border-border focus:ring-primary"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username" className="text-foreground">Username</Label>
             <Input
               id="username"
               name="username"
               value={formData.username}
               onChange={handleChange}
               disabled={isLoading}
+              className="bg-background border-border focus:ring-primary"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-foreground">Email</Label>
             <Input
               id="email"
               name="email"
@@ -124,10 +130,11 @@ export function EditProfileDialog() {
               onChange={handleChange}
               disabled={isLoading}
               placeholder="Enter your email"
+              className="bg-background border-border focus:ring-primary"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
+            <Label htmlFor="bio" className="text-foreground">Bio</Label>
             <Textarea
               id="bio"
               name="bio"
@@ -135,28 +142,35 @@ export function EditProfileDialog() {
               onChange={handleChange}
               placeholder="Tell us about yourself"
               disabled={isLoading}
+              className="bg-background border-border focus:ring-primary resize-none min-h-[100px]"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="imageUrl">Profile Image URL</Label>
+            <Label htmlFor="imageUrl" className="text-foreground">Profile Image URL</Label>
             <Input
               id="imageUrl"
               name="imageUrl"
               value={formData.imageUrl}
               onChange={handleChange}
               disabled={isLoading}
+              className="bg-background border-border focus:ring-primary"
             />
           </div>
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end space-x-2 pt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsOpen(false)}
               disabled={isLoading}
+              className="bg-card hover:bg-secondary/80 border-border transition-all duration-200"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              disabled={isLoading}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

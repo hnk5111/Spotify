@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import PlayButton from "@/pages/home/components/PlayButton";
 import { EditProfileDialog } from "./profile/EditProfileDialog";
+import { ThemeToggle } from "./ui/theme-toggle";
 
 const Topbar = () => {
   const { isAdmin } = useAuthStore();
@@ -64,18 +65,20 @@ const Topbar = () => {
   return (
     <>
       {/* Regular Topbar */}
-      <div className="flex items-center justify-between p-4 sticky top-0 bg-zinc-900/75 backdrop-blur-md z-10">
+      <div className="flex items-center justify-between p-4 sticky top-0 bg-background/75 dark:bg-background/90 backdrop-blur-md z-10 border-b border-border">
         <div className="flex gap-2 items-center">
           <img src="/logo.png" className="size-10" alt="BeatBond logo" />
-          <span className="xs:inline font-semi-bold">BeatBond</span>
+          <span className="xs:inline font-semibold tracking-tight">
+            BeatBond
+          </span>
         </div>
 
         {/* Desktop Search */}
         <div className="hidden md:flex flex-1 max-w-md mx-4" ref={searchRef}>
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 size-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground size-4" />
             {isLoading && (
-              <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 size-4 animate-spin" />
+              <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground size-4 animate-spin" />
             )}
             <Input
               value={searchQuery}
@@ -85,14 +88,14 @@ const Topbar = () => {
               }}
               onFocus={() => setShowResults(true)}
               placeholder="Search songs, albums..."
-              className="w-full pl-10 pr-10 bg-zinc-800 border-zinc-700"
+              className="w-full pl-10 pr-10 bg-secondary/50 dark:bg-secondary/30 border-border focus:ring-primary"
             />
 
             {/* Desktop Search Results */}
             {showResults && searchResults && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-800 rounded-md shadow-lg max-h-96 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-card rounded-md shadow-lg max-h-96 overflow-y-auto border border-border">
                 {searchResults.length === 0 && !isLoading && searchQuery && (
-                  <div className="p-3 text-sm text-zinc-400">
+                  <div className="p-3 text-sm text-muted-foreground">
                     No results found
                   </div>
                 )}
@@ -100,8 +103,8 @@ const Topbar = () => {
                   searchResults.map((song) => (
                     <div
                       key={song.id}
-                      className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-md overflow-hidden
-                                  hover:bg-zinc-700/50 transition-colors group cursor-pointer relative"
+                      className="flex items-center gap-3 p-3 bg-card/50 hover:bg-secondary/50 
+                               transition-all duration-200 group cursor-pointer relative"
                       onClick={() => {
                         setShowResults(false);
                         clearSearch();
@@ -110,13 +113,13 @@ const Topbar = () => {
                       <img
                         src={song.image[2]?.url || "/default-image.png"}
                         alt={song.name}
-                        className="h-12 w-12 object-cover rounded"
+                        className="h-12 w-12 object-cover rounded shadow-md"
                       />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-white">
+                        <p className="text-sm font-medium text-foreground">
                           {song.name}
                         </p>
-                        <p className="text-xs text-zinc-400">
+                        <p className="text-xs text-muted-foreground">
                           {song.artists.all[0].name}
                         </p>
                         <PlayButton
@@ -149,7 +152,7 @@ const Topbar = () => {
           {/* Mobile Search Button */}
           <button
             onClick={() => setShowMobileSearch(true)}
-            className="md:hidden p-2 hover:bg-zinc-800 rounded-full"
+            className="md:hidden p-2 hover:bg-secondary/50 rounded-full transition-colors"
           >
             <Search className="size-5" />
           </button>
@@ -159,7 +162,7 @@ const Topbar = () => {
               to={"/admin"}
               className={cn(
                 buttonVariants({ variant: "outline" }),
-                "hidden sm:flex"
+                "hidden sm:flex hover:bg-secondary/50 transition-colors"
               )}
             >
               <LayoutDashboardIcon className="size-4 mr-2" />
@@ -173,6 +176,7 @@ const Topbar = () => {
 
           <SignedIn>
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <EditProfileDialog />
               <UserButton afterSignOutUrl="/" />
             </div>
@@ -182,25 +186,25 @@ const Topbar = () => {
 
       {/* Mobile Search Modal */}
       {showMobileSearch && (
-        <div className="fixed inset-0 bg-black z-50 p-4 md:hidden">
+        <div className="fixed inset-0 bg-background/95 backdrop-blur-sm z-50 p-4 md:hidden">
           <div className="flex flex-col h-full">
             <div className="flex items-center gap-4 mb-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 size-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground size-4" />
                 {isLoading && (
-                  <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 size-4 animate-spin" />
+                  <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground size-4 animate-spin" />
                 )}
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search songs, albums..."
-                  className="w-full pl-10 pr-10 bg-zinc-800 border-zinc-700"
+                  className="w-full pl-10 pr-10 bg-secondary/50 dark:bg-secondary/30 border-border focus:ring-primary"
                   autoFocus
                 />
               </div>
               <button
                 onClick={handleSearchClose}
-                className="p-2 hover:bg-zinc-800 rounded-full"
+                className="p-2 hover:bg-secondary/50 rounded-full transition-colors"
               >
                 <X className="size-5" />
               </button>
@@ -209,7 +213,7 @@ const Topbar = () => {
             {/* Mobile Search Results */}
             <div className="flex-1 overflow-y-auto">
               {searchResults.length === 0 && !isLoading && searchQuery && (
-                <div className="p-3 text-sm text-zinc-400">
+                <div className="p-3 text-sm text-muted-foreground">
                   No results found
                 </div>
               )}
@@ -217,21 +221,20 @@ const Topbar = () => {
                 searchResults.map((song) => (
                   <div
                     key={song.id}
-                    // to={`/albums/${song.albumId}?track=${song.id}`}
-                    className="flex items-center gap-5 p-3 m-2 bg-zinc-800/50 rounded-md overflow-hidden
-                                hover:bg-zinc-700/50 transition-colors group cursor-pointer relative"
+                    className="flex items-center gap-5 p-3 m-2 bg-card/50 rounded-md overflow-hidden
+                             hover:bg-secondary/50 transition-all duration-200 group cursor-pointer relative"
                     onClick={handleSearchClose}
                   >
                     <img
                       src={song.image[2].url}
                       alt={song.name}
-                      className="h-12 w-12 object-cover rounded"
+                      className="h-12 w-12 object-cover rounded shadow-md"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-foreground">
                         {song.name}
                       </p>
-                      <p className="text-xs text-zinc-400">
+                      <p className="text-xs text-muted-foreground">
                         {song.artists.all[0].name}
                       </p>
                       <PlayButton
