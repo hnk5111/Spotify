@@ -5,6 +5,7 @@ import FeaturedSection from "./components/FeaturedSection";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SectionGrid from "./components/SectionGrid";
 import { usePlayerStore } from "@/stores/usePlayerStore";
+import { AnimatedText } from "@/components/ui/animated-text";
 
 const HomePage = () => {
   const {
@@ -36,11 +37,11 @@ const HomePage = () => {
     }
   }, [initializeQueue, madeForYouSongs, trendingSongs, featuredSongs]);
 
-  const Greeting = () => {
+  const getGreetings = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
+    if (hour < 12) return ["music", "vibes", "rhythm"];
+    if (hour < 18) return ["groove", "beats", "tunes"];
+    return ["chill", "vibe", "relax"];
   };
 
   return (
@@ -48,8 +49,12 @@ const HomePage = () => {
       <Topbar />
       <ScrollArea className="h-[calc(100vh-180px)]">
         <div className="p-4 sm:p-6">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-foreground tracking-tight">
-            {Greeting()}
+          <h1 className="text-foreground mb-8">
+            <AnimatedText 
+              staticText="One spot for"
+              texts={getGreetings()} 
+              interval={4000} 
+            />
           </h1>
           <FeaturedSection />
 
@@ -70,4 +75,5 @@ const HomePage = () => {
     </main>
   );
 };
+
 export default HomePage;

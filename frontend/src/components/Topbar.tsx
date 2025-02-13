@@ -22,6 +22,7 @@ const Topbar = () => {
     setSearchQuery,
     searchSongs,
     clearSearch,
+    error,
   } = useSearchStore();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -94,11 +95,15 @@ const Topbar = () => {
             {/* Desktop Search Results */}
             {showResults && searchResults && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-card rounded-md shadow-lg max-h-96 overflow-y-auto border border-border">
-                {searchResults.length === 0 && !isLoading && searchQuery && (
+                {error ? (
+                  <div className="p-3 text-sm text-destructive">
+                    {error}
+                  </div>
+                ) : searchResults.length === 0 && !isLoading && searchQuery ? (
                   <div className="p-3 text-sm text-muted-foreground">
                     No results found
                   </div>
-                )}
+                ) : null}
                 {Array.isArray(searchResults) &&
                   searchResults.map((song) => (
                     <div
@@ -111,7 +116,7 @@ const Topbar = () => {
                       }}
                     >
                       <img
-                        src={song.image[2]?.url || "/default-image.png"}
+                        src={song.image?.[2]?.url || song.image?.[1]?.url || song.image?.[0]?.url || "/default-image.png"}
                         alt={song.name}
                         className="h-12 w-12 object-cover rounded shadow-md"
                       />
@@ -120,19 +125,14 @@ const Topbar = () => {
                           {song.name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {song.artists.all[0].name}
+                          {song.artists?.all?.[0]?.name || "Unknown Artist"}
                         </p>
                         <PlayButton
                           song={{
                             _id: song.id,
                             title: song.name,
-                            artist:
-                              song.artists?.all?.[0]?.name || "Unknown Artist",
-                            imageUrl:
-                              song.image?.[2]?.url ||
-                              song.image?.[1]?.url ||
-                              song.image?.[0]?.url ||
-                              "/default-image.png",
+                            artist: song.artists?.all?.[0]?.name || "Unknown Artist",
+                            imageUrl: song.image?.[2]?.url || song.image?.[1]?.url || song.image?.[0]?.url || "/default-image.png",
                             audioUrl: song.downloadUrl?.[0]?.url || "",
                             albumId: song.albumId || "",
                             duration: Number(song.duration) || 0,
@@ -212,11 +212,15 @@ const Topbar = () => {
 
             {/* Mobile Search Results */}
             <div className="flex-1 overflow-y-auto">
-              {searchResults.length === 0 && !isLoading && searchQuery && (
+              {error ? (
+                <div className="p-3 text-sm text-destructive">
+                  {error}
+                </div>
+              ) : searchResults.length === 0 && !isLoading && searchQuery ? (
                 <div className="p-3 text-sm text-muted-foreground">
                   No results found
                 </div>
-              )}
+              ) : null}
               {Array.isArray(searchResults) &&
                 searchResults.map((song) => (
                   <div
@@ -226,7 +230,7 @@ const Topbar = () => {
                     onClick={handleSearchClose}
                   >
                     <img
-                      src={song.image[2].url}
+                      src={song.image?.[2]?.url || song.image?.[1]?.url || song.image?.[0]?.url || "/default-image.png"}
                       alt={song.name}
                       className="h-12 w-12 object-cover rounded shadow-md"
                     />
@@ -235,19 +239,14 @@ const Topbar = () => {
                         {song.name}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {song.artists.all[0].name}
+                        {song.artists?.all?.[0]?.name || "Unknown Artist"}
                       </p>
                       <PlayButton
                         song={{
                           _id: song.id,
                           title: song.name,
-                          artist:
-                            song.artists?.all?.[0]?.name || "Unknown Artist",
-                          imageUrl:
-                            song.image?.[2]?.url ||
-                            song.image?.[1]?.url ||
-                            song.image?.[0]?.url ||
-                            "/default-image.png",
+                          artist: song.artists?.all?.[0]?.name || "Unknown Artist",
+                          imageUrl: song.image?.[2]?.url || song.image?.[1]?.url || song.image?.[0]?.url || "/default-image.png",
                           audioUrl: song.downloadUrl?.[0]?.url || "",
                           albumId: song.albumId || "",
                           duration: Number(song.duration) || 0,
