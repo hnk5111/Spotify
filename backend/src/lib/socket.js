@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import { Message } from "../models/message.model.js";
 import { Notification } from "../models/notification.model.js";
 import { User } from "../models/user.model.js";
+import { FriendRequest } from "../models/friendRequest.model.js";
 
 const userSockets = new Map();
 
@@ -58,6 +59,22 @@ export const initializeSocket = (server) => {
 				const { receiverId, content } = data;
 				if (!content.trim()) {
 					throw new Error("Message cannot be empty");
+				}
+
+				// Add friendship check
+				const friendshipStatus = await FriendRequest.findOne({
+					$or: [
+						{ senderId: socket.user.clerkId, receiverId },
+						{ senderId: receiverId, receiverId: socket.user.clerkId }
+					],
+					status: "accepted"
+				});
+
+				if (!friendshipStatus) {
+					socket.emit("messageError", { 
+						message: "You can only message users who have accepted your friend request" 
+					});
+					return;
 				}
 
 				// Check if receiver exists
