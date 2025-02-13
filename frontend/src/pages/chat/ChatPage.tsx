@@ -29,7 +29,7 @@ const ChatPage = () => {
       <div className="grid lg:grid-cols-[320px,1fr] h-full">
         <div className="flex flex-col h-full border-r border-border bg-card/50">
           <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border">
-            <h2 className="font-semibold text-foreground">Messages</h2>
+            <h2 className="font-semibold text-foreground text-center md:text-left">Messages</h2>
           </div>
 
           <ScrollArea className="flex-1">

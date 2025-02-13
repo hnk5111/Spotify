@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import SignInOAuthButtons from "./SignInOAuthButtons";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSearchStore } from "@/stores/useSearchStore";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import { Input } from "./ui/input";
@@ -23,6 +24,7 @@ const Topbar = () => {
     searchSongs,
     clearSearch,
   } = useSearchStore();
+  const { setIsVisible } = useSidebarStore();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -35,6 +37,14 @@ const Topbar = () => {
   //   imageUrl: "",
   //   audioUrl: "",
   // };
+
+  useEffect(() => {
+    if (showMobileSearch) {
+      setIsVisible(false);
+    } else {
+      setIsVisible(true);
+    }
+  }, [showMobileSearch, setIsVisible]);
 
   useEffect(() => {
     if (debouncedSearch) {
@@ -60,15 +70,16 @@ const Topbar = () => {
     setShowMobileSearch(false);
     setShowResults(false);
     clearSearch();
+    setIsVisible(true);
   };
 
   return (
     <>
       {/* Regular Topbar */}
-      <div className="flex items-center justify-between p-4 sticky top-0 bg-background/75 dark:bg-background/90 backdrop-blur-md z-10 border-b border-border">
-        <div className="flex gap-2 items-center">
+      <div className="flex items-center justify-end p-4 sticky top-0 bg-background/75 dark:bg-background/90 backdrop-blur-md z-10 border-b border-border">
+        <div className="flex-1 hidden md:flex gap-2 items-center">
           <img src="/logo.png" className="size-10" alt="BeatBond logo" />
-          <span className="xs:inline font-semibold tracking-tight">
+          <span className="font-semibold tracking-tight">
             BeatBond
           </span>
         </div>
@@ -148,7 +159,7 @@ const Topbar = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-4">
           {/* Mobile Search Button */}
           <button
             onClick={() => setShowMobileSearch(true)}
@@ -175,7 +186,7 @@ const Topbar = () => {
           </SignedOut>
 
           <SignedIn>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <ThemeToggle />
               <EditProfileDialog />
               <UserButton afterSignOutUrl="/" />

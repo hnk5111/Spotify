@@ -9,7 +9,11 @@ import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FriendsActivity } from "./FriendsActivity";
 
-const LeftSidebar = () => {
+interface LeftSidebarProps {
+  onNavigate?: () => void;
+}
+
+const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
   const { albums, fetchAlbums, isLoading } = useMusicStore();
   const location = useLocation();
 
@@ -23,6 +27,12 @@ const LeftSidebar = () => {
     { icon: Users, label: "Search Users", path: "/users" },
     { icon: Users, label: "Friends", path: "/friends" },
   ];
+
+  const handleNavigation = () => {
+    if (onNavigate) {
+      onNavigate();
+    }
+  };
 
   return (
     <div className="h-full flex flex-col gap-2">
@@ -42,6 +52,7 @@ const LeftSidebar = () => {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={handleNavigation}
                 className={cn(
                   buttonVariants({
                     variant: "ghost",
@@ -78,6 +89,7 @@ const LeftSidebar = () => {
                 <Link
                   to={`/albums/${album._id}`}
                   key={album._id}
+                  onClick={handleNavigation}
                   className="p-2 hover:bg-secondary/80 rounded-lg flex items-center gap-3 group cursor-pointer
                            transition-all duration-200"
                 >

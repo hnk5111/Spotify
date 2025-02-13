@@ -26,7 +26,7 @@ const FriendsActivityPage = () => {
   return (
     <ScrollArea className="h-full">
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Friends Activity</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center md:text-left">Friends Activity</h1>
         
         <div className="space-y-4">
           {friends.map((friend) => (

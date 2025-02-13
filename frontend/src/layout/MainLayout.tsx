@@ -17,10 +17,13 @@ import {
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
-// import { VisuallyHidden } from "@/components/ui/visually-hidden";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { cn } from "@/lib/utils";
 
 const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { isVisible } = useSidebarStore();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -31,6 +34,10 @@ const MainLayout = () => {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   return (
     <div className="h-screen flex flex-col">
@@ -43,9 +50,12 @@ const MainLayout = () => {
 
         {/* Mobile Menu Button */}
         {isMobile ? (
-          <Sheet>
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <button className="fixed top-5 right-4 z-50 p-2 bg-black/20 hover:bg-black/30 rounded-lg md:hidden shadow-sm transition-all duration-200">
+              <button className={cn(
+                "fixed top-5 left-4 z-50 p-2 bg-black/20 hover:bg-black/30 rounded-lg md:hidden shadow-sm transition-all duration-200",
+                !isVisible && "hidden"
+              )}>
                 <Menu className="h-6 w-6" />
               </button>
             </SheetTrigger>
@@ -54,7 +64,7 @@ const MainLayout = () => {
               className="w-[300px] p-0 bg-black/20 backdrop-blur-sm border-r border-white/10"
             >
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              <LeftSidebar />
+              <LeftSidebar onNavigate={handleClose} />
             </SheetContent>
           </Sheet>
         ) : (
