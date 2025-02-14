@@ -131,6 +131,7 @@ const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
     { icon: Users, label: "Friends", path: "/friends" },
     { icon: Bell, label: "Notifications", path: "/notifications" },
     { icon: Settings, label: "Settings", path: "/settings" },
+    
   ];
 
   const handleNavigation = () => {
