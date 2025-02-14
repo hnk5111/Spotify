@@ -17,6 +17,7 @@ export const initializeSocket = (server) => {
 	});
 
 	const userActivities = new Map(); // {userId: activity}
+	const onlineUsers = new Set();
 
 	io.use(async (socket, next) => {
 		const userId = socket.handshake.auth.userId;
@@ -37,13 +38,25 @@ export const initializeSocket = (server) => {
 	});
 
 	io.on("connection", (socket) => {
-		const userId = socket.user.clerkId;
+		const userId = socket.handshake.auth.userId;
+		
+		if (userId) {
+			onlineUsers.add(userId);
+			socket.join(userId);
+			
+			// Broadcast to all clients that user is online
+			io.emit("user_connected", userId);
+			
+			// Send current online users to the newly connected client
+			socket.on("get_online_users", () => {
+				socket.emit("online_users", Array.from(onlineUsers));
+			});
+		}
+
 		userSockets.set(userId, socket.id);
 		userActivities.set(userId, "Online");
 
 		// broadcast to all connected sockets that this user just logged in
-		io.emit("user_connected", userId);
-
 		io.emit("users_online", Array.from(userSockets.keys()));
 
 		io.emit("activities", Array.from(userActivities.entries()));
@@ -115,9 +128,12 @@ export const initializeSocket = (server) => {
 		});
 
 		socket.on("disconnect", () => {
+			if (userId) {
+				onlineUsers.delete(userId);
+				io.emit("user_disconnected", userId);
+			}
 			userSockets.delete(userId);
 			userActivities.delete(userId);
-			io.emit("user_disconnected", userId);
 		});
 	});
 

@@ -33,7 +33,6 @@ export const FriendsActivity = ({
   const {
     data: friends = [],
     isLoading,
-    error,
   } = useQuery<Friend[]>({
     queryKey: ["friends"],
     queryFn: async () => {

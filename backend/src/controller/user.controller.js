@@ -132,3 +132,16 @@ export const updateProfile = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const updateLastSeen = async (req, res, next) => {
+	try {
+		const userId = req.auth.userId;
+		await User.findOneAndUpdate(
+			{ clerkId: userId },
+			{ lastSeen: new Date() }
+		);
+		res.status(200).json({ success: true });
+	} catch (error) {
+		next(error);
+	}
+};
