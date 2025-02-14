@@ -6,7 +6,14 @@ const notificationSchema = new mongoose.Schema(
     message: { type: String, required: true },
     read: { type: Boolean, default: false },
     type: { type: String, enum: ['message', 'friend_request', 'friend_request_response', 'system'], default: 'system' },
-    metadata: { type: mongoose.Schema.Types.Mixed }, // For storing request IDs etc
+    metadata: {
+      requestId: String,
+      senderId: String,
+      senderName: String,
+      senderImage: String,
+      // Keep it flexible for other notification types
+      type: mongoose.Schema.Types.Mixed
+    }
   },
   { timestamps: true }
 );

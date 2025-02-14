@@ -24,7 +24,11 @@ const UserProfilePage = () => {
   const navigate = useNavigate();
   useUser();
 
-  const { data: profile, isLoading, error } = useQuery<UserProfile>({
+  const {
+    data: profile,
+    isLoading,
+    error,
+  } = useQuery<UserProfile>({
     queryKey: ["userProfile", userId],
     queryFn: async () => {
       if (!userId) throw new Error("User ID is required");
@@ -35,7 +39,7 @@ const UserProfilePage = () => {
   });
 
   const queryClient = useQueryClient();
-  
+
   useMutation({
     mutationFn: async () => {
       await axiosInstance.post(`/friends/request`, { receiverId: userId });
@@ -87,7 +91,7 @@ const UserProfilePage = () => {
               <MessageCircle className="h-4 w-4" />
               Send Message
             </Button>
-            
+
             <FriendRequestButton userId={userId!} />
           </div>
         </div>
@@ -95,9 +99,7 @@ const UserProfilePage = () => {
         <div className="space-y-6">
           <div>
             <h2 className="text-lg font-semibold mb-2">About</h2>
-            <p className="text-zinc-400">
-              {profile.bio || "No bio available"}
-            </p>
+            <p className="text-zinc-400">{profile.bio || "No bio available"}</p>
           </div>
 
           <div>
@@ -110,4 +112,4 @@ const UserProfilePage = () => {
   );
 };
 
-export default UserProfilePage; 
+export default UserProfilePage;

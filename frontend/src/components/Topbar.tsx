@@ -79,9 +79,7 @@ const Topbar = () => {
       <div className="flex items-center justify-end p-4 sticky top-0 bg-background/75 dark:bg-background/90 backdrop-blur-md z-10 border-b border-border">
         <div className="flex-1 hidden md:flex gap-2 items-center">
           <img src="/logo.png" className="size-10" alt="BeatBond logo" />
-          <span className="font-semibold tracking-tight">
-            BeatBond
-          </span>
+          <span className="font-semibold tracking-tight">BeatBond</span>
         </div>
 
         {/* Desktop Search */}

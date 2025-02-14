@@ -40,11 +40,11 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col overflow-hidden">
       <AnimatedBackground />
       <ResizablePanelGroup
         direction="horizontal"
-        className="flex-1 flex h-full p-2 gap-2 z-10"
+        className="flex-1 h-full p-2 gap-2 z-10 overflow-hidden"
       >
         <AudioPlayer />
 
@@ -54,8 +54,10 @@ const MainLayout = () => {
             <SheetTrigger asChild>
               <button className={cn(
                 "fixed top-5 left-4 z-50 p-2 bg-black/20 hover:bg-black/30 rounded-lg md:hidden shadow-sm transition-all duration-200",
-                !isVisible && "hidden"
-              )}>
+                !isVisible && "hidden" 
+                
+                )}
+              >
                 <Menu className="h-6 w-6" />
               </button>
             </SheetTrigger>
@@ -70,7 +72,7 @@ const MainLayout = () => {
         ) : (
           // Desktop sidebar
           <ResizablePanel defaultSize={20} minSize={10} maxSize={30}>
-            <div className="h-full">
+            <div className="h-full overflow-hidden">
               <LeftSidebar />
             </div>
           </ResizablePanel>
@@ -84,7 +86,7 @@ const MainLayout = () => {
 
         {/* Main content */}
         <ResizablePanel defaultSize={isMobile ? 100 : 60}>
-          <div className="h-full">
+          <div className="h-full overflow-y-auto">
             <Outlet />
           </div>
         </ResizablePanel>

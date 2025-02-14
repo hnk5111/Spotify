@@ -7,6 +7,8 @@ export const sendFriendRequest = async (req, res, next) => {
     const senderId = req.auth.userId;
     const { receiverId } = req.body;
 
+    console.log("Sending friend request:", { senderId, receiverId });
+
     // Check if request already exists
     const existingRequest = await FriendRequest.findOne({
       $or: [
@@ -16,6 +18,7 @@ export const sendFriendRequest = async (req, res, next) => {
     });
 
     if (existingRequest) {
+      console.log("Existing request found:", existingRequest);
       return res.status(400).json({ 
         message: existingRequest.status === 'pending' 
           ? "Friend request already sent" 
@@ -23,21 +26,47 @@ export const sendFriendRequest = async (req, res, next) => {
       });
     }
 
+    // Get sender details for the notification
+    const sender = await User.findOne({ clerkId: senderId });
+    if (!sender) {
+      console.log("Sender not found:", senderId);
+      return res.status(404).json({ message: "Sender not found" });
+    }
+
+    console.log("Sender found:", sender);
+
+    // Create friend request
     const request = await FriendRequest.create({
       senderId,
       receiverId
     });
 
-    // Create notification for receiver
-    await Notification.create({
+    console.log("Friend request created:", request);
+
+    // Create notification with enhanced metadata
+    const notification = await Notification.create({
       userId: receiverId,
-      message: `You have a new friend request`,
+      message: "sent you a friend request",
       type: 'friend_request',
-      metadata: { requestId: request._id }
+      metadata: {
+        requestId: request._id,
+        senderId: sender.clerkId,
+        senderName: sender.fullName,
+        senderImage: sender.imageUrl
+      }
     });
+
+    console.log("Notification created:", notification);
+
+    // Emit socket event for real-time notification
+    const io = req.app.get('io');
+    if (io) {
+      io.to(receiverId).emit('new_notification');
+    }
 
     res.status(201).json(request);
   } catch (error) {
+    console.error("Error in sendFriendRequest:", error);
     next(error);
   }
 };
@@ -47,22 +76,40 @@ export const respondToFriendRequest = async (req, res, next) => {
     const { requestId } = req.params;
     const { status } = req.body;
 
-    const request = await FriendRequest.findByIdAndUpdate(
-      requestId,
-      { status },
-      { new: true }
-    );
-
+    const request = await FriendRequest.findById(requestId);
     if (!request) {
       return res.status(404).json({ message: "Request not found" });
     }
 
-    // Create notification for sender
+    // Get responder details for the notification
+    const responder = await User.findOne({ clerkId: req.auth.userId });
+    if (!responder) {
+      return res.status(404).json({ message: "Responder not found" });
+    }
+
+    // Update request status
+    request.status = status;
+    await request.save();
+
+    // Create notification for the original sender
     await Notification.create({
       userId: request.senderId,
-      message: `Your friend request was ${status}`,
-      type: 'friend_request_response'
+      message: status === 'accepted' 
+        ? "accepted your friend request. You can now chat with each other!" 
+        : "declined your friend request",
+      type: 'friend_request_response',
+      metadata: {
+        senderId: responder.clerkId,
+        senderName: responder.fullName,
+        senderImage: responder.imageUrl
+      }
     });
+
+    // Emit socket event for real-time notification
+    const io = req.app.get('io');
+    if (io) {
+      io.to(request.senderId).emit('new_notification');
+    }
 
     res.status(200).json(request);
   } catch (error) {
