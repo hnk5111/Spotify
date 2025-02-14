@@ -210,24 +210,24 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Sticky Header */}
-      <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border">
+      {/* Header - Updated styling */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border/10">
         <div className="flex items-center gap-3">
-          <Avatar className="border border-border/50">
+          <Avatar className="h-10 w-10 ring-2 ring-border/5 ring-offset-2 ring-offset-background">
             <AvatarImage src={userData?.imageUrl} alt={userData?.fullName} />
             <AvatarFallback>{userData?.fullName?.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="font-semibold text-foreground">
+            <h2 className="font-semibold text-lg text-foreground">
               {userData?.fullName}
             </h2>
           </div>
         </div>
       </div>
 
-      {/* Scrollable Messages Area */}
-      <ScrollArea className="flex-1" onScroll={handleScroll}>
-        <div className="p-4 space-y-4">
+      {/* Messages Area - Updated styling */}
+      <ScrollArea className="flex-1 px-2" onScroll={handleScroll}>
+        <div className="py-4 space-y-6">
           {/* Loading indicator for older messages */}
           {isFetchingNextPage && (
             <div className="flex justify-center py-2">
@@ -252,15 +252,20 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
                   }`}
                 >
                   <div
-                    className={`max-w-[70%] rounded-lg p-3 shadow-sm ${
+                    className={`max-w-[70%] rounded-2xl px-4 py-2.5 shadow-sm ${
                       msg.senderId === user?.id
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground"
+                        ? "bg-primary/90 text-primary-foreground"
+                        : "bg-secondary/50 text-secondary-foreground backdrop-blur-sm"
                     }`}
                   >
-                    <p className="break-words">{msg.content}</p>
-                    <span className="text-xs opacity-70 mt-1 block">
-                      {new Date(msg.createdAt).toLocaleTimeString()}
+                    <p className="break-words text-[15px] leading-relaxed">
+                      {msg.content}
+                    </p>
+                    <span className="text-[11px] opacity-70 mt-1 block">
+                      {new Date(msg.createdAt).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
                     </span>
                   </div>
                 </div>
@@ -271,12 +276,12 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
         </div>
       </ScrollArea>
 
-      {/* Scroll to bottom button */}
+      {/* Scroll to bottom button - Updated styling */}
       {!autoScroll && (
         <Button
           size="icon"
           variant="outline"
-          className="absolute bottom-20 right-4 rounded-full bg-card border-border shadow-lg hover:bg-secondary/80 transition-all duration-200"
+          className="absolute bottom-20 right-4 rounded-full bg-background/95 border-border/10 shadow-lg hover:bg-secondary/80 transition-all duration-200"
           onClick={() => {
             setAutoScroll(true);
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -286,24 +291,24 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
         </Button>
       )}
 
-      {/* Message Input */}
+      {/* Message Input - Updated styling */}
       <form
         onSubmit={handleSendMessage}
-        className="p-4 border-t border-border bg-background/95 backdrop-blur-sm"
+        className="p-4 border-t border-border/10 bg-background/95 backdrop-blur-sm"
       >
-        <div className="flex gap-2">
+        <div className="flex gap-2 max-w-[720px] mx-auto">
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type a message..."
-            className="bg-secondary/50 border-border focus:ring-primary"
+            className="bg-secondary/20 border-border/10 focus:ring-primary/20 rounded-xl"
             disabled={isSending}
           />
           <Button
             type="submit"
             size="icon"
             disabled={isSending || !message.trim()}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
+            className="bg-primary/90 text-primary-foreground hover:bg-primary/80 rounded-xl transition-all duration-200"
           >
             {isSending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
