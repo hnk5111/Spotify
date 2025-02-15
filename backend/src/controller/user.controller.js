@@ -111,37 +111,3 @@ export const getUserProfile = async (req, res, next) => {
 		next(error);
 	}
 };
-
-export const updateProfile = async (req, res, next) => {
-	try {
-		const userId = req.auth.userId;
-		const { fullName, username, bio } = req.body;
-
-		const user = await User.findOneAndUpdate(
-			{ clerkId: userId },
-			{ fullName, username, bio },
-			{ new: true }
-		);
-
-		if (!user) {
-			return res.status(404).json({ message: "User not found" });
-		}
-
-		res.status(200).json(user);
-	} catch (error) {
-		next(error);
-	}
-};
-
-export const updateLastSeen = async (req, res, next) => {
-	try {
-		const userId = req.auth.userId;
-		await User.findOneAndUpdate(
-			{ clerkId: userId },
-			{ lastSeen: new Date() }
-		);
-		res.status(200).json({ success: true });
-	} catch (error) {
-		next(error);
-	}
-};

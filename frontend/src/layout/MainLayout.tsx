@@ -40,11 +40,11 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col">
       <AnimatedBackground />
       <ResizablePanelGroup
         direction="horizontal"
-        className="flex-1 h-full p-2 gap-2 z-10 overflow-hidden"
+        className="flex-1 flex h-full p-2 gap-2 z-10"
       >
         <AudioPlayer />
 
@@ -72,7 +72,7 @@ const MainLayout = () => {
         ) : (
           // Desktop sidebar
           <ResizablePanel defaultSize={20} minSize={10} maxSize={30}>
-            <div className="h-full overflow-hidden">
+            <div className="h-full">
               <LeftSidebar />
             </div>
           </ResizablePanel>
@@ -86,7 +86,7 @@ const MainLayout = () => {
 
         {/* Main content */}
         <ResizablePanel defaultSize={isMobile ? 100 : 60}>
-          <div className="h-full overflow-y-auto">
+          <div className="h-full">
             <Outlet />
           </div>
         </ResizablePanel>

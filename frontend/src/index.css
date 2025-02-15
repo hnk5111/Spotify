@@ -59,35 +59,8 @@
 	  --chart-4: 0 0% 40%;
 	  --chart-5: 0 0% 20%;
 	}
-
-	html, body, #root {
-		@apply h-full overflow-hidden;
-	}
-
-	/* Scrollbar Styles */
-	::-webkit-scrollbar {
-		@apply w-2;
-	}
-
-	::-webkit-scrollbar-track {
-		@apply bg-transparent;
-	}
-
-	::-webkit-scrollbar-thumb {
-		@apply bg-muted rounded-full;
-	}
-
-	::-webkit-scrollbar-thumb:hover {
-		@apply bg-muted-foreground/50;
-	}
-
-	/* Firefox */
-	* {
-		scrollbar-width: thin;
-		scrollbar-color: hsl(var(--muted)) transparent;
-	}
-}
-
+  }
+  
 @layer base {
 	* {
 		@apply border-border;

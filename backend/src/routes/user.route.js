@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import { getAllUsers, getMessages, searchUsers, getUserProfile, updateUserProfile, updateLastSeen } from "../controller/user.controller.js";
+import { getAllUsers, getMessages, searchUsers, getUserProfile, updateUserProfile } from "../controller/user.controller.js";
 
 const router = Router();
 
@@ -11,6 +11,5 @@ router.get("/search", searchUsers);
 router.get("/messages/:userId", getMessages);
 router.get("/profile/:userId", getUserProfile);
 router.put("/profile/:clerkId", updateUserProfile);
-router.put("/last-seen", updateLastSeen);
 
 export default router;

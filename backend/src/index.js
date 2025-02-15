@@ -7,7 +7,6 @@ import cors from "cors";
 import fs from "fs";
 import { createServer } from "http";
 import cron from "node-cron";
-import { Server } from "socket.io";
 
 import { initializeSocket } from "./lib/socket.js";
 
@@ -29,29 +28,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
-
-// Store io instance on app for use in controllers
-app.set('io', io);
-
-// Socket connection handling
-io.on('connection', (socket) => {
-  const userId = socket.handshake.auth.userId;
-  if (userId) {
-    socket.join(userId);
-    console.log('User connected:', userId);
-  }
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', userId);
-  });
-});
+initializeSocket(httpServer);
 
 app.use(
   cors({

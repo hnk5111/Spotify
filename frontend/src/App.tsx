@@ -14,8 +14,6 @@ import UserSearchPage from "./pages/users/UserSearchPage";
 import UserProfilePage from "./pages/profile/UserProfilePage";
 import FriendsActivityPage from "./pages/friends/FriendsActivityPage";
 import { ThemeProvider } from "./providers/theme-provider";
-import NotificationsPage from "./pages/notifications/NotificationsPage";
-import SettingsPage from "./pages/settings/SettingsPage";
 
 function App() {
   return (
@@ -40,8 +38,6 @@ function App() {
           <Route path="/profile/:userId" element={<UserProfilePage />} />
           <Route path="/albums/:albumId" element={<AlbumPage />} />
           <Route path="/friends" element={<FriendsActivityPage />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

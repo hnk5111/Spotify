@@ -26,15 +26,13 @@ const ChatPage = () => {
 
   return (
     <ErrorBoundary>
-      <div className="grid lg:grid-cols-[320px,1fr] h-full overflow-hidden">
-        <div className="flex flex-col h-full border-r border-border bg-card/50 overflow-hidden">
+      <div className="grid lg:grid-cols-[320px,1fr] h-full">
+        <div className="flex flex-col h-full border-r border-border bg-card/50">
           <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border">
-            <h2 className="font-semibold text-foreground text-center md:text-left">
-              Messages
-            </h2>
+            <h2 className="font-semibold text-foreground text-center md:text-left">Messages</h2>
           </div>
 
-          <ScrollArea className="flex-1 overflow-y-auto">
+          <ScrollArea className="flex-1">
             <div className="p-4 space-y-2">
               {friends.map((friend) => (
                 <Link
@@ -63,7 +61,7 @@ const ChatPage = () => {
           </ScrollArea>
         </div>
 
-        <div className="flex flex-col h-full bg-background overflow-hidden">
+        <div className="flex flex-col h-full bg-background">
           {selectedUserId ? (
             <DirectMessageChat userId={selectedUserId} />
           ) : (
