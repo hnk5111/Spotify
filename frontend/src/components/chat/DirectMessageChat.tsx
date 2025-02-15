@@ -8,14 +8,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, Loader2, ChevronDown } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useSocket } from "@/hooks/useSocket";
 import { toast } from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
 
-interface ChatProps {
+interface DirectMessageChatProps {
   userId: string;
 }
 
@@ -39,7 +39,9 @@ interface MessagePage {
   totalPages: number;
 }
 
-export const DirectMessageChat = ({ userId }: ChatProps) => {
+export const DirectMessageChat: React.FC<DirectMessageChatProps> = ({
+  userId,
+}) => {
   const { user } = useUser();
   const socket = useSocket();
   const queryClient = useQueryClient();
@@ -210,7 +212,7 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header - Updated styling */}
+      {/* Header */}
       <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border/10">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 ring-2 ring-border/5 ring-offset-2 ring-offset-background">
@@ -225,7 +227,7 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
         </div>
       </div>
 
-      {/* Messages Area - Updated styling */}
+      {/* Messages Area with its own ScrollArea */}
       <ScrollArea className="flex-1 px-2" onScroll={handleScroll}>
         <div className="py-4 space-y-6">
           {/* Loading indicator for older messages */}
@@ -235,9 +237,10 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
             </div>
           )}
 
-          {/* Intersection observer target for infinite scroll */}
+          {/* Intersection observer target */}
           <div ref={topRef} />
 
+          {/* Messages */}
           {isLoadingMessages ? (
             <div className="flex justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -263,8 +266,8 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
                     </p>
                     <span className="text-[11px] opacity-70 mt-1 block">
                       {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </span>
                   </div>
@@ -276,22 +279,7 @@ export const DirectMessageChat = ({ userId }: ChatProps) => {
         </div>
       </ScrollArea>
 
-      {/* Scroll to bottom button - Updated styling */}
-      {!autoScroll && (
-        <Button
-          size="icon"
-          variant="outline"
-          className="absolute bottom-20 right-4 rounded-full bg-background/95 border-border/10 shadow-lg hover:bg-secondary/80 transition-all duration-200"
-          onClick={() => {
-            setAutoScroll(true);
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-      )}
-
-      {/* Message Input - Updated styling */}
+      {/* Input Area */}
       <form
         onSubmit={handleSendMessage}
         className="p-4 border-t border-border/10 bg-background/95 backdrop-blur-sm"

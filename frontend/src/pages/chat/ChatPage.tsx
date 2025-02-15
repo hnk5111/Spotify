@@ -30,7 +30,7 @@ const ChatPage = () => {
   });
 
   return (
-    <div>
+    <div className="h-[calc(100vh-4rem)]">
       <ErrorBoundary>
         <div
           className="grid h-full overflow-hidden relative border rounded-lg shadow-lg"
@@ -41,7 +41,7 @@ const ChatPage = () => {
           {/* Sidebar */}
           <div
             className={cn(
-              "flex flex-col h-full border-r border-border/20 bg-card/30 overflow-hidden transition-all duration-300",
+              "flex flex-col h-full border-r border-border/20 bg-card/30",
               "backdrop-blur-sm shadow-sm"
             )}
           >
@@ -65,7 +65,7 @@ const ChatPage = () => {
               </Button>
             </div>
 
-            <ScrollArea className="flex-1 overflow-y-auto">
+            <ScrollArea className="flex-1">
               <div className="p-3 space-y-1">
                 {friends.map((friend) => (
                   <Link
