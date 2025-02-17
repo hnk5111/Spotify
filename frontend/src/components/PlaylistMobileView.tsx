@@ -120,8 +120,9 @@ const PlaylistMobileView = ({
             setCurrentSongUrl(null);
             setCurrentSongId(null);
             console.error("Failed to play audio");
-          }}
-        />
+          } } setIsPlaying={function (): void {
+            throw new Error("Function not implemented.");
+          } }        />
       )}
 
       {/* Songs List */}

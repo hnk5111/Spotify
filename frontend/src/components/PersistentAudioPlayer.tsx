@@ -2,7 +2,6 @@ import { useAudioStore } from "@/stores/useAudioStore";
 import { Music } from "lucide-react";
 import AudioPlayer from "./AudioPlayer";
 import { toast } from "react-hot-toast";
-import { cn } from "@/lib/utils";
 
 const PersistentAudioPlayer = () => {
   const { currentSong, isPlaying, setIsPlaying, setCurrentSong } = useAudioStore();

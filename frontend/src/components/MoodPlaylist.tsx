@@ -88,12 +88,7 @@ const MoodPlaylist = () => {
     setSelectedMood(mood);
   };
 
-  const handleChangeMood = () => {
-    setIsExpanded(true);
-    setSelectedMood(null);
-  };
 
-  const currentMood = moods.find(m => m.id === selectedMood) || moods[0];
 
   const { data: songs = [], isLoading, error } = useQuery({
     queryKey: ["mood-songs", selectedMood],
