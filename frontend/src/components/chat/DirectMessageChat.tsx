@@ -8,15 +8,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, ChevronLeft } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useSocket } from "@/hooks/useSocket";
 import { toast } from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
 
-interface DirectMessageChatProps {
+interface ChatProps {
   userId: string;
+  onBack?: () => void;
 }
 
 interface Message {
@@ -39,9 +40,7 @@ interface MessagePage {
   totalPages: number;
 }
 
-export const DirectMessageChat: React.FC<DirectMessageChatProps> = ({
-  userId,
-}) => {
+export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
   const { user } = useUser();
   const socket = useSocket();
   const queryClient = useQueryClient();
@@ -212,9 +211,19 @@ export const DirectMessageChat: React.FC<DirectMessageChatProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
+      {/* Header - Updated for mobile */}
       <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border/10">
         <div className="flex items-center gap-3">
+          {onBack && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="mr-1 -ml-2"
+              onClick={onBack}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          )}
           <Avatar className="h-10 w-10 ring-2 ring-border/5 ring-offset-2 ring-offset-background">
             <AvatarImage src={userData?.imageUrl} alt={userData?.fullName} />
             <AvatarFallback>{userData?.fullName?.charAt(0)}</AvatarFallback>
@@ -227,9 +236,12 @@ export const DirectMessageChat: React.FC<DirectMessageChatProps> = ({
         </div>
       </div>
 
-      {/* Messages Area with its own ScrollArea */}
-      <ScrollArea className="flex-1 px-2" onScroll={handleScroll}>
-        <div className="py-4 space-y-6">
+      {/* Messages Area - Updated for mobile */}
+      <ScrollArea 
+        className="flex-1 px-2 md:px-4" 
+        onScroll={handleScroll}
+      >
+        <div className="py-4 space-y-4 md:space-y-6">
           {/* Loading indicator for older messages */}
           {isFetchingNextPage && (
             <div className="flex justify-center py-2">
@@ -279,10 +291,10 @@ export const DirectMessageChat: React.FC<DirectMessageChatProps> = ({
         </div>
       </ScrollArea>
 
-      {/* Input Area */}
+      {/* Message Input - Updated for mobile */}
       <form
         onSubmit={handleSendMessage}
-        className="p-4 border-t border-border/10 bg-background/95 backdrop-blur-sm"
+        className="p-3 md:p-4 border-t border-border/10 bg-background/95 backdrop-blur-sm"
       >
         <div className="flex gap-2 max-w-[720px] mx-auto">
           <Input
@@ -296,7 +308,7 @@ export const DirectMessageChat: React.FC<DirectMessageChatProps> = ({
             type="submit"
             size="icon"
             disabled={isSending || !message.trim()}
-            className="bg-primary/90 text-primary-foreground hover:bg-primary/80 rounded-xl transition-all duration-200"
+            className="bg-primary/90 text-primary-foreground hover:bg-primary/80 rounded-xl transition-all duration-200 flex-shrink-0"
           >
             {isSending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

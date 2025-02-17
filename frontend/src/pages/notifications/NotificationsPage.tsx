@@ -25,19 +25,16 @@ const NotificationsPage = () => {
   const navigate = useNavigate();
   const { user, isLoaded } = useUser();
 
-  const { data: notifications = [], isLoading } = useQuery<Notification[]>({
-    queryKey: ["notifications"],
+  const { data: notifications, isLoading } = useQuery({
+    queryKey: ["notifications"] as const,
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/notifications");
+      const { data } = await axiosInstance.get<Notification[]>("/notifications");
       return data;
     },
     enabled: !!user,
+    staleTime: 1000 * 60, // 1 minute
     retry: false,
-    onError: (error: any) => {
-      if (error?.response?.status === 401) {
-        navigate("/");
-      }
-    },
+    gcTime: 0,
   });
 
   const { mutate: markAsRead } = useMutation({
@@ -47,6 +44,9 @@ const NotificationsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
+    onError: () => {
+      toast.error("Failed to mark notification as read");
+    }
   });
 
   const { mutate: deleteNotification } = useMutation({
@@ -57,6 +57,9 @@ const NotificationsPage = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast.success("Notification deleted");
     },
+    onError: () => {
+      toast.error("Failed to delete notification");
+    }
   });
 
   const { mutate: clearAll } = useMutation({
@@ -67,6 +70,9 @@ const NotificationsPage = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast.success("All notifications cleared");
     },
+    onError: () => {
+      toast.error("Failed to clear notifications");
+    }
   });
 
   const handleNotificationClick = (notification: Notification) => {
@@ -74,18 +80,20 @@ const NotificationsPage = () => {
       markAsRead(notification._id);
     }
 
-    if (notification.type === 'message') {
-      navigate(`/chat?userId=${notification.metadata?.messageId}`);
+    if (notification.type === 'message' && notification.metadata?.messageId) {
+      navigate(`/chat?userId=${notification.metadata.messageId}`);
     } else if (notification.type === 'friend_request') {
       navigate('/friends');
     }
   };
 
-  // Redirect if not authenticated
+  // Handle unauthorized access
   if (isLoaded && !user) {
     navigate("/");
     return null;
   }
+
+  const notificationsList = notifications || [];
 
   return (
     <div className="container max-w-4xl mx-auto py-8">
@@ -94,7 +102,7 @@ const NotificationsPage = () => {
           <Bell className="h-6 w-6" />
           Notifications
         </h1>
-        {notifications.length > 0 && (
+        {notificationsList.length > 0 && (
           <Button 
             variant="outline" 
             onClick={() => clearAll()}
@@ -111,13 +119,13 @@ const NotificationsPage = () => {
             <div className="flex justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
-          ) : notifications.length === 0 ? (
+          ) : notificationsList.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               No notifications yet
             </div>
           ) : (
             <div className="space-y-2">
-              {notifications.map((notification) => (
+              {notificationsList.map((notification: Notification) => (
                 <div
                   key={notification._id}
                   className={`
