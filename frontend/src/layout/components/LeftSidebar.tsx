@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
-import { Bell, HomeIcon, Library, MessageCircle, Users } from "lucide-react";
+import { Bell, HomeIcon, Library, MessageCircle, Users, Heart } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FriendsActivity } from "./FriendsActivity";
@@ -27,6 +27,7 @@ const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
     { icon: Users, label: "Search Users", path: "/users" },
     { icon: Users, label: "Friends", path: "/friends" },
     { icon: Bell, label: "Notifications", path: "/notifications" },
+    { icon: Heart, label: "Mood Playlist", path: "/mood" },
   ];
 
   const handleNavigation = () => {

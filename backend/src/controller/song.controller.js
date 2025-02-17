@@ -1,4 +1,5 @@
 import { Song } from "../models/song.model.js";
+import { getMoodBasedSongs } from '../services/mood.service.js';
 
 export const getAllSongs = async (req, res, next) => {
 	try {
@@ -78,5 +79,21 @@ export const getTrendingSongs = async (req, res, next) => {
 		res.json(songs);
 	} catch (error) {
 		next(error);
+	}
+};
+
+export const getMoodSongs = async (req, res) => {
+	try {
+		const { mood } = req.params;
+		
+		if (!['happy', 'sad', 'romantic', 'party'].includes(mood)) {
+			return res.status(400).json({ message: 'Invalid mood' });
+		}
+
+		const songs = await getMoodBasedSongs(mood);
+		res.json(songs);
+	} catch (error) {
+		console.error('Error in getMoodSongs:', error);
+		res.status(500).json({ message: 'Failed to fetch mood-based songs' });
 	}
 };
