@@ -41,7 +41,6 @@ export const PlaybackControls = () => {
 
     const isYouTubeSource = currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
     const audio = document.querySelector('audio');
-    const videoPlayer = document.querySelector('iframe');
 
     if (!currentSong) return;
 
