@@ -19,6 +19,7 @@ import { Menu } from "lucide-react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { cn } from "@/lib/utils";
+import { NotificationIndicator } from "@/components/NotificationIndicator";
 
 const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -41,6 +42,11 @@ const MainLayout = () => {
 
   return (
     <div className="h-screen flex flex-col">
+      {/* Header with notifications */}
+      <div className="fixed top-4 right-4 z-50">
+        <NotificationIndicator />
+      </div>
+
       <AnimatedBackground />
       <ResizablePanelGroup
         direction="horizontal"
@@ -52,10 +58,10 @@ const MainLayout = () => {
         {isMobile ? (
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <button className={cn(
-                "fixed top-5 left-4 z-50 p-2 bg-black/20 hover:bg-black/30 rounded-lg md:hidden shadow-sm transition-all duration-200",
-                !isVisible && "hidden" 
-                
+              <button
+                className={cn(
+                  "fixed top-5 left-4 z-50 p-2 bg-black/20 hover:bg-black/30 rounded-lg md:hidden shadow-sm transition-all duration-200",
+                  !isVisible && "hidden"
                 )}
               >
                 <Menu className="h-6 w-6" />
