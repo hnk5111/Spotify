@@ -14,19 +14,16 @@ import {
   Pause,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import AudioPlayer from "./AudioPlayer";
 import { toast } from "react-hot-toast";
 import { axiosInstance } from "@/lib/axios";
-import { AxiosError } from 'axios';
+import { usePlayerStore } from "@/stores/usePlayerStore";
 
 interface Song {
-  id: string;
-  name: string;
-  url: string;
-  image: string;
-  duration: string;
-  primaryArtists: string;
-  language: string;
+  _id: string;
+  title: string;
+  artist: string;
+  imageUrl: string;
+  audioUrl: string;
 }
 
 type Mood = "happy" | "sad" | "romantic" | "party" | null;
@@ -40,84 +37,58 @@ const moods = [
 
 const MoodPlaylist = () => {
   const [selectedMood, setSelectedMood] = useState<Mood>(null);
-  const [currentSong, setCurrentSong] = useState<Song | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { currentSong, isPlaying, playAlbum, togglePlay } = usePlayerStore();
 
-  const { data: songs, isLoading, error } = useQuery({
+  const { data: songs = [], isLoading, error } = useQuery({
     queryKey: ["mood-songs", selectedMood],
     queryFn: async () => {
       if (!selectedMood) return [];
 
       try {
         console.log('Fetching songs for mood:', selectedMood);
-        const response = await axiosInstance.get(`/songs/mood/${selectedMood}`);
-        console.log('Full API Response:', response);
-        
-        const { data } = response;
-        console.log('Received songs data:', data);
-        
-        if (!Array.isArray(data)) {
-          console.error('Invalid response format. Expected array, got:', typeof data, data);
-          throw new Error('Invalid response format from server');
-        }
-
-        if (data.length === 0) {
-          console.log('No songs returned from API');
-          toast.error('No songs found for this mood. Please try another mood.');
-          return [];
-        }
-
-        // Validate song objects
-        const validSongs = data.filter(song => {
-          const isValid = song && song.id && song.name && song.url;
-          if (!isValid) {
-            console.error('Invalid song object:', song);
-          }
-          return isValid;
+        const { data } = await axiosInstance.get(`/songs/mood/${selectedMood}`);
+        // Transform the data to match the Song interface
+        const transformedSongs = data.map((song: any) => {
+          // Extract video ID from YouTube URL
+          const videoId = song.url.split('v=')[1];
+          return {
+            _id: song.id,
+            title: song.name,
+            artist: song.primaryArtists,
+            imageUrl: song.image,
+            audioUrl: `https://www.youtube.com/watch?v=${videoId}`,
+            albumId: null,
+            duration: parseInt(song.duration.split(':')[0]) * 60 + parseInt(song.duration.split(':')[1]),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
         });
-
-        console.log('Valid songs:', validSongs);
-        return validSongs;
+        console.log('Received songs:', transformedSongs);
+        return transformedSongs;
       } catch (error) {
-        if (error instanceof AxiosError) {
-          console.error('API Error Details:', {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status,
-            headers: error.response?.headers
-          });
-          const errorMessage = error.response?.data?.message || 'Failed to fetch songs';
-          toast.error(errorMessage);
-        } else {
-          console.error('Unexpected error:', error);
-          toast.error('An unexpected error occurred');
-        }
+        console.error('Error fetching songs:', error);
+        toast.error('Failed to fetch songs. Please try again.');
         throw error;
       }
     },
     enabled: !!selectedMood,
-    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   const handlePlayPause = async (song: Song) => {
     try {
-      if (!song.url) {
-        toast.error("No playable source found for this song");
-        return;
-      }
-
-      // Check if the URL is accessible
-      const response = await fetch(song.url, { method: 'HEAD' });
-      if (!response.ok) {
+      if (!song.audioUrl) {
         toast.error("This song is currently not available for playback");
         return;
       }
 
-      if (currentSong?.id === song.id) {
-        setIsPlaying(!isPlaying);
+      console.log('Playing song:', song.title);
+      console.log('URL:', song.audioUrl);
+
+      if (currentSong?._id === song._id) {
+        togglePlay();
       } else {
-        setCurrentSong(song);
-        setIsPlaying(true);
+        const songIndex = songs.findIndex((s: Song) => s._id === song._id);
+        playAlbum(songs, songIndex);
       }
     } catch (error) {
       console.error('Error playing song:', error);
@@ -125,14 +96,8 @@ const MoodPlaylist = () => {
     }
   };
 
-  const handlePlayError = () => {
-    setIsPlaying(false);
-    setCurrentSong(null);
-    toast.error("Playback failed. This song might not be available in your region.");
-  };
-
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full pb-40">
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/20 to-background z-0" />
         <div className="relative z-10 p-6 pb-8">
@@ -178,24 +143,38 @@ const MoodPlaylist = () => {
               <div className="flex justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
+            ) : error ? (
+              <div className="text-center py-12 text-muted-foreground">
+                Failed to load songs. Please try again.
+              </div>
+            ) : songs.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                No songs found for this mood.
+              </div>
             ) : (
               <div className="space-y-2">
-                {songs?.map((song: Song) => (
+                {songs.map((song: Song) => (
                   <div
-                    key={song.id}
+                    key={song._id}
                     className="flex items-center gap-4 p-3 rounded-lg hover:bg-accent/50 transition-colors group"
                   >
                     <div 
-                      className="relative w-12 h-12 rounded-md overflow-hidden cursor-pointer"
+                      className="relative w-12 h-12 rounded-md overflow-hidden cursor-pointer bg-accent/30"
                       onClick={() => handlePlayPause(song)}
                     >
-                      <img
-                        src={song.image}
-                        alt={song.name}
-                        className="w-full h-full object-cover"
-                      />
+                      {song.imageUrl ? (
+                        <img
+                          src={song.imageUrl}
+                          alt={song.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Music className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        {currentSong?.id === song.id && isPlaying ? (
+                        {currentSong?._id === song._id && isPlaying ? (
                           <Pause className="h-6 w-6 text-white" />
                         ) : (
                           <Play className="h-6 w-6 text-white" />
@@ -205,19 +184,15 @@ const MoodPlaylist = () => {
                     <div className="flex-1 min-w-0">
                       <p className={cn(
                         "font-medium truncate",
-                        currentSong?.id === song.id && "text-primary"
+                        currentSong?._id === song._id && "text-primary"
                       )}>
-                        {song.name}
+                        {song.title}
                       </p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {song.primaryArtists}
+                        {song.artist}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">
-                        {Math.floor(parseInt(song.duration) / 60)}:
-                        {(parseInt(song.duration) % 60).toString().padStart(2, "0")}
-                      </span>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -232,14 +207,6 @@ const MoodPlaylist = () => {
             )}
           </div>
         </ScrollArea>
-      )}
-
-      {currentSong && (
-        <AudioPlayer
-          url={currentSong.url}
-          isPlaying={isPlaying}
-          onError={handlePlayError}
-        />
       )}
     </div>
   );

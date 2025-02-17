@@ -22,42 +22,99 @@ const formatTime = (seconds: number) => {
 };
 
 export const PlaybackControls = () => {
-  const { currentSong, isPlaying, togglePlay, playNext, playPrevious } =
-    usePlayerStore();
-
-  const [volume, setVolume] = useState(75);
-  const [currentTime, setCurrentTime] = useState(0);
+  const { currentSong, isPlaying, togglePlay, playNext, playPrevious } = usePlayerStore();
+  const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [volume, setVolume] = useState(75);
+  const progressInterval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    audioRef.current = document.querySelector("audio");
+    // Clear existing interval when song changes
+    if (progressInterval.current) {
+      clearInterval(progressInterval.current);
+      progressInterval.current = null;
+    }
 
-    const audio = audioRef.current;
-    if (!audio) return;
+    // Reset progress when song changes
+    setProgress(0);
+    setDuration(0);
 
-    const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => setDuration(audio.duration);
+    const isYouTubeSource = currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
+    const audio = document.querySelector('audio');
+    const videoPlayer = document.querySelector('iframe');
 
-    audio.addEventListener("timeupdate", updateTime);
-    audio.addEventListener("loadedmetadata", updateDuration);
+    if (!currentSong) return;
 
-    const handleEnded = () => {
-      usePlayerStore.setState({ isPlaying: false });
-    };
+    if (isYouTubeSource) {
+      // For YouTube sources, update progress every 100ms
+      if (isPlaying) {
+        progressInterval.current = setInterval(() => {
+          const player = (window as any).player;
+          if (player && typeof player.getCurrentTime === 'function') {
+            const currentTime = player.getCurrentTime();
+            const videoDuration = player.getDuration();
+            setProgress(currentTime);
+            setDuration(videoDuration);
+          }
+        }, 100);
+      }
+    } else if (audio) {
+      // For audio sources
+      const updateProgress = () => {
+        setProgress(audio.currentTime);
+        setDuration(audio.duration || 0);
+      };
 
-    audio.addEventListener("ended", handleEnded);
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('loadedmetadata', updateProgress);
+      audio.volume = volume / 100;
+
+      return () => {
+        audio.removeEventListener('timeupdate', updateProgress);
+        audio.removeEventListener('loadedmetadata', updateProgress);
+      };
+    }
 
     return () => {
-      audio.removeEventListener("timeupdate", updateTime);
-      audio.removeEventListener("loadedmetadata", updateDuration);
-      audio.removeEventListener("ended", handleEnded);
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+      }
     };
-  }, [currentSong]);
+  }, [currentSong, isPlaying, volume]);
 
   const handleSeek = (value: number[]) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = value[0];
+    const time = value[0];
+    const isYouTubeSource = currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
+    
+    if (isYouTubeSource) {
+      const player = (window as any).player;
+      if (player && typeof player.seekTo === 'function') {
+        player.seekTo(time);
+      }
+    } else {
+      const audio = document.querySelector('audio');
+      if (audio) {
+        audio.currentTime = time;
+      }
+    }
+    setProgress(time);
+  };
+
+  const handleVolumeChange = (value: number[]) => {
+    const newVolume = value[0];
+    setVolume(newVolume);
+    
+    const isYouTubeSource = currentSong?.audioUrl?.includes('youtube.com') || currentSong?.audioUrl?.includes('youtu.be');
+    if (isYouTubeSource) {
+      const player = (window as any).player;
+      if (player && typeof player.setVolume === 'function') {
+        player.setVolume(newVolume);
+      }
+    } else {
+      const audio = document.querySelector('audio');
+      if (audio) {
+        audio.volume = newVolume / 100;
+      }
     }
   };
 
@@ -86,7 +143,7 @@ export const PlaybackControls = () => {
             {/* Mobile Slider */}
             <div className="mt-3 flex flex-col w-full px-1">
               <Slider
-                value={[currentTime]}
+                value={[progress]}
                 max={duration || 100}
                 step={1}
                 className="w-full hover:cursor-grab active:cursor-grabbing"
@@ -94,7 +151,7 @@ export const PlaybackControls = () => {
               />
               <div className="flex justify-between mt-1">
                 <div className="text-xs text-muted-foreground">
-                  {formatTime(currentTime)}
+                  {formatTime(progress)}
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {formatTime(duration)}
@@ -180,10 +237,10 @@ export const PlaybackControls = () => {
 
           <div className="hidden sm:flex items-center gap-2 w-full">
             <div className="text-xs text-muted-foreground">
-              {formatTime(currentTime)}
+              {formatTime(progress)}
             </div>
             <Slider
-              value={[currentTime]}
+              value={[progress]}
               max={duration || 100}
               step={1}
               className="w-full hover:cursor-grab active:cursor-grabbing"
@@ -231,12 +288,7 @@ export const PlaybackControls = () => {
               max={100}
               step={1}
               className="w-24 hover:cursor-grab active:cursor-grabbing"
-              onValueChange={(value) => {
-                setVolume(value[0]);
-                if (audioRef.current) {
-                  audioRef.current.volume = value[0] / 100;
-                }
-              }}
+              onValueChange={handleVolumeChange}
             />
           </div>
         </div>
