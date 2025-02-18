@@ -70,10 +70,6 @@ export default {
 					'0%': { transform: 'translateX(4%) translateY(1%)' },
 					'50%': { transform: 'translateX(-4%) translateY(-2%)' },
 					'100%': { transform: 'translateX(4%) translateY(1%)' }
-				},
-				'spin-slow': {
-					'0%': { transform: 'rotate(0deg)' },
-					'100%': { transform: 'rotate(360deg)' },
 				}
 			},
 			animation: {
@@ -85,8 +81,7 @@ export default {
 				"flow-1": "flow-1 8s ease-in-out infinite",
 				"flow-2": "flow-2 9s ease-in-out infinite",
 				"flow-3": "flow-3 10s ease-in-out infinite",
-				"flow-4": "flow-4 11s ease-in-out infinite",
-				'spin-slow': 'spin-slow 3s linear infinite'
+				"flow-4": "flow-4 11s ease-in-out infinite"
 			},
 			colors: {
 				'custom-indigo': '#6D28D9',

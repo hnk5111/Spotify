@@ -20,6 +20,7 @@ import statRoutes from "./routes/stat.route.js";
 import searchRoutes from "./routes/search.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 import friendRoutes from "./routes/friend.route.js";
+import chatRoutes from "./routes/chat.route.js";
 
 dotenv.config();
 
@@ -79,6 +80,7 @@ app.use("/api/stats", statRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/friends", friendRoutes);
+app.use("/api/chat", chatRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
