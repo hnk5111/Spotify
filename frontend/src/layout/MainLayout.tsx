@@ -15,7 +15,7 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Menu, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
+import { Menu } from "lucide-react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 
@@ -23,12 +23,8 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-<<<<<<< Updated upstream
-  useSidebarStore();
-=======
   const [isFloating, setIsFloating] = useState(false);
-  const { isVisible } = useSidebarStore();
->>>>>>> Stashed changes
+  useSidebarStore();
 
   useEffect(() => {
     const checkMobile = () => {
