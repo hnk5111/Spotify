@@ -112,7 +112,6 @@ const MoodPlaylist = () => {
     setSelectedMood(null);
   };
 
-
   const { data: songs = [], isLoading, error } = useQuery({
     queryKey: ["mood-songs", selectedMood],
     queryFn: async () => {
@@ -247,7 +246,7 @@ const MoodPlaylist = () => {
                 selectedMood && "h-fit"
               )}>
                 <motion.div 
-                  className="flex items-center gap-2 md:gap-4 mb-3 md:mb-8 bg-background/80 backdrop-blur-md p-2"
+                  className="flex items-center gap-2 md:gap-4 mb-3 md:mb-8 bg-background/80 backdrop-blur-md p-2 md:p-4"
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -263,7 +262,7 @@ const MoodPlaylist = () => {
                     </Button>
                   )}
                   <h2 className={cn(
-                    "font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50",
+                    "font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50 w-full text-center md:text-left pl-8 md:pl-0",
                     !isExpanded ? "text-lg md:text-2xl" : "text-xl md:text-4xl lg:text-5xl",
                   )}>
                     {selectedMood ? "Your Mood Playlist" : "How are you feeling today?"}
@@ -354,10 +353,6 @@ const MoodPlaylist = () => {
                         {songs?.length || 0} curated songs for your mood
                       </p>
                     </div>
-                    {/* <Button variant="secondary" size="sm" className="gap-2 md:size-lg">
-                      <ListMusic className="h-4 w-4 md:h-5 md:w-5" />
-                      <span className="hidden md:inline">Play All</span>
-                    </Button> */}
                   </div>
 
                   <ScrollArea className="flex-1">

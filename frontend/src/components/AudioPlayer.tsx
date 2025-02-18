@@ -1,52 +1,119 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Volume2, VolumeX, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat } from "lucide-react";
 import { Slider } from "./ui/slider";
 import ReactPlayer from "react-player/youtube";
 import { cn } from "@/lib/utils";
+import { toast } from "react-hot-toast";
 
 interface AudioPlayerProps {
   url: string;
   isPlaying: boolean;
   onError: () => void;
   setIsPlaying: (playing: boolean) => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
 }
 
-const AudioPlayer = ({ url, isPlaying, onError, setIsPlaying }: AudioPlayerProps) => {
-  const [volume, setVolume] = useState(0.7);
-  const [isMuted, setIsMuted] = useState(false);
+const AudioPlayer = ({ 
+  url, 
+  isPlaying, 
+  onError, 
+  setIsPlaying,
+  onNext,
+  onPrevious 
+}: AudioPlayerProps) => {
+  // Player states
+  const [volume, setVolume] = useState(() => {
+    const savedVolume = localStorage.getItem('player-volume');
+    return savedVolume ? parseFloat(savedVolume) : 0.7;
+  });
+  const [isMuted, setIsMuted] = useState(() => {
+    return localStorage.getItem('player-muted') === 'true';
+  });
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [seeking, setSeeking] = useState(false);
+  const [isShuffling, setIsShuffling] = useState(false);
+  const [repeatMode, setRepeatMode] = useState<'none' | 'one' | 'all'>('none');
   const playerRef = useRef<ReactPlayer>(null);
 
-  const handleProgress = (state: { played: number; playedSeconds: number }) => {
+  // Save volume and mute state to localStorage
+  useEffect(() => {
+    localStorage.setItem('player-volume', volume.toString());
+    localStorage.setItem('player-muted', isMuted.toString());
+  }, [volume, isMuted]);
+
+  // Handle player progress
+  const handleProgress = useCallback((state: { played: number; playedSeconds: number }) => {
     if (!seeking) {
       setProgress(state.playedSeconds);
     }
-  };
+  }, [seeking]);
 
-  const handleDuration = (duration: number) => {
+  // Handle duration change
+  const handleDuration = useCallback((duration: number) => {
     setDuration(duration);
-  };
+  }, []);
 
-  const handleSeekChange = (value: number[]) => {
+  // Handle seeking
+  const handleSeekChange = useCallback((value: number[]) => {
     setSeeking(true);
     setProgress(value[0]);
-  };
+  }, []);
 
-  const handleSeekMouseUp = (value: number[]) => {
+  const handleSeekMouseUp = useCallback((value: number[]) => {
     setSeeking(false);
     if (playerRef.current) {
       playerRef.current.seekTo(value[0], 'seconds');
     }
-  };
+  }, []);
 
-  const formatTime = (time: number) => {
+  // Handle player end
+  const handleEnded = useCallback(() => {
+    if (repeatMode === 'one') {
+      if (playerRef.current) {
+        playerRef.current.seekTo(0);
+        setIsPlaying(true);
+      }
+    } else if (repeatMode === 'all' && onNext) {
+      onNext();
+    } else {
+      setIsPlaying(false);
+    }
+  }, [repeatMode, onNext, setIsPlaying]);
+
+  // Handle player error
+  const handleError = useCallback((error: any) => {
+    console.error('Player error:', error);
+    toast.error('Error playing track. Please try again.');
+    onError();
+  }, [onError]);
+
+  // Handle volume change
+  const handleVolumeChange = useCallback((value: number[]) => {
+    const newVolume = value[0] / 100;
+    setVolume(newVolume);
+    setIsMuted(false);
+  }, []);
+
+  // Toggle repeat mode
+  const toggleRepeat = useCallback(() => {
+    setRepeatMode(current => {
+      switch (current) {
+        case 'none': return 'one';
+        case 'one': return 'all';
+        case 'all': return 'none';
+      }
+    });
+  }, []);
+
+  // Format time helper
+  const formatTime = useCallback((time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
   return (
     <div className="w-full space-y-2">
@@ -57,7 +124,8 @@ const AudioPlayer = ({ url, isPlaying, onError, setIsPlaying }: AudioPlayerProps
         volume={isMuted ? 0 : volume}
         onProgress={handleProgress}
         onDuration={handleDuration}
-        onError={onError}
+        onError={handleError}
+        onEnded={handleEnded}
         width="0"
         height="0"
         style={{ display: 'none' }}
@@ -76,7 +144,12 @@ const AudioPlayer = ({ url, isPlaying, onError, setIsPlaying }: AudioPlayerProps
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className={cn(
+            "h-8 w-8 text-muted-foreground hover:text-foreground",
+            isShuffling && "text-primary"
+          )}
+          onClick={() => setIsShuffling(!isShuffling)}
+          title="Shuffle"
         >
           <Shuffle className="h-4 w-4" />
         </Button>
@@ -84,6 +157,9 @@ const AudioPlayer = ({ url, isPlaying, onError, setIsPlaying }: AudioPlayerProps
           variant="ghost"
           size="icon"
           className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          onClick={onPrevious}
+          disabled={!onPrevious}
+          title="Previous"
         >
           <SkipBack className="h-4 w-4" />
         </Button>
@@ -96,6 +172,7 @@ const AudioPlayer = ({ url, isPlaying, onError, setIsPlaying }: AudioPlayerProps
             "flex items-center justify-center"
           )}
           onClick={() => setIsPlaying(!isPlaying)}
+          title={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (
             <Pause className="h-5 w-5" />
@@ -107,15 +184,26 @@ const AudioPlayer = ({ url, isPlaying, onError, setIsPlaying }: AudioPlayerProps
           variant="ghost"
           size="icon"
           className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          onClick={onNext}
+          disabled={!onNext}
+          title="Next"
         >
           <SkipForward className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className={cn(
+            "h-8 w-8 text-muted-foreground hover:text-foreground",
+            repeatMode !== 'none' && "text-primary"
+          )}
+          onClick={toggleRepeat}
+          title={`Repeat ${repeatMode}`}
         >
           <Repeat className="h-4 w-4" />
+          {repeatMode === 'one' && (
+            <span className="absolute text-[10px] font-bold">1</span>
+          )}
         </Button>
       </div>
 
@@ -145,6 +233,7 @@ const AudioPlayer = ({ url, isPlaying, onError, setIsPlaying }: AudioPlayerProps
           size="icon"
           className="h-8 w-8"
           onClick={() => setIsMuted(!isMuted)}
+          title={isMuted ? "Unmute" : "Mute"}
         >
           {isMuted ? (
             <VolumeX className="h-4 w-4" />
@@ -157,11 +246,9 @@ const AudioPlayer = ({ url, isPlaying, onError, setIsPlaying }: AudioPlayerProps
           min={0}
           max={100}
           step={1}
-          onValueChange={(value) => {
-            setVolume(value[0] / 100);
-            setIsMuted(false);
-          }}
+          onValueChange={handleVolumeChange}
           className="w-24"
+          aria-label="Volume"
         />
       </div>
     </div>

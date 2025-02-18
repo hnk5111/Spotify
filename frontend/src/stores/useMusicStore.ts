@@ -105,9 +105,15 @@ export const useMusicStore = create<MusicStore>((set) => ({
 
 		try {
 			const response = await axiosInstance.get("/albums");
-			set({ albums: response.data });
+			if (response && response.data) {
+				set({ albums: response.data });
+			} else {
+				set({ albums: [], error: "No data received from server" });
+			}
 		} catch (error: any) {
-			set({ error: error.response.data.message });
+			const errorMessage = error.response?.data?.message || error.message || "Failed to fetch albums";
+			set({ albums: [], error: errorMessage });
+			console.error("Error fetching albums:", error);
 		} finally {
 			set({ isLoading: false });
 		}
