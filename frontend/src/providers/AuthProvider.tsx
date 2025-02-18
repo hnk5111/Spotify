@@ -2,7 +2,7 @@ import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useChatStore } from "@/stores/useChatStore";
 import { useAuth } from "@clerk/clerk-react";
-import { Loader } from "lucide-react";
+import { Music } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const updateApiToken = (token: string | null) => {
@@ -42,8 +42,18 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	if (loading)
 		return (
-			<div className='h-screen w-full flex items-center justify-center'>
-				<Loader className='size-8 text-emerald-500 animate-spin' />
+			<div className='h-screen w-full flex items-center justify-center bg-background'>
+				<div className='flex flex-col items-center gap-4'>
+					<div className='relative'>
+						<Music className='size-12 text-primary animate-bounce' />
+						<div className='absolute -right-3 -top-3'>
+							<span className='block size-3 rounded-full bg-primary/80 animate-ping' />
+						</div>
+						<div className='absolute -left-3 -bottom-3'>
+							<span className='block size-3 rounded-full bg-primary/80 animate-ping delay-150' />
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 
