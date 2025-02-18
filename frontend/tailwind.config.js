@@ -70,6 +70,10 @@ export default {
 					'0%': { transform: 'translateX(4%) translateY(1%)' },
 					'50%': { transform: 'translateX(-4%) translateY(-2%)' },
 					'100%': { transform: 'translateX(4%) translateY(1%)' }
+				},
+				'spin-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' },
 				}
 			},
 			animation: {
@@ -81,12 +85,12 @@ export default {
 				"flow-1": "flow-1 8s ease-in-out infinite",
 				"flow-2": "flow-2 9s ease-in-out infinite",
 				"flow-3": "flow-3 10s ease-in-out infinite",
-				"flow-4": "flow-4 11s ease-in-out infinite"
+				"flow-4": "flow-4 11s ease-in-out infinite",
+				'spin-slow': 'spin-slow 3s linear infinite'
 			},
 			colors: {
 				'custom-indigo': '#6D28D9',
 				'custom-light-purple': '#D4BCE5',
-<<<<<<< Updated upstream
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -127,17 +131,6 @@ export default {
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
 				}
-=======
-			},
-			keyframes: {
-				'spin-slow': {
-					'0%': { transform: 'rotate(0deg)' },
-					'100%': { transform: 'rotate(360deg)' },
-				},
-			},
-			animation: {
-				'spin-slow': 'spin-slow 3s linear infinite',
->>>>>>> Stashed changes
 			},
     		borderRadius: {
     			lg: 'var(--radius)',
