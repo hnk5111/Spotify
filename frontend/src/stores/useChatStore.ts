@@ -18,7 +18,7 @@ interface ChatStore {
 	fetchUsers: () => Promise<void>;
 	initSocket: (userId: string) => void;
 	disconnectSocket: () => void;
-	sendMessage: (receiverId: string, senderId: string, content: string) => void;
+	sendMessage: (receiverId: string, content: string) => void;
 	fetchMessages: (userId: string) => Promise<void>;
 	setSelectedUser: (user: User | null) => void;
 }
@@ -84,37 +84,28 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 				});
 			});
 
-			socket.on("receive_message", (message: Message) => {
+			socket.on("messageUpdate", (data: { message: Message, notification?: any }) => {
 				set((state) => ({
-					messages: [...state.messages, message],
+					messages: [...state.messages, data.message],
 				}));
 
 				// Add notification if message is from someone other than selected user
-				if (message.senderId !== get().selectedUser?.clerkId) {
-					const sender = get().users.find(u => u.clerkId === message.senderId);
+				if (data.message.senderId !== get().selectedUser?.clerkId) {
+					const sender = get().users.find(u => u.clerkId === data.message.senderId);
 					if (sender) {
 						useNotificationStore.getState().addNotification({
 							message: `New message from ${sender.fullName}`,
 							type: "message",
 							read: false,
-							data: { message, sender }
+							data: { message: data.message, sender }
 						});
 					}
 				}
 			});
 
-			socket.on("message_sent", (message: Message) => {
-				set((state) => ({
-					messages: [...state.messages, message],
-				}));
-			});
-
-			socket.on("activity_updated", ({ userId, activity }) => {
-				set((state) => {
-					const newActivities = new Map(state.userActivities);
-					newActivities.set(userId, activity);
-					return { userActivities: newActivities };
-				});
+			socket.on("messageError", (error: { message: string }) => {
+				console.error("Message error:", error.message);
+				// You can add toast notification here if needed
 			});
 
 			set({ isConnected: true });
@@ -128,11 +119,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 		}
 	},
 
-	sendMessage: async (receiverId, senderId, content) => {
+	sendMessage: async (receiverId, content) => {
 		const socket = get().socket;
 		if (!socket) return;
 
-		socket.emit("send_message", { receiverId, senderId, content });
+		socket.emit("sendMessage", { receiverId, content });
 	},
 
 	fetchMessages: async (userId: string) => {

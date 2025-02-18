@@ -16,8 +16,6 @@ export const initializeSocket = (server) => {
 		},
 	});
 
-	const userActivities = new Map(); // {userId: activity}
-
 	io.use(async (socket, next) => {
 		const userId = socket.handshake.auth.userId;
 		if (!userId) {
@@ -25,89 +23,80 @@ export const initializeSocket = (server) => {
 		}
 		
 		try {
-			const user = await User.findOne({ clerkId: userId });
+			const user = await User.findOne({ clerkId: userId }).select('clerkId fullName');
 			if (!user) {
 				return next(new Error("User not found"));
 			}
 			socket.user = user;
 			next();
 		} catch (error) {
-			next(error);
+			next(new Error("Authentication failed"));
 		}
 	});
 
 	io.on("connection", (socket) => {
 		const userId = socket.user.clerkId;
 		userSockets.set(userId, socket.id);
-		userActivities.set(userId, "Online");
 
-		// broadcast to all connected sockets that this user just logged in
-		io.emit("user_connected", userId);
-
-		io.emit("users_online", Array.from(userSockets.keys()));
-
-		io.emit("activities", Array.from(userActivities.entries()));
-
-		socket.on("update_activity", ({ userId, activity }) => {
-			console.log("activity updated", userId, activity);
-			userActivities.set(userId, activity);
-			io.emit("activity_updated", { userId, activity });
+		// Emit connection status with online users in a single event
+		io.emit("user_status_update", {
+			userId,
+			action: "connected",
+			onlineUsers: Array.from(userSockets.keys())
 		});
 
 		socket.on("sendMessage", async (data) => {
 			try {
 				const { receiverId, content } = data;
-				if (!content.trim()) {
+				const trimmedContent = content?.trim();
+				
+				if (!trimmedContent) {
 					throw new Error("Message cannot be empty");
 				}
 
-				// Add friendship check
+				// Check friendship status
 				const friendshipStatus = await FriendRequest.findOne({
 					$or: [
-						{ senderId: socket.user.clerkId, receiverId },
-						{ senderId: receiverId, receiverId: socket.user.clerkId }
+						{ senderId: userId, receiverId },
+						{ senderId: receiverId, receiverId: userId }
 					],
 					status: "accepted"
 				});
 
 				if (!friendshipStatus) {
-					socket.emit("messageError", { 
-						message: "You can only message users who have accepted your friend request" 
-					});
-					return;
-				}
-
-				// Check if receiver exists
-				const receiver = await User.findOne({ clerkId: receiverId });
-				if (!receiver) {
-					throw new Error("Recipient not found");
+					throw new Error("You can only message users who have accepted your friend request");
 				}
 
 				const message = await Message.create({
-					senderId: socket.user.clerkId,
+					senderId: userId,
 					receiverId,
-					content: content.trim(),
+					content: trimmedContent,
 				});
 
-				// Create notification
-				await Notification.create({
-					userId: receiverId,
-					message: `New message from ${socket.user.fullName}`,
-					type: 'message',
-					metadata: { messageId: message._id }
-				});
+				// Bundle message and notification for the receiver
+				const messagePayload = {
+					message,
+					notification: {
+						userId: receiverId,
+						message: `New message from ${socket.user.fullName}`,
+						type: 'message',
+						messageId: message._id
+					}
+				};
 
-				// Send to receiver
+				// Create notification asynchronously
+				Notification.create(messagePayload.notification).catch(console.error);
+
+				// Send to receiver if online
 				const receiverSocketId = userSockets.get(receiverId);
 				if (receiverSocketId) {
-					io.to(receiverSocketId).emit("receiveMessage", message);
-					io.to(receiverSocketId).emit("new_notification");
+					io.to(receiverSocketId).emit("messageUpdate", messagePayload);
 				}
 
-				// Send back to sender
-				socket.emit("receiveMessage", message);
+				// Send confirmation to sender
+				socket.emit("messageUpdate", { message });
+
 			} catch (error) {
-				console.error("Error sending message:", error);
 				socket.emit("messageError", { 
 					message: error.message || "Failed to send message" 
 				});
@@ -116,8 +105,11 @@ export const initializeSocket = (server) => {
 
 		socket.on("disconnect", () => {
 			userSockets.delete(userId);
-			userActivities.delete(userId);
-			io.emit("user_disconnected", userId);
+			io.emit("user_status_update", {
+				userId,
+				action: "disconnected",
+				onlineUsers: Array.from(userSockets.keys())
+			});
 		});
 	});
 
