@@ -15,7 +15,7 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 
@@ -23,7 +23,12 @@ import { useSidebarStore } from "@/stores/useSidebarStore";
 const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+<<<<<<< Updated upstream
   useSidebarStore();
+=======
+  const [isFloating, setIsFloating] = useState(false);
+  const { isVisible } = useSidebarStore();
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const checkMobile = () => {
@@ -86,7 +91,7 @@ const MainLayout = () => {
           </div>
         </ResizablePanel>
 
-        {!isMobile && (
+        {!isMobile && !isFloating && (
           <>
             <ResizableHandle className="w-2 bg-white/10 rounded-full transition-colors hover:bg-white/20" />
             <ResizablePanel
@@ -94,14 +99,22 @@ const MainLayout = () => {
               minSize={0}
               maxSize={25}
               collapsedSize={0}
+              className="transition-all duration-300 ease-in-out"
             >
               <div className="h-full">
-                <FriendsActivity />
+                <FriendsActivity onToggleFloat={() => setIsFloating(true)} />
               </div>
             </ResizablePanel>
           </>
         )}
       </ResizablePanelGroup>
+
+      {/* Floating Friends Panel */}
+      {!isMobile && isFloating && (
+        <div className="fixed right-4 bottom-20 w-80 rounded-lg shadow-xl z-50 bg-card border border-border">
+          <FriendsActivity isFloating onToggleFloat={() => setIsFloating(false)} />
+        </div>
+      )}
 
       <PlaybackControls />
     </div>

@@ -86,6 +86,7 @@ export default {
 			colors: {
 				'custom-indigo': '#6D28D9',
 				'custom-light-purple': '#D4BCE5',
+<<<<<<< Updated upstream
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -126,6 +127,17 @@ export default {
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
 				}
+=======
+			},
+			keyframes: {
+				'spin-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' },
+				},
+			},
+			animation: {
+				'spin-slow': 'spin-slow 3s linear infinite',
+>>>>>>> Stashed changes
 			},
     		borderRadius: {
     			lg: 'var(--radius)',
