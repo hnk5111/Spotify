@@ -14,6 +14,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useSocket } from "@/hooks/useSocket";
 import { toast } from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
+import { InfiniteData } from "@tanstack/react-query";
 
 interface ChatProps {
   userId: string;
@@ -122,16 +123,37 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewMessage = (newMessage: Message) => {
-      if (newMessage.senderId === userId || newMessage.receiverId === userId) {
-        queryClient.invalidateQueries({ queryKey: ["messages", userId] });
+    const handleNewMessage = (data: { message: Message }) => {
+      if (data.message.senderId === userId || data.message.receiverId === userId) {
+        // Update messages immediately in the cache
+        queryClient.setQueryData<InfiniteData<MessagePage>>(
+          ["messages", userId],
+          (oldData) => {
+            if (!oldData) return oldData;
+            
+            const newPages = oldData.pages.map((page, index) => {
+              if (index === oldData.pages.length - 1) {
+                return {
+                  ...page,
+                  messages: [...page.messages, data.message]
+                };
+              }
+              return page;
+            });
+
+            return {
+              ...oldData,
+              pages: newPages
+            };
+          }
+        );
       }
     };
 
-    socket.on("receiveMessage", handleNewMessage);
+    socket.on("messageUpdate", handleNewMessage);
 
     return () => {
-      socket.off("receiveMessage", handleNewMessage);
+      socket.off("messageUpdate", handleNewMessage);
     };
   }, [socket, userId, queryClient]);
 
@@ -183,35 +205,70 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
     setAutoScroll(isNearBottom);
   };
 
-  const allMessages = messages?.pages.flatMap((page) => page.messages) ?? [];
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || !socket || !user || isSending) return;
 
     try {
       setIsSending(true);
+      const trimmedMessage = message.trim();
+      setMessage("");
+
+      // Optimistically add the message
+      const optimisticMessage: Message = {
+        _id: Date.now().toString(),
+        senderId: user.id,
+        receiverId: userId,
+        content: trimmedMessage,
+        createdAt: new Date().toISOString()
+      };
+
+      queryClient.setQueryData<InfiniteData<MessagePage>>(
+        ["messages", userId],
+        (oldData) => {
+          if (!oldData) return oldData;
+          
+          const newPages = oldData.pages.map((page, index) => {
+            if (index === oldData.pages.length - 1) {
+              return {
+                ...page,
+                messages: [...page.messages, optimisticMessage]
+              };
+            }
+            return page;
+          });
+
+          return {
+            ...oldData,
+            pages: newPages
+          };
+        }
+      );
 
       socket.emit("sendMessage", {
         receiverId: userId,
-        content: message.trim(),
+        content: trimmedMessage,
       });
 
-      setMessage("");
-      queryClient.invalidateQueries({ queryKey: ["messages", userId] });
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error("Failed to send message");
+      setMessage(message); // Restore message on error
     } finally {
       setIsSending(false);
     }
   };
 
+  // Ensure messages are sorted by date
+  const allMessages = messages?.pages
+    .flatMap((page) => page.messages)
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) ?? [];
+
   if (!userData) return null;
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header - Updated for mobile */}
+    <div className="flex flex-col h-full relative">
+      {/* Header */}
       <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border/10">
         <div className="flex items-center gap-3">
           {onBack && (
@@ -236,11 +293,8 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
         </div>
       </div>
 
-      {/* Messages Area - Updated for mobile */}
-      <ScrollArea 
-        className="flex-1 px-2 md:px-4" 
-        onScroll={handleScroll}
-      >
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-2 md:px-4" onScroll={handleScroll}>
         <div className="py-4 space-y-4 md:space-y-6">
           {/* Loading indicator for older messages */}
           {isFetchingNextPage && (
@@ -267,7 +321,7 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
                   }`}
                 >
                   <div
-                    className={`max-w-[70%] rounded-2xl px-4 py-2.5 shadow-sm ${
+                    className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-2.5 shadow-sm ${
                       msg.senderId === user?.id
                         ? "bg-primary/90 text-primary-foreground"
                         : "bg-secondary/50 text-secondary-foreground backdrop-blur-sm"
@@ -289,12 +343,12 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
             </>
           )}
         </div>
-      </ScrollArea>
+      </div>
 
-      {/* Message Input - Updated for mobile */}
+      {/* Message Input */}
       <form
         onSubmit={handleSendMessage}
-        className="p-3 md:p-4 border-t border-border/10 bg-background/95 backdrop-blur-sm"
+        className="sticky bottom-0 p-3 md:p-4 border-t border-border/10 bg-background/95 backdrop-blur-sm mt-auto"
       >
         <div className="flex gap-2 max-w-[720px] mx-auto">
           <Input

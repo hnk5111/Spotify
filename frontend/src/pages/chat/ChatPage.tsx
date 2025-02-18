@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSearchParams, Link } from "react-router-dom";
 import { DirectMessageChat } from "@/components/chat/DirectMessageChat";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { Send, PanelLeftClose, PanelLeft } from "lucide-react";
+import { Send, PanelLeftClose, PanelLeft, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,6 +31,7 @@ const ChatPage = () => {
     };
 
     window.addEventListener('resize', handleResize);
+    handleResize(); // Call initially
     return () => window.removeEventListener('resize', handleResize);
   }, [selectedUserId]);
 
@@ -68,7 +69,7 @@ const ChatPage = () => {
             "flex flex-col h-full border-r border-border/20 bg-card/30",
             "backdrop-blur-sm shadow-sm transition-all duration-300",
             isMobile && isSidebarCollapsed && "w-0 opacity-0",
-            isMobile && "absolute left-0 top-0 bottom-0 z-50 w-full bg-background",
+            isMobile && "fixed left-0 top-0 bottom-0 z-50 w-full bg-background",
             !isSidebarCollapsed && isMobile && "w-full"
           )}>
             <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border/20 flex items-center justify-between">
@@ -77,21 +78,20 @@ const ChatPage = () => {
                   Messages
                 </h2>
               )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "ml-auto hover:bg-secondary/30",
-                  isMobile && "md:hidden"
-                )}
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              >
-                {isSidebarCollapsed ? (
-                  <PanelLeft className="h-5 w-5" />
-                ) : (
-                  <PanelLeftClose className="h-5 w-5" />
-                )}
-              </Button>
+              {!isMobile && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="ml-auto hover:bg-secondary/30"
+                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                >
+                  {isSidebarCollapsed ? (
+                    <PanelLeft className="h-5 w-5" />
+                  ) : (
+                    <PanelLeftClose className="h-5 w-5" />
+                  )}
+                </Button>
+              )}
             </div>
 
             <ScrollArea className="flex-1 overflow-y-auto">
@@ -106,6 +106,7 @@ const ChatPage = () => {
                       selectedUserId === friend.clerkId && "bg-secondary/30 backdrop-blur-sm border-border/20",
                       isSidebarCollapsed && !isMobile && "justify-center p-2"
                     )}
+                    onClick={() => isMobile && setIsSidebarCollapsed(true)}
                   >
                     <Avatar className="h-10 w-10 ring-2 ring-border/5 ring-offset-2 ring-offset-background border border-border/10">
                       <AvatarImage src={friend.imageUrl} alt={friend.fullName} />
@@ -132,13 +133,16 @@ const ChatPage = () => {
 
           {/* Main Chat Area */}
           <div className={cn(
-            "flex flex-col h-full bg-background/95 overflow-hidden border-l border-border/20",
-            isMobile && "w-full"
+            "flex flex-col h-full bg-background/95 overflow-hidden",
+            isMobile && selectedUserId && "fixed inset-0 z-50"
           )}>
             {selectedUserId ? (
               <DirectMessageChat 
                 userId={selectedUserId} 
-                onBack={isMobile ? () => setIsSidebarCollapsed(false) : undefined}
+                onBack={isMobile ? () => {
+                  setIsSidebarCollapsed(false);
+                  window.history.pushState({}, '', '/chat');
+                } : undefined}
               />
             ) : (
               <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground/70">

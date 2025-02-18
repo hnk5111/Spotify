@@ -23,11 +23,22 @@ interface ChatStore {
 	setSelectedUser: (user: User | null) => void;
 }
 
-const baseURL = import.meta.env.MODE === "development" ? "http://localhost:5000" : "/";
+const baseURL = import.meta.env.MODE === "development" 
+	? "http://localhost:5000" 
+	: "https://spotify-backend-3idi.onrender.com";  // Replace with your actual backend URL
 
 const socket = io(baseURL, {
-	autoConnect: false, // only connect if user is authenticated
+	autoConnect: false,
 	withCredentials: true,
+	transports: ['websocket', 'polling'],  // Add fallback to polling if websocket fails
+	reconnection: true,
+	reconnectionAttempts: 5,
+	reconnectionDelay: 1000,
+});
+
+// Add error handling for socket connection
+socket.on('connect_error', (error) => {
+	console.error('Socket connection error:', error);
 });
 
 export const useChatStore = create<ChatStore>((set, get) => ({

@@ -9,7 +9,10 @@ const userSockets = new Map();
 export const initializeSocket = (server) => {
 	const io = new Server(server, {
 		cors: {
-			origin: "http://localhost:3000",
+			origin: [
+				"http://localhost:3000",
+				"https://spotify-hdw7.onrender.com"  // Add your frontend production URL
+			],
 			methods: ["GET", "POST"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],
