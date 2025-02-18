@@ -5,7 +5,6 @@ import {
 } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2, ChevronLeft } from "lucide-react";

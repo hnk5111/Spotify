@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSearchParams, Link } from "react-router-dom";
 import { DirectMessageChat } from "@/components/chat/DirectMessageChat";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { Send, PanelLeftClose, PanelLeft, ArrowLeft } from "lucide-react";
+import { Send, PanelLeftClose, PanelLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
