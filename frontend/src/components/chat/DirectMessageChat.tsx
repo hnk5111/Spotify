@@ -130,6 +130,13 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
           (oldData) => {
             if (!oldData) return oldData;
             
+            // Check if message already exists
+            const messageExists = oldData.pages.some(page => 
+              page.messages.some(msg => msg._id === data.message._id)
+            );
+
+            if (messageExists) return oldData;
+
             const newPages = oldData.pages.map((page, index) => {
               if (index === oldData.pages.length - 1) {
                 return {
@@ -146,6 +153,11 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
             };
           }
         );
+
+        // Scroll to bottom for new messages
+        if (messagesEndRef.current && autoScroll) {
+          messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
       }
     };
 
@@ -154,7 +166,7 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
     return () => {
       socket.off("messageUpdate", handleNewMessage);
     };
-  }, [socket, userId, queryClient]);
+  }, [socket, userId, queryClient, autoScroll]);
 
   useEffect(() => {
     if (!socket) return;
@@ -213,15 +225,16 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
       const trimmedMessage = message.trim();
       setMessage("");
 
-      // Optimistically add the message
+      // Create optimistic message
       const optimisticMessage: Message = {
-        _id: Date.now().toString(),
+        _id: `temp-${Date.now()}`,
         senderId: user.id,
         receiverId: userId,
         content: trimmedMessage,
         createdAt: new Date().toISOString()
       };
 
+      // Update UI optimistically
       queryClient.setQueryData<InfiniteData<MessagePage>>(
         ["messages", userId],
         (oldData) => {
@@ -244,15 +257,39 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
         }
       );
 
+      // Emit socket event
       socket.emit("sendMessage", {
         receiverId: userId,
         content: trimmedMessage,
       });
 
+      // Ensure scroll to bottom
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error("Failed to send message");
       setMessage(message); // Restore message on error
+
+      // Remove optimistic message on error
+      queryClient.setQueryData<InfiniteData<MessagePage>>(
+        ["messages", userId],
+        (oldData) => {
+          if (!oldData) return oldData;
+          
+          const newPages = oldData.pages.map(page => ({
+            ...page,
+            messages: page.messages.filter(msg => !msg._id.startsWith('temp-'))
+          }));
+
+          return {
+            ...oldData,
+            pages: newPages
+          };
+        }
+      );
     } finally {
       setIsSending(false);
     }
