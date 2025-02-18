@@ -19,7 +19,6 @@ import { Menu } from "lucide-react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { cn } from "@/lib/utils";
-import { NotificationIndicator } from "@/components/NotificationIndicator";
 
 const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -42,11 +41,6 @@ const MainLayout = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Header with notifications */}
-      <div className="fixed top-4 right-4 z-50">
-        <NotificationIndicator />
-      </div>
-
       <AnimatedBackground />
       <ResizablePanelGroup
         direction="horizontal"
@@ -55,14 +49,11 @@ const MainLayout = () => {
         <AudioPlayer />
 
         {/* Mobile Menu Button */}
-        {isMobile ? (
+        {isMobile && (
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <button
-                className={cn(
-                  "fixed top-5 left-4 z-50 p-2 bg-black/20 hover:bg-black/30 rounded-lg md:hidden shadow-sm transition-all duration-200",
-                  !isVisible && "hidden"
-                )}
+                className="fixed top-5 left-4 z-50 p-2 bg-black/20 hover:bg-black/30 rounded-lg md:hidden shadow-sm transition-all duration-200"
               >
                 <Menu className="h-6 w-6" />
               </button>
@@ -75,20 +66,18 @@ const MainLayout = () => {
               <LeftSidebar onNavigate={handleClose} />
             </SheetContent>
           </Sheet>
-        ) : (
-          // Desktop sidebar
-          <ResizablePanel defaultSize={20} minSize={10} maxSize={30}>
-            <div className="h-full">
-              <LeftSidebar />
-            </div>
-          </ResizablePanel>
         )}
 
-        <ResizableHandle
-          className={`w-2 bg-white/10 rounded-full transition-colors hover:bg-white/20 ${
-            isMobile ? "hidden" : ""
-          }`}
-        />
+        {!isMobile && (
+          <>
+            <ResizablePanel defaultSize={20} minSize={10} maxSize={30}>
+              <div className="h-full">
+                <LeftSidebar />
+              </div>
+            </ResizablePanel>
+            <ResizableHandle className="w-2 bg-white/10 rounded-full transition-colors hover:bg-white/20" />
+          </>
+        )}
 
         {/* Main content */}
         <ResizablePanel defaultSize={isMobile ? 100 : 60}>
@@ -118,4 +107,5 @@ const MainLayout = () => {
     </div>
   );
 };
+
 export default MainLayout;

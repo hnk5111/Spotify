@@ -6,8 +6,8 @@ const AudioPlayer = () => {
 	const playerRef = useRef<ReactPlayer>(null);
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const { currentSong, isPlaying, playNext, togglePlay } = usePlayerStore();
-	const [progress, setProgress] = useState(0);
-	const [duration, setDuration] = useState(0);
+	const [, setProgress] = useState(0);
+	const [, setDuration] = useState(0);
 	
 	useEffect(() => {
 		if (!currentSong) return;

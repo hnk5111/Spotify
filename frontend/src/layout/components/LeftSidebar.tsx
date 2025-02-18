@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
-import { Bell, HomeIcon, Library, MessageCircle, Users, Heart } from "lucide-react";
+import { HomeIcon, Library, MessageCircle, Users, Heart, Bell } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FriendsActivity } from "./FriendsActivity";
