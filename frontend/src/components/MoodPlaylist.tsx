@@ -68,7 +68,7 @@ const moods = [
 
 const MoodPlaylist = () => {
   const [selectedMood, setSelectedMood] = useState<Mood>(null);
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [, setIsAnimating] = useState(true);
   const [isExpanded, setIsExpanded] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const { currentSong, isPlaying, playAlbum, togglePlay } = usePlayerStore();
