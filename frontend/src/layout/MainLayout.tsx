@@ -18,12 +18,12 @@ import {
 import { Menu } from "lucide-react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { cn } from "@/lib/utils";
+
 
 const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { isVisible } = useSidebarStore();
+  useSidebarStore();
 
   useEffect(() => {
     const checkMobile = () => {
