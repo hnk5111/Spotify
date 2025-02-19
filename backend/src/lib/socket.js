@@ -11,12 +11,22 @@ export const initializeSocket = (server) => {
 		cors: {
 			origin: [
 				"http://localhost:3000",
-				"https://spotify-hdw7.onrender.com"  // Add your frontend production URL
+				"https://spotify-hdw7.onrender.com",  // Your frontend URL
+				process.env.FRONTEND_URL // Add this for flexibility
 			],
 			methods: ["GET", "POST"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],
 		},
+		// Add these connection settings
+		pingTimeout: 60000,
+		pingInterval: 25000,
+		reconnection: true,
+		reconnectionAttempts: 5,
+		reconnectionDelay: 1000,
+		reconnectionDelayMax: 5000,
+		randomizationFactor: 0.5,
+		transports: ['websocket', 'polling']
 	});
 
 	io.use(async (socket, next) => {

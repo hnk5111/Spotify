@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { DirectMessageChat } from "@/components/chat/DirectMessageChat";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { Send, PanelLeftClose, PanelLeft } from "lucide-react";
+import { Send, PanelLeftClose, PanelLeft, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,7 @@ const ChatPage = () => {
   const selectedUserId = searchParams.get("userId");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -157,6 +158,19 @@ const ChatPage = () => {
           </div>
         </div>
       </ErrorBoundary>
+
+      {/* Mobile Header with Back Button */}
+      <div className="md:hidden flex items-center gap-2 p-4 border-b">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="h-8 w-8"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h1 className="font-semibold">Messages</h1>
+      </div>
     </div>
   );
 };
