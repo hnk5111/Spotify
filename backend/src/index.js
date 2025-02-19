@@ -5,7 +5,7 @@ import fileUpload from "express-fileupload";
 import path from "path";
 import cors from "cors";
 import fs from "fs";
-import { Server } from 'http';
+import { createServer } from "http";
 import cron from "node-cron";
 
 import { initializeSocket } from "./lib/socket.js";
@@ -21,6 +21,7 @@ import searchRoutes from "./routes/search.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 import friendRoutes from "./routes/friend.route.js";
 import chatRoutes from "./routes/chat.route.js";
+import healthRoutes from "./routes/health.route.js";
 
 dotenv.config();
 
@@ -28,20 +29,25 @@ const __dirname = path.resolve();
 const app = express();
 const PORT = process.env.PORT;
 
-const httpServer = Server(app);
+const httpServer = createServer(app);
 initializeSocket(httpServer);
 
 app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://spotify-hdw7.onrender.com",
-      process.env.FRONTEND_URL
+      "https://spotify-hdw7.onrender.com"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "Connection", "Upgrade", "Sec-WebSocket-Key", "Sec-WebSocket-Version"],
-    exposedHeaders: ["Upgrade"]
+    allowedHeaders: [
+      "Content-Type", 
+      "Authorization",
+      "Connection",
+      "Upgrade",
+      "Sec-WebSocket-Key",
+      "Sec-WebSocket-Version"
+    ],
   })
 );
 
@@ -76,17 +82,6 @@ cron.schedule("0 * * * *", () => {
 
 app.options('*', cors()); // Enable preflight requests for all routes
 
-// Add WebSocket upgrade handling
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Credentials', 'true');
-  if (req.headers['upgrade'] === 'websocket') {
-    res.setHeader('Connection', 'Upgrade');
-    res.setHeader('Upgrade', 'websocket');
-  }
-  next();
-});
-
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
@@ -97,6 +92,7 @@ app.use("/api/search", searchRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/friends", friendRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/health", healthRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
@@ -119,6 +115,5 @@ app.use((err, req, res, next) => {
 
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  console.log(`WebSocket server is ready`);
   connectDB();
 });

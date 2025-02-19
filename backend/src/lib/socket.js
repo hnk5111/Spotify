@@ -11,28 +11,31 @@ export const initializeSocket = (server) => {
 		cors: {
 			origin: [
 				"http://localhost:3000",
-				"https://spotify-hdw7.onrender.com",
-				process.env.FRONTEND_URL
+				"https://spotify-hdw7.onrender.com"
 			],
 			methods: ["GET", "POST", "PUT", "DELETE"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],
 		},
-		transports: ['websocket', 'polling'],
+		transports: ["polling", "websocket"],
 		allowEIO3: true,
 		pingTimeout: 60000,
 		pingInterval: 25000,
 		upgradeTimeout: 30000,
-		agent: false,
-		rejectUnauthorized: false,
-		perMessageDeflate: false,
-		path: '/socket.io/',
 		connectTimeout: 45000,
+		path: "/socket.io/",
 		reconnection: true,
-		reconnectionAttempts: Infinity,
+		reconnectionAttempts: 5,
 		reconnectionDelay: 1000,
 		reconnectionDelayMax: 5000,
-		randomizationFactor: 0.5
+		maxHttpBufferSize: 1e8,
+		agent: undefined,
+		rejectUnauthorized: undefined,
+		perMessageDeflate: undefined,
+	});
+
+	io.engine.on("connection_error", (err) => {
+		console.error("Connection error:", err);
 	});
 
 	io.use(async (socket, next) => {
