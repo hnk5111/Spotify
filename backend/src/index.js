@@ -40,7 +40,8 @@ app.use(
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Connection", "Upgrade", "Sec-WebSocket-Key", "Sec-WebSocket-Version"],
+    exposedHeaders: ["Upgrade"]
   })
 );
 
@@ -75,6 +76,17 @@ cron.schedule("0 * * * *", () => {
 
 app.options('*', cors()); // Enable preflight requests for all routes
 
+// Add WebSocket upgrade handling
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  if (req.headers['upgrade'] === 'websocket') {
+    res.setHeader('Connection', 'Upgrade');
+    res.setHeader('Upgrade', 'websocket');
+  }
+  next();
+});
+
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
@@ -106,6 +118,7 @@ app.use((err, req, res, next) => {
 });
 
 httpServer.listen(PORT, () => {
-  console.log("Server is running on port " + PORT);
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`WebSocket server is ready`);
   connectDB();
 });

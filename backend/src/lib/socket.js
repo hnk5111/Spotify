@@ -11,22 +11,28 @@ export const initializeSocket = (server) => {
 		cors: {
 			origin: [
 				"http://localhost:3000",
-				"https://spotify-hdw7.onrender.com",  // Your frontend URL
-				process.env.FRONTEND_URL // Add this for flexibility
+				"https://spotify-hdw7.onrender.com",
+				process.env.FRONTEND_URL
 			],
-			methods: ["GET", "POST"],
+			methods: ["GET", "POST", "PUT", "DELETE"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],
 		},
-		// Add these connection settings
+		transports: ['websocket', 'polling'],
+		allowEIO3: true,
 		pingTimeout: 60000,
 		pingInterval: 25000,
+		upgradeTimeout: 30000,
+		agent: false,
+		rejectUnauthorized: false,
+		perMessageDeflate: false,
+		path: '/socket.io/',
+		connectTimeout: 45000,
 		reconnection: true,
-		reconnectionAttempts: 5,
+		reconnectionAttempts: Infinity,
 		reconnectionDelay: 1000,
 		reconnectionDelayMax: 5000,
-		randomizationFactor: 0.5,
-		transports: ['websocket', 'polling']
+		randomizationFactor: 0.5
 	});
 
 	io.use(async (socket, next) => {
