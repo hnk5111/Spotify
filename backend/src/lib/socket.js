@@ -5,14 +5,17 @@ import { User } from "../models/user.model.js";
 import { FriendRequest } from "../models/friendRequest.model.js";
 
 const userSockets = new Map();
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+// Define allowed origins for development
+const ALLOWED_ORIGINS = isDevelopment 
+	? ['http://localhost:3000', 'http://localhost:5173']
+	: true; // In production, allow all origins since we're serving frontend from same server
 
 export const initializeSocket = (server) => {
 	const io = new Server(server, {
 		cors: {
-			origin: [
-				"http://localhost:3000",
-				"https://spotify-hdw7.onrender.com"
-			],
+			origin: ALLOWED_ORIGINS,
 			methods: ["GET", "POST", "PUT", "DELETE"],
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],
@@ -29,30 +32,51 @@ export const initializeSocket = (server) => {
 		reconnectionDelay: 1000,
 		reconnectionDelayMax: 5000,
 		maxHttpBufferSize: 1e8,
-		agent: undefined,
-		rejectUnauthorized: undefined,
-		perMessageDeflate: undefined,
+		cookie: {
+			name: 'io',
+			path: '/',
+			httpOnly: true,
+			sameSite: isDevelopment ? 'lax' : 'strict',
+			secure: !isDevelopment
+		}
+	});
+
+	// Debug logging
+	io.engine.on("connection", (socket) => {
+		console.log(`✅ New socket connection [${socket.id}]`);
+		// console.log(`📍 Origin: ${socket.handshake.headers.origin}`);
+		
+		socket.on("upgrade", (transport) => {
+			console.log(`🔄 Transport upgraded for [${socket.id}] to:`, transport);
+		});
 	});
 
 	io.engine.on("connection_error", (err) => {
-		console.error("Connection error:", err);
+		console.error("❌ Socket connection error:", {
+			code: err.code,
+			message: err.message,
+			type: err.type,
+			origin: err.req?.headers?.origin,
+			url: err.req?.url
+		});
 	});
 
 	io.use(async (socket, next) => {
 		const userId = socket.handshake.auth.userId;
 		if (!userId) {
-			return next(new Error("Authentication error"));
+			return next(new Error("Authentication error: No user ID provided"));
 		}
 		
 		try {
 			const user = await User.findOne({ clerkId: userId }).select('clerkId fullName');
 			if (!user) {
-				return next(new Error("User not found"));
+				return next(new Error("Authentication error: User not found"));
 			}
 			socket.user = user;
 			next();
 		} catch (error) {
-			next(new Error("Authentication failed"));
+			console.error("Authentication error:", error);
+			next(new Error("Authentication failed: " + error.message));
 		}
 	});
 
@@ -60,7 +84,9 @@ export const initializeSocket = (server) => {
 		const userId = socket.user.clerkId;
 		userSockets.set(userId, socket.id);
 
-		// Emit connection status with online users in a single event
+		console.log(`🟢 User ${userId} connected with socket ${socket.id}`);
+
+		// Emit connection status with online users
 		io.emit("user_status_update", {
 			userId,
 			action: "connected",
@@ -95,7 +121,7 @@ export const initializeSocket = (server) => {
 					content: trimmedContent,
 				});
 
-				// Bundle message and notification for the receiver
+				// Bundle message and notification
 				const messagePayload = {
 					message,
 					notification: {
@@ -106,8 +132,8 @@ export const initializeSocket = (server) => {
 					}
 				};
 
-				// Create notification asynchronously
-				Notification.create(messagePayload.notification).catch(console.error);
+				// Create notification
+				await Notification.create(messagePayload.notification);
 
 				// Send to receiver if online
 				const receiverSocketId = userSockets.get(receiverId);
@@ -127,6 +153,8 @@ export const initializeSocket = (server) => {
 
 		socket.on("disconnect", () => {
 			userSockets.delete(userId);
+			console.log(`🔴 User ${userId} disconnected`);
+			
 			io.emit("user_status_update", {
 				userId,
 				action: "disconnected",
