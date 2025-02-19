@@ -4,7 +4,7 @@ import { useUser } from '@clerk/clerk-react';
 
 const BASE_URL = import.meta.env.MODE === 'development' 
   ? 'http://localhost:5000'
-  : 'https://spotify-backend-3idi.onrender.com';  // Replace with your actual backend URL
+  : 'https://spotify-backend-3i89idi.onrender.com';  // Replace with your actual backend URL
 
 export const useSocket = () => {
   const { user } = useUser();
