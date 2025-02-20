@@ -32,24 +32,12 @@ const PORT = process.env.PORT;
 const httpServer = createServer(app);
 initializeSocket(httpServer);
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "https://spotify-hdw7.onrender.com"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-    allowedHeaders: [
-      "Content-Type", 
-      "Authorization",
-      "Connection",
-      "Upgrade",
-      "Sec-WebSocket-Key",
-      "Sec-WebSocket-Version"
-    ],
-  })
-);
+app.use(cors({
+  origin: ["https://spotify-hdw7.onrender.com", "http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.use(express.json()); // to parse req.body
 app.use(clerkMiddleware()); // this will add auth to req obj => req.auth

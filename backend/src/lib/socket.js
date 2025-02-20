@@ -9,33 +9,25 @@ const userSockets = new Map();
 export const initializeSocket = (server) => {
 	const io = new Server(server, {
 		cors: {
-			origin: [
-				"http://localhost:3000",
-				"https://spotify-hdw7.onrender.com"
-			],
-			methods: ["GET", "POST", "PUT", "DELETE"],
+			origin: ["https://spotify-hdw7.onrender.com", "http://localhost:3000"],
+			methods: ["GET", "POST"],
 			credentials: true,
-			allowedHeaders: ["Content-Type", "Authorization"],
+			allowedHeaders: ["Authorization"]
 		},
-		transports: ["polling", "websocket"],
+		transports: ["polling"],
 		allowEIO3: true,
 		pingTimeout: 60000,
 		pingInterval: 25000,
-		upgradeTimeout: 30000,
-		connectTimeout: 45000,
-		path: "/socket.io/",
-		reconnection: true,
-		reconnectionAttempts: 5,
-		reconnectionDelay: 1000,
-		reconnectionDelayMax: 5000,
 		maxHttpBufferSize: 1e8,
-		agent: undefined,
-		rejectUnauthorized: undefined,
-		perMessageDeflate: undefined,
+		path: "/socket.io/"
 	});
 
 	io.engine.on("connection_error", (err) => {
-		console.error("Connection error:", err);
+		console.error("Socket connection error details:", {
+			type: err.type,
+			description: err.description,
+			context: err.context
+		});
 	});
 
 	io.use(async (socket, next) => {
