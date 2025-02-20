@@ -5,19 +5,18 @@ import {
 } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Send, Loader2, ChevronLeft } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useSocket } from "@/hooks/useSocket";
 import { toast } from "react-hot-toast";
 import { useInView } from "react-intersection-observer";
 import { InfiniteData } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { MessageInput } from "@/pages/chat/components/MessageInput";
 
 interface ChatProps {
   userId: string;
-  onBack?: () => void;
 }
 
 interface Message {
@@ -40,13 +39,14 @@ interface MessagePage {
   totalPages: number;
 }
 
-export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
+export const DirectMessageChat = ({ userId }: ChatProps) => {
   const { user } = useUser();
   const socket = useSocket();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { ref: topRef, inView: isTopVisible } = useInView();
 
@@ -75,6 +75,15 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
       return data;
     },
   });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Listen for socket errors
   useEffect(() => {
@@ -295,119 +304,110 @@ export const DirectMessageChat = ({ userId, onBack }: ChatProps) => {
     }
   };
 
-  // Ensure messages are sorted by date
-  const allMessages = messages?.pages
-    .flatMap((page) => page.messages)
-    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) ?? [];
-
   if (!userData) return null;
 
   return (
-    <div className="flex flex-col h-full relative">
-      {/* Header */}
-      <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 p-4 border-b border-border/10">
-        <div className="flex items-center gap-3">
-          {onBack && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="mr-1 -ml-2"
-              onClick={onBack}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-          )}
-          <Avatar className="h-10 w-10 ring-2 ring-border/5 ring-offset-2 ring-offset-background">
-            <AvatarImage src={userData?.imageUrl} alt={userData?.fullName} />
-            <AvatarFallback>{userData?.fullName?.charAt(0)}</AvatarFallback>
+    <div className="flex flex-col h-full relative bg-background">
+      {/* Desktop Header */}
+      {!isMobile && (
+        <div className="px-6 h-14 border-b flex items-center gap-3 bg-card/30 backdrop-blur-sm sticky top-0 z-10">
+          <Avatar>
+            <AvatarImage src={userData.imageUrl} alt={userData.fullName} />
+            <AvatarFallback>{userData.fullName.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="font-semibold text-lg text-foreground">
-              {userData?.fullName}
-            </h2>
+            <h2 className="font-medium leading-none">{userData.fullName}</h2>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-2 md:px-4" onScroll={handleScroll}>
-        <div className="py-4 space-y-4 md:space-y-6">
-          {/* Loading indicator for older messages */}
+      <div 
+        className="flex-1 overflow-y-auto"
+        onScroll={handleScroll}
+        style={{ overscrollBehavior: 'contain' }}
+      >
+        <div className="flex flex-col justify-end min-h-full">
+          {/* Loading More Indicator */}
           {isFetchingNextPage && (
-            <div className="flex justify-center py-2">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <div className="flex justify-center py-2" ref={topRef}>
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           )}
 
-          {/* Intersection observer target */}
-          <div ref={topRef} />
+          {/* Empty State */}
+          {!isLoadingMessages && (!messages?.pages[0]?.messages || messages.pages[0].messages.length === 0) && (
+            <div className="flex flex-col items-center justify-center py-12 text-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Send className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  No messages yet. Start the conversation!
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {isLoadingMessages && (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          )}
 
           {/* Messages */}
-          {isLoadingMessages ? (
-            <div className="flex justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            <>
-              {allMessages.map((msg) => (
-                <div
-                  key={msg._id}
-                  className={`flex ${
-                    msg.senderId === user?.id ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-2.5 shadow-sm ${
-                      msg.senderId === user?.id
-                        ? "bg-primary/90 text-primary-foreground"
-                        : "bg-secondary/50 text-secondary-foreground backdrop-blur-sm"
-                    }`}
-                  >
-                    <p className="break-words text-[15px] leading-relaxed">
-                      {msg.content}
-                    </p>
-                    <span className="text-[11px] opacity-70 mt-1 block">
-                      {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </>
-          )}
+          <div className="p-4 space-y-4">
+            {[...messages?.pages || []].reverse().map((page, i) => (
+              <div key={i} className="flex flex-col gap-3">
+                {page.messages.map((msg) => {
+                  const isCurrentUser = msg.senderId === user?.id;
+                  return (
+                    <div
+                      key={msg._id}
+                      className={cn(
+                        "flex items-start gap-2 max-w-[85%]",
+                        isCurrentUser ? "ml-auto" : "mr-auto"
+                      )}
+                    >
+                      {!isCurrentUser && (
+                        <Avatar className="h-8 w-8 mt-0.5 flex-shrink-0">
+                          <AvatarImage src={userData.imageUrl} alt={userData.fullName} />
+                          <AvatarFallback>{userData.fullName.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div
+                        className={cn(
+                          "rounded-2xl px-4 py-2.5 text-sm break-words",
+                          isCurrentUser 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-muted"
+                        )}
+                      >
+                        {msg.content}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          {/* Auto scroll anchor */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
       {/* Message Input */}
-      <form
-        onSubmit={handleSendMessage}
-        className="sticky bottom-0 p-3 md:p-4 border-t border-border/10 bg-background/95 backdrop-blur-sm mt-auto"
-      >
-        <div className="flex gap-2 max-w-[720px] mx-auto">
-          <Input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Type a message..."
-            className="bg-secondary/20 border-border/10 focus:ring-primary/20 rounded-xl"
-            disabled={isSending}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={isSending || !message.trim()}
-            className="bg-primary/90 text-primary-foreground hover:bg-primary/80 rounded-xl transition-all duration-200 flex-shrink-0"
-          >
-            {isSending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </form>
+      <div className="sticky bottom-0 bg-background border-t">
+        <MessageInput
+          message={message}
+          onChange={setMessage}
+          onSubmit={handleSendMessage}
+          isSending={isSending}
+          placeholder="Type a message..."
+        />
+      </div>
     </div>
   );
 };
