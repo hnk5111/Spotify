@@ -11,6 +11,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"svix": "^1.57.0",
 		"tailwind-scrollbar": "^4.0.0"
 	}
 }

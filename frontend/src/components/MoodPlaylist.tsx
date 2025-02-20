@@ -520,9 +520,9 @@ const MoodPlaylist = () => {
       <Dialog open={showChatDialog} onOpenChange={setShowChatDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Would you like to talk about it?</DialogTitle>
+            <DialogTitle>Would you like to talk about why you're feeling this way?</DialogTitle>
             <DialogDescription>
-              I'm here to listen and support you. Sometimes sharing your feelings with someone can help you feel better.
+              Vent to us instead of venting to a human who isn't as smart as us. xD
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end space-x-2">
