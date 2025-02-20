@@ -2,7 +2,9 @@ import { User } from "../models/user.model.js";
 
 export const authCallback = async (req, res) => {
 	try {
-		const { id, email_addresses, username, first_name, last_name, image_url } = req.auth;
+		const { id, email_addresses, username, first_name, last_name, image_url } = req.body;
+		
+		console.log('Auth callback received:', { id, email_addresses, username, first_name, last_name });
 		
 		if (!id) {
 			throw new Error('No user ID provided from Clerk');
@@ -10,41 +12,55 @@ export const authCallback = async (req, res) => {
 
 		// Find existing user
 		let user = await User.findOne({ clerkId: id });
+		console.log('Existing user found:', user);
 
 		if (!user) {
-			// Get primary email from Clerk
-			const primaryEmail = email_addresses?.find(email => email.id === req.auth.primary_email_address_id)?.email_address;
+			// For new user creation
+			const email = email_addresses || '';
+			const generatedUsername = username || email.split('@')[0] || `user_${Date.now()}`;
 			
-			if (!primaryEmail) {
-				throw new Error('No primary email found from Clerk');
-			}
-
 			// Create new user with required fields
-			user = await User.create({
+			const newUser = {
 				clerkId: id,
-				email: primaryEmail,
-				username: username || primaryEmail.split('@')[0], // Use username or create from email
+				email: email,
+				username: generatedUsername,
 				fullName: `${first_name || ''} ${last_name || ''}`.trim(),
 				imageUrl: image_url || '',
 				isOnline: true
-			});
+			};
 
-			console.log('✅ New user created:', user.fullName);
+			console.log('Creating new user:', newUser);
+			
+			try {
+				user = await User.create(newUser);
+				console.log('✅ New user created successfully:', user);
+			} catch (createError) {
+				console.error('Error creating user:', createError);
+				throw new Error(`Failed to create user: ${createError.message}`);
+			}
 		} else {
 			// Update existing user's information
-			user.email = email_addresses?.[0]?.email_address || user.email;
-			user.fullName = `${first_name || ''} ${last_name || ''}`.trim() || user.fullName;
-			user.imageUrl = image_url || user.imageUrl;
-			user.isOnline = true;
-			await user.save();
-
-			console.log('✅ Existing user updated:', user.fullName);
+			try {
+				user.email = email_addresses || user.email;
+				user.fullName = `${first_name || ''} ${last_name || ''}`.trim() || user.fullName;
+				user.imageUrl = image_url || user.imageUrl;
+				user.isOnline = true;
+				await user.save();
+				console.log('✅ Existing user updated successfully:', user);
+			} catch (updateError) {
+				console.error('Error updating user:', updateError);
+				throw new Error(`Failed to update user: ${updateError.message}`);
+			}
 		}
 
-		res.json({ user });
+		res.status(200).json({ 
+			success: true,
+			user 
+		});
 	} catch (error) {
 		console.error('❌ Error in auth callback:', error);
 		res.status(500).json({ 
+			success: false,
 			error: 'Authentication failed',
 			message: error.message 
 		});

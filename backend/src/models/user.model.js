@@ -58,10 +58,7 @@ userSchema.pre('save', function(next) {
 	next();
 });
 
-// Create indexes for better query performance
-userSchema.index({ clerkId: 1 });
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
+// Create text index for search functionality
 userSchema.index({ fullName: 'text' });
 
 export const User = mongoose.model("User", userSchema);
