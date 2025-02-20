@@ -33,7 +33,8 @@ Remember to:
 - Show empathy and understanding
 - Focus on emotional support
 - Be patient and gentle
-- Maintain appropriate boundaries`;
+- Maintain appropriate boundaries
+- Responses should be short and maximum 100 words`;
 
 export const chatWithAI = async (req, res) => {
   if (!isGroqAvailable) {
