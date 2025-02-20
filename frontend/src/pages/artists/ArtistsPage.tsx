@@ -5,9 +5,11 @@ import { Music2, Star } from "lucide-react";
 import BollywoodArtists from "./components/BollywoodArtists";
 import HollywoodArtists from "./components/HollywoodArtists";
 import BhojpuriArtists from "./components/BhojpuriArtists";
+// Assuming the components are in a different directory or have been renamed
+
 
 const ArtistsPage = () => {
-  const [selectedTab, setSelectedTab] = useState("bollywood");
+  const [, setSelectedTab] = useState("bollywood");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-900 to-black text-zinc-100 p-4 md:p-8">
