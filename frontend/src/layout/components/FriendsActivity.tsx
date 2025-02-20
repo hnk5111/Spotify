@@ -4,13 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios";
 import { HeadphonesIcon, Users, Music, ChevronUp, ChevronDown, Maximize2, Minimize2 } from "lucide-react";
 import { useUser } from "@clerk/clerk-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/stores/useChatStore";
 
 interface Friend {
   _id: string;
   fullName: string;
   imageUrl: string;
+  clerkId: string;
   currentlyPlaying?: {
     songName: string;
     artistName: string;
@@ -28,8 +30,30 @@ export const FriendsActivity = ({
   isFloating = false,
   onToggleFloat,
 }: FriendsActivityProps) => {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const [isCompact, setIsCompact] = useState(false);
+  const { onlineUsers, userActivities, initSocket, disconnectSocket, socket } = useChatStore();
+
+  useEffect(() => {
+    if (isSignedIn && user?.id) {
+      // Initialize socket connection
+      initSocket(user.id);
+
+      // Emit user_connected event when component mounts
+      socket?.emit("user_connected", user.id);
+
+      // Cleanup function
+      return () => {
+        socket?.emit("user_disconnected", user.id);
+        disconnectSocket();
+      };
+    }
+  }, [isSignedIn, user?.id]);
+
+  // Debug logging
+  useEffect(() => {
+    console.log("Online Users:", Array.from(onlineUsers));
+  }, [onlineUsers]);
 
   const {
     data: friends = [],
@@ -44,6 +68,11 @@ export const FriendsActivity = ({
     retry: false,
     enabled: !!isSignedIn,
   });
+
+  // Function to check if a user is online
+  const isUserOnline = (clerkId: string) => {
+    return onlineUsers.has(clerkId);
+  };
 
   // Hide the component on mobile when not signed in
   if (!isSignedIn && isMobile) {
@@ -153,7 +182,12 @@ export const FriendsActivity = ({
                   "relative flex items-start gap-3 p-3 group-hover:transform group-hover:translate-x-1 transition-all duration-200",
                   isCompact && "py-2"
                 )}>
-                  <Avatar className="ring-2 ring-offset-2 ring-offset-background ring-primary/10 transition-all duration-300 group-hover:ring-primary/30">
+                  <Avatar className={cn(
+                    "ring-2 ring-offset-2 ring-offset-background transition-all duration-300",
+                    isUserOnline(friend.clerkId) 
+                      ? "ring-green-500/50 group-hover:ring-green-500/70"
+                      : "ring-primary/10 group-hover:ring-primary/30"
+                  )}>
                     <AvatarImage src={friend.imageUrl} />
                     <AvatarFallback>{friend.fullName[0]}</AvatarFallback>
                   </Avatar>
@@ -163,28 +197,38 @@ export const FriendsActivity = ({
                       <p className="text-sm font-medium text-foreground truncate">
                         {friend.fullName}
                       </p>
-                      <span className="flex-shrink-0 w-2 h-2 rounded-full bg-green-500" />
+                      <span className={cn(
+                        "flex-shrink-0 w-2 h-2 rounded-full transition-colors duration-300",
+                        isUserOnline(friend.clerkId) 
+                          ? "bg-green-500 animate-pulse"
+                          : "bg-gray-400"
+                      )} />
                     </div>
                     
-                    {!isCompact && friend.currentlyPlaying ? (
+                    {!isCompact && (
                       <div className="mt-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <div className="animate-spin-slow w-3 h-3">
-                            <Music className="w-3 h-3 text-primary" />
-                          </div>
-                          <p className="text-xs text-primary truncate">
-                            {friend.currentlyPlaying.songName}
+                        {userActivities.get(friend.clerkId) ? (
+                          <>
+                            <div className="flex items-center gap-2">
+                              <div className="animate-spin-slow w-3 h-3">
+                                <Music className="w-3 h-3 text-primary" />
+                              </div>
+                              <p className="text-xs text-primary truncate">
+                                {userActivities.get(friend.clerkId)}
+                              </p>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="text-xs text-muted-foreground/60">
+                            {isUserOnline(friend.clerkId) ? (
+                              <span className="text-green-500">Online</span>
+                            ) : (
+                              "Offline"
+                            )}
                           </p>
-                        </div>
-                        <p className="text-xs text-muted-foreground/60 truncate">
-                          {friend.currentlyPlaying.artistName}
-                        </p>
+                        )}
                       </div>
-                    ) : !isCompact ? (
-                      <p className="text-xs text-muted-foreground/60 mt-1">
-                        Not playing
-                      </p>
-                    ) : null}
+                    )}
                   </div>
                 </div>
               </div>
