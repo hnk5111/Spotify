@@ -52,9 +52,9 @@ const moodKeywords = {
 const moodSongs = {
   happy: [
     {
-      name: "Happy",
-      artist: "Pharrell Williams",
-      url: "https://www.youtube.com/watch?v=ZbZSe6N_BXs",
+      name: "Matargashti",
+      artist: " Mohit Chauhan ",
+      url: "https://youtu.be/iid7cxx0keU?si=41DP-PUb5S6RhXmz",
       image: "https://i.ytimg.com/vi/ZbZSe6N_BXs/maxresdefault.jpg",
       duration: "3:53"
     },
@@ -92,7 +92,7 @@ const moodSongs = {
       name: "Desi Girl",
       artist: "Vishal Dadlani, Shankar Mahadevan",
       mood: "happy",
-      url: "https://www.youtube.com/watch?v=RX7TA3ezjHc",
+      url: "https://youtu.be/T4tedh_11hg?si=CIBsWHb6Mi8zulPo",
       image: "https://i.ytimg.com/vi/RX7TA3ezjHc/maxresdefault.jpg",
       duration: "4:20"
     },
@@ -270,6 +270,111 @@ const moodSongs = {
       url: "https://www.youtube.com/watch?v=gxJ_xZAssqg",
       image: "https://i.ytimg.com/vi/gxJ_xZAssqg/maxresdefault.jpg",
       duration: "3:33"
+    },
+    {
+      name: "Tum Hi Ho Bandhu",
+      artist: "Kavita Seth, Neeraj Shridhar",
+      url: "https://www.youtube.com/watch?v=z3UHfi9vpbc",
+      image: "https://i.ytimg.com/vi/z3UHfi9vpbc/maxresdefault.jpg",
+      duration: "4:31"
+    },
+    {
+      name: "Dil Dhadakne Do",
+      artist: "Priyanka Chopra, Farhan Akhtar",
+      url: "https://www.youtube.com/watch?v=WvdXhMkqkTc",
+      image: "https://i.ytimg.com/vi/WvdXhMkqkTc/maxresdefault.jpg",
+      duration: "3:47"
+    },
+    {
+      name: "Ainvayi Ainvayi",
+      artist: "Salim-Sulaiman",
+      url: "https://www.youtube.com/watch?v=pElk1ShPrcE",
+      image: "https://i.ytimg.com/vi/pElk1ShPrcE/maxresdefault.jpg",
+      duration: "4:25"
+    },
+    {
+      name: "Desi Girl",
+      artist: "Shankar-Ehsaan-Loy",
+      url: "https://www.youtube.com/watch?v=RX7TA3ezjHc",
+      image: "https://i.ytimg.com/vi/RX7TA3ezjHc/maxresdefault.jpg",
+      duration: "4:20"
+    },
+    {
+      name: "Dhoom Machale",
+      artist: "Sunidhi Chauhan",
+      url: "https://www.youtube.com/watch?v=3n6RsyW-FAI",
+      image: "https://i.ytimg.com/vi/3n6RsyW-FAI/maxresdefault.jpg",
+      duration: "4:45"
+    },
+    {
+      name: "Radha",
+      artist: "Shreya Ghoshal, Vishal-Shekhar",
+      url: "https://www.youtube.com/watch?v=X9_Ml4t0F-g",
+      image: "https://i.ytimg.com/vi/X9_Ml4t0F-g/maxresdefault.jpg",
+      duration: "4:05"
+    },
+    {
+      name: "Tune Maari Entriyaan",
+      artist: "Vishal Dadlani, Bappi Lahiri",
+      url: "https://www.youtube.com/watch?v=Jn5hsfbhWx4",
+      image: "https://i.ytimg.com/vi/Jn5hsfbhWx4/maxresdefault.jpg",
+      duration: "4:15"
+    },
+    {
+      name: "Chammak Challo",
+      artist: "Akon, Hamsika Iyer",
+      url: "https://www.youtube.com/watch?v=yJB5v-ZxHbs",
+      image: "https://i.ytimg.com/vi/yJB5v-ZxHbs/maxresdefault.jpg",
+      duration: "3:42"
+    },
+    {
+      name: "Dard-E-Disco",
+      artist: "Sukhwinder Singh",
+      url: "https://www.youtube.com/watch?v=jP3_jB_b6YE",
+      image: "https://i.ytimg.com/vi/jP3_jB_b6YE/maxresdefault.jpg",
+      duration: "4:35"
+    },
+    {
+      name: "Zingaat Hindi",
+      artist: "Ajay-Atul",
+      url: "https://www.youtube.com/watch?v=sN9U0wRgeLg",
+      image: "https://i.ytimg.com/vi/sN9U0wRgeLg/maxresdefault.jpg",
+      duration: "3:25"
+    },
+    {
+      name: "Ghagra",
+      artist: "Rekha Bhardwaj, Vishal Dadlani",
+      url: "https://www.youtube.com/watch?v=caoGNx1LF2Q",
+      image: "https://i.ytimg.com/vi/caoGNx1LF2Q/maxresdefault.jpg",
+      duration: "5:05"
+    },
+    {
+      name: "Malhari",
+      artist: "Vishal Dadlani",
+      url: "https://www.youtube.com/watch?v=l_MyUGq7pgs",
+      image: "https://i.ytimg.com/vi/l_MyUGq7pgs/maxresdefault.jpg",
+      duration: "3:35"
+    },
+    {
+      name: "Nagada Sang Dhol",
+      artist: "Shreya Ghoshal, Osman Mir",
+      url: "https://www.youtube.com/watch?v=X_8m-lHt6AU",
+      image: "https://i.ytimg.com/vi/X_8m-lHt6AU/maxresdefault.jpg",
+      duration: "4:15"
+    },
+    {
+      name: "Tattad Tattad",
+      artist: "Aditya Narayan",
+      url: "https://www.youtube.com/watch?v=sRv9_Q3HOmg",
+      image: "https://i.ytimg.com/vi/sRv9_Q3HOmg/maxresdefault.jpg",
+      duration: "3:45"
+    },
+    {
+      name: "Badtameez Dil",
+      artist: "Benny Dayal",
+      url: "https://www.youtube.com/watch?v=II2EO3Nw4m0",
+      image: "https://i.ytimg.com/vi/II2EO3Nw4m0/maxresdefault.jpg",
+      duration: "3:45"
     }
   ],
   sad: [
@@ -492,6 +597,181 @@ const moodSongs = {
       url: "https://www.youtube.com/watch?v=2tPs5P7Ldps",
       image: "https://i.ytimg.com/vi/2tPs5P7Ldps/maxresdefault.jpg",
       duration: "4:08"
+    },
+    {
+      name: "Aaj Din Chadheya",
+      artist: "Rahat Fateh Ali Khan",
+      url: "https://www.youtube.com/watch?v=YFYiTS46x-8",
+      image: "https://i.ytimg.com/vi/YFYiTS46x-8/maxresdefault.jpg",
+      duration: "5:25"
+    },
+    {
+      name: "Tujhe Bhula Diya",
+      artist: "Mohit Chauhan, Shekhar Ravjiani",
+      url: "https://www.youtube.com/watch?v=gkCKTuR-ECI",
+      image: "https://i.ytimg.com/vi/gkCKTuR-ECI/maxresdefault.jpg",
+      duration: "5:10"
+    },
+    {
+      name: "Tum Jo Aaye",
+      artist: "Rahat Fateh Ali Khan, Tulsi Kumar",
+      url: "https://www.youtube.com/watch?v=yxqn-wXUd5c",
+      image: "https://i.ytimg.com/vi/yxqn-wXUd5c/maxresdefault.jpg",
+      duration: "5:07"
+    },
+    {
+      name: "Tera Chehra",
+      artist: "Arijit Singh",
+      url: "https://www.youtube.com/watch?v=QvVqO5qxY_c",
+      image: "https://i.ytimg.com/vi/QvVqO5qxY_c/maxresdefault.jpg",
+      duration: "4:45"
+    },
+    {
+      name: "Phir Mohabbat",
+      artist: "Mohammed Irfan",
+      url: "https://www.youtube.com/watch?v=ZWs_ZX82RWs",
+      image: "https://i.ytimg.com/vi/ZWs_ZX82RWs/maxresdefault.jpg",
+      duration: "4:55"
+    },
+    {
+      name: "Dil Ibaadat",
+      artist: "KK",
+      url: "https://www.youtube.com/watch?v=BAeGLiBZuiQ",
+      image: "https://i.ytimg.com/vi/BAeGLiBZuiQ/maxresdefault.jpg",
+      duration: "5:30"
+    },
+    {
+      name: "Alvida",
+      artist: "KK",
+      url: "https://www.youtube.com/watch?v=grdZhxXCVww",
+      image: "https://i.ytimg.com/vi/grdZhxXCVww/maxresdefault.jpg",
+      duration: "5:20"
+    },
+    {
+      name: "Bhula Dena",
+      artist: "Mustafa Zahid",
+      url: "https://www.youtube.com/watch?v=HwIOZkPDhfM",
+      image: "https://i.ytimg.com/vi/HwIOZkPDhfM/maxresdefault.jpg",
+      duration: "4:05"
+    },
+    {
+      name: "Ek Thi Daastan",
+      artist: "Shafqat Amanat Ali",
+      url: "https://www.youtube.com/watch?v=Ue8CIyqoFv0",
+      image: "https://i.ytimg.com/vi/Ue8CIyqoFv0/maxresdefault.jpg",
+      duration: "4:35"
+    },
+    {
+      name: "Dil De Diya Hai",
+      artist: "Anand Raj Anand",
+      url: "https://www.youtube.com/watch?v=Nc6hSOj_8vY",
+      image: "https://i.ytimg.com/vi/Nc6hSOj_8vY/maxresdefault.jpg",
+      duration: "5:45"
+    },
+    {
+      name: "Tadap Tadap",
+      artist: "KK",
+      url: "https://www.youtube.com/watch?v=RLnFGfJ3TN8",
+      image: "https://i.ytimg.com/vi/RLnFGfJ3TN8/maxresdefault.jpg",
+      duration: "6:05"
+    },
+    {
+      name: "Tujhe Sochta Hoon",
+      artist: "Pritam, KK",
+      url: "https://www.youtube.com/watch?v=pCyW346-J4E",
+      image: "https://i.ytimg.com/vi/pCyW346-J4E/maxresdefault.jpg",
+      duration: "4:45"
+    },
+    {
+      name: "Tere Naina",
+      artist: "Shankar Mahadevan",
+      url: "https://www.youtube.com/watch?v=x_6zUZl8nvI",
+      image: "https://i.ytimg.com/vi/x_6zUZl8nvI/maxresdefault.jpg",
+      duration: "4:35"
+    },
+    {
+      name: "Tum Mile",
+      artist: "Neeraj Shridhar",
+      url: "https://www.youtube.com/watch?v=_TxBxB3eHkA",
+      image: "https://i.ytimg.com/vi/_TxBxB3eHkA/maxresdefault.jpg",
+      duration: "5:15"
+    },
+    {
+      name: "Mere Rang Mein",
+      artist: "Atif Aslam, Shreya Ghoshal",
+      url: "https://www.youtube.com/watch?v=GQEoKDivm58",
+      image: "https://i.ytimg.com/vi/GQEoKDivm58/maxresdefault.jpg",
+      duration: "4:55"
+    },
+    {
+      name: "Tere Bina",
+      artist: "A.R. Rahman",
+      url: "https://www.youtube.com/watch?v=BMB6YOWzQMY",
+      image: "https://i.ytimg.com/vi/BMB6YOWzQMY/maxresdefault.jpg",
+      duration: "5:30"
+    },
+    {
+      name: "Sanam Re",
+      artist: "Arijit Singh",
+      url: "https://www.youtube.com/watch?v=DS-raAyMxl4",
+      image: "https://i.ytimg.com/vi/DS-raAyMxl4/maxresdefault.jpg",
+      duration: "4:25"
+    },
+    {
+      name: "Soch Na Sake",
+      artist: "Arijit Singh, Tulsi Kumar",
+      url: "https://www.youtube.com/watch?v=_lL5qZf1OeI",
+      image: "https://i.ytimg.com/vi/_lL5qZf1OeI/maxresdefault.jpg",
+      duration: "4:48"
+    },
+    {
+      name: "Tere Sang Yaara",
+      artist: "Atif Aslam",
+      url: "https://www.youtube.com/watch?v=E8RPorI6bis",
+      image: "https://i.ytimg.com/vi/E8RPorI6bis/maxresdefault.jpg",
+      duration: "4:39"
+    },
+    {
+      name: "Kuch To Hai",
+      artist: "Armaan Malik",
+      url: "https://www.youtube.com/watch?v=BkjX0-pzPxg",
+      image: "https://i.ytimg.com/vi/BkjX0-pzPxg/maxresdefault.jpg",
+      duration: "4:15"
+    },
+    {
+      name: "Bol Do Na Zara",
+      artist: "Armaan Malik",
+      url: "https://www.youtube.com/watch?v=EpEraRui1pc",
+      image: "https://i.ytimg.com/vi/EpEraRui1pc/maxresdefault.jpg",
+      duration: "4:12"
+    },
+    {
+      name: "Main Hoon Saath Tere",
+      artist: "Arijit Singh",
+      url: "https://www.youtube.com/watch?v=pfVODjDBFxU",
+      image: "https://i.ytimg.com/vi/pfVODjDBFxU/maxresdefault.jpg",
+      duration: "4:28"
+    },
+    {
+      name: "Tera Ban Jaunga",
+      artist: "Akhil Sachdeva, Tulsi Kumar",
+      url: "https://www.youtube.com/watch?v=mQiiw7uRngk",
+      image: "https://i.ytimg.com/vi/mQiiw7uRngk/maxresdefault.jpg",
+      duration: "3:57"
+    },
+    {
+      name: "Kya Baat Ay",
+      artist: "Harrdy Sandhu",
+      url: "https://www.youtube.com/watch?v=G0Hx6uN2AJE",
+      image: "https://i.ytimg.com/vi/G0Hx6uN2AJE/maxresdefault.jpg",
+      duration: "3:38"
+    },
+    {
+      name: "Tera Ghata",
+      artist: "Gajendra Verma",
+      url: "https://www.youtube.com/watch?v=0KNk-Joi-NM",
+      image: "https://i.ytimg.com/vi/0KNk-Joi-NM/maxresdefault.jpg",
+      duration: "4:15"
     }
   ],
   romantic: [
@@ -802,6 +1082,188 @@ const moodSongs = {
       url: "https://www.youtube.com/watch?v=gdZLi9oWNZg",
       image: "https://i.ytimg.com/vi/gdZLi9oWNZg/maxresdefault.jpg",
       duration: "3:43"
+    },
+    {
+      name: "Naach Meri Rani",
+      artist: "Guru Randhawa, Nikhita Gandhi",
+      url: "https://www.youtube.com/watch?v=X9B5B3KiYxQ",
+      image: "https://i.ytimg.com/vi/X9B5B3KiYxQ/maxresdefault.jpg",
+      duration: "3:30"
+    },
+    {
+      name: "Aankh Marey",
+      artist: "Neha Kakkar, Mika Singh",
+      url: "https://www.youtube.com/watch?v=5MxvgXZNc-0",
+      image: "https://i.ytimg.com/vi/5MxvgXZNc-0/maxresdefault.jpg",
+      duration: "3:32"
+    },
+    {
+      name: "Coca Cola",
+      artist: "Tony Kakkar, Neha Kakkar",
+      url: "https://www.youtube.com/watch?v=_cPHiwPqbqo",
+      image: "https://i.ytimg.com/vi/_cPHiwPqbqo/maxresdefault.jpg",
+      duration: "3:20"
+    },
+    {
+      name: "Morni Banke",
+      artist: "Guru Randhawa, Neha Kakkar",
+      url: "https://www.youtube.com/watch?v=g1Nz2KOoFJs",
+      image: "https://i.ytimg.com/vi/g1Nz2KOoFJs/maxresdefault.jpg",
+      duration: "3:45"
+    },
+    {
+      name: "Lamborghini",
+      artist: "Diljit Dosanjh",
+      url: "https://www.youtube.com/watch?v=GuqlX_rqN4k",
+      image: "https://i.ytimg.com/vi/GuqlX_rqN4k/maxresdefault.jpg",
+      duration: "3:35"
+    },
+    {
+      name: "Dheeme Dheeme",
+      artist: "Tony Kakkar",
+      url: "https://www.youtube.com/watch?v=9mWdw-09dso",
+      image: "https://i.ytimg.com/vi/9mWdw-09dso/maxresdefault.jpg",
+      duration: "3:28"
+    },
+    {
+      name: "Hauli Hauli",
+      artist: "Garry Sandhu, Neha Kakkar",
+      url: "https://www.youtube.com/watch?v=k1MbYE_7yfc",
+      image: "https://i.ytimg.com/vi/k1MbYE_7yfc/maxresdefault.jpg",
+      duration: "3:15"
+    },
+    {
+      name: "Nikle Currant",
+      artist: "Jassi Gill, Neha Kakkar",
+      url: "https://www.youtube.com/watch?v=tXzh-TB-d9c",
+      image: "https://i.ytimg.com/vi/tXzh-TB-d9c/maxresdefault.jpg",
+      duration: "3:40"
+    },
+    {
+      name: "Dilbar",
+      artist: "Neha Kakkar, Dhvani Bhanushali",
+      url: "https://www.youtube.com/watch?v=JFcgOboQZ08",
+      image: "https://i.ytimg.com/vi/JFcgOboQZ08/maxresdefault.jpg",
+      duration: "3:29"
+    },
+    {
+      name: "Saki Saki",
+      artist: "Neha Kakkar, Tulsi Kumar",
+      url: "https://www.youtube.com/watch?v=gxJ_xZAssqg",
+      image: "https://i.ytimg.com/vi/gxJ_xZAssqg/maxresdefault.jpg",
+      duration: "3:33"
+    },
+    {
+      name: "Lagdi Lahore Di",
+      artist: "Guru Randhawa, Tulsi Kumar",
+      url: "https://www.youtube.com/watch?v=pWxcXrXvvbs",
+      image: "https://i.ytimg.com/vi/pWxcXrXvvbs/maxresdefault.jpg",
+      duration: "3:42"
+    },
+    {
+      name: "Genda Phool",
+      artist: "Badshah, Payal Dev",
+      url: "https://www.youtube.com/watch?v=SD4Z8dlZPd8",
+      image: "https://i.ytimg.com/vi/SD4Z8dlZPd8/maxresdefault.jpg",
+      duration: "3:30"
+    },
+    {
+      name: "Naagin",
+      artist: "Aastha Gill, Akasa",
+      url: "https://www.youtube.com/watch?v=JZ_paQILAnw",
+      image: "https://i.ytimg.com/vi/JZ_paQILAnw/maxresdefault.jpg",
+      duration: "3:15"
+    },
+    {
+      name: "Buzz",
+      artist: "Aastha Gill, Badshah",
+      url: "https://www.youtube.com/watch?v=DsDe6pz5KKo",
+      image: "https://i.ytimg.com/vi/DsDe6pz5KKo/maxresdefault.jpg",
+      duration: "3:22"
+    },
+    {
+      name: "Sauda Khara Khara",
+      artist: "Sukhbir, Dhvani Bhanushali",
+      url: "https://www.youtube.com/watch?v=jZW1cJy4eVQ",
+      image: "https://i.ytimg.com/vi/jZW1cJy4eVQ/maxresdefault.jpg",
+      duration: "3:35"
+    },
+    {
+      name: "Chandigarh Mein",
+      artist: "Badshah, Lisa Mishra",
+      url: "https://www.youtube.com/watch?v=Zk11H94KfO4",
+      image: "https://i.ytimg.com/vi/Zk11H94KfO4/maxresdefault.jpg",
+      duration: "3:28"
+    },
+    {
+      name: "Yaad Piya Ki Aane Lagi",
+      artist: "Neha Kakkar",
+      url: "https://www.youtube.com/watch?v=eyk18_5LV4k",
+      image: "https://i.ytimg.com/vi/eyk18_5LV4k/maxresdefault.jpg",
+      duration: "4:05"
+    },
+    {
+      name: "Kala Chashma",
+      artist: "Badshah, Neha Kakkar",
+      url: "https://www.youtube.com/watch?v=k4yXQkG2s1E",
+      image: "https://i.ytimg.com/vi/k4yXQkG2s1E/maxresdefault.jpg",
+      duration: "4:00"
+    },
+    {
+      name: "Desi Boyz",
+      artist: "Pritam",
+      url: "https://www.youtube.com/watch?v=RKioDWlajvo",
+      image: "https://i.ytimg.com/vi/RKioDWlajvo/maxresdefault.jpg",
+      duration: "3:45"
+    },
+    {
+      name: "Subha Hone Na De",
+      artist: "Mika Singh, Akriti Kakkar",
+      url: "https://www.youtube.com/watch?v=Y7G-tYRzwYY",
+      image: "https://i.ytimg.com/vi/Y7G-tYRzwYY/maxresdefault.jpg",
+      duration: "4:10"
+    },
+    {
+      name: "Chittiyaan Kalaiyaan",
+      artist: "Meet Bros, Kanika Kapoor",
+      url: "https://www.youtube.com/watch?v=zpsVpnvFfZQ",
+      image: "https://i.ytimg.com/vi/zpsVpnvFfZQ/maxresdefault.jpg",
+      duration: "3:42"
+    },
+    {
+      name: "Nashe Si Chadh Gayi",
+      artist: "Arijit Singh",
+      url: "https://www.youtube.com/watch?v=Wd2B8OAotU8",
+      image: "https://i.ytimg.com/vi/Wd2B8OAotU8/maxresdefault.jpg",
+      duration: "3:56"
+    },
+    {
+      name: "Desi Look",
+      artist: "Kanika Kapoor",
+      url: "https://www.youtube.com/watch?v=0IILJTQluKw",
+      image: "https://i.ytimg.com/vi/0IILJTQluKw/maxresdefault.jpg",
+      duration: "3:20"
+    },
+    {
+      name: "Proper Patola",
+      artist: "Badshah, Diljit Dosanjh",
+      url: "https://www.youtube.com/watch?v=YmXJp4RtBCM",
+      image: "https://i.ytimg.com/vi/YmXJp4RtBCM/maxresdefault.jpg",
+      duration: "3:45"
+    },
+    {
+      name: "Kamariya",
+      artist: "Aastha Gill, Divya Kumar",
+      url: "https://www.youtube.com/watch?v=i0_m90T04uw",
+      image: "https://i.ytimg.com/vi/i0_m90T04uw/maxresdefault.jpg",
+      duration: "3:12"
+    },
+    {
+      name: "Garmi",
+      artist: "Badshah, Neha Kakkar",
+      url: "https://www.youtube.com/watch?v=L_ZIeH4Yasw",
+      image: "https://i.ytimg.com/vi/L_ZIeH4Yasw/maxresdefault.jpg",
+      duration: "3:08"
     },
     {
       name: "Naach Meri Rani",
