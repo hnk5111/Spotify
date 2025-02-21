@@ -27,26 +27,26 @@ const bollywoodArtists: Artist[] = [
     topSongs: [
       {
         id: "as1",
-        name: "Tum Hi Ho",
+        name: "Ve Kamleya",
         artist: "Arijit Singh",
-        url: "https://www.youtube.com/watch?v=example1",
-        image: "https://example.com/tum_hi_ho.jpg",
-        duration: "4:22"
+        url: "https://youtu.be/IYK34I7y5O8?si=2t88lplAE65tWsxo",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoJkXvPVomVpv9cKbDcwl9YAioQxmCRI_WTU3mO0Tvdn8l2sKCcbAAFMAcwZeSgoezgl4&usqp=CAU",
+        duration: "4:45"
       },
       {
         id: "as2",
-        name: "Channa Mereya",
+        name: "Tera Chehra",
         artist: "Arijit Singh",
-        url: "https://www.youtube.com/watch?v=example2",
-        image: "https://example.com/channa_mereya.jpg",
-        duration: "5:10"
+        url: "https://youtu.be/LOmC1dlZ2BE?si=39Yyxd2wZ_ysA5iz",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEx6kF06iGOwkoxpT7aPhy8miY9DF477fduHcWAJ7KuQz1WXFyYjpCpUAGCgK96cBQXy4&usqp=CAU",
+        duration: "4:38"
       },
       {
         id: "as3",
         name: "Tera Hone Laga Hoon",
         artist: "Arijit Singh",
-        url: "https://www.youtube.com/watch?v=example3",
-        image: "https://example.com/tera_hone_laga_hoon.jpg",
+        url: "https://youtu.be/rLR37BR88T0?si=vIkbedI0Tpr1nQd7",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsub5XVj0stErbJgpwuE3763gigxtFJrL-4QzKOWfzTuhZ_DrkWwTQtg5XGQHUrewUpk8&usqp=CAU",
         duration: "4:30"
       }
     ]
@@ -58,26 +58,26 @@ const bollywoodArtists: Artist[] = [
     topSongs: [
       {
         id: "sg1",
-        name: "Teri Meri",
+        name: "Ami Je Tomar",
         artist: "Shreya Ghoshal",
-        url: "https://www.youtube.com/watch?v=example4",
-        image: "https://example.com/teri_mer.jpg",
-        duration: "4:15"
+        url: "https://youtu.be/FGNc3BibU3o?si=PaOXRnVWc81MHPPm",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaAxfJiYff-Q2Ds525g2Ls3iBuYliii6zLRAY3L7rGKbA-tkisycmZ4O9DaHQ5uZ7onf0&usqp=CAU",
+        duration: "5:13"
       },
       {
         id: "sg2",
         name: "Jaadu Hai Nasha Hai",
         artist: "Shreya Ghoshal",
-        url: "https://www.youtube.com/watch?v=example5",
-        image: "https://example.com/jaadu_hai_nasha_hai.jpg",
+        url: "https://youtu.be/T_MPeEX-aIs?si=a6QPLoo2NMa5VOtQ",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPIktM9XKKC7h65YPnQLpTuAL3Ni-oVOk-6YbiMwu5niMTalqfjlsckzenDeDNNvu9kJQ&usqp=CAU",
         duration: "4:45"
       },
       {
         id: "sg3",
         name: "Sun Raha Hai Na Tu",
         artist: "Shreya Ghoshal",
-        url: "https://www.youtube.com/watch?v=example6",
-        image: "https://example.com/sun_raha_hai_na_tu.jpg",
+        url: "https://youtu.be/inEu2qQuGZ8?si=DLFzyE6l2NFSBt0m",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmR90AdydgAjESLBS14FLEzGbkgDr9lzdwH8_kncT84S4btr5XpRcOZjsMguy8ZVE_MQc&usqp=CAU",
         duration: "5:00"
       }
     ]
@@ -89,58 +89,58 @@ const bollywoodArtists: Artist[] = [
     topSongs: [
       {
         id: "aa1",
-        name: "Tera Hone Laga Hoon",
+        name: "Pehli Dafa ",
         artist: "Atif Aslam",
-        url: "https://www.youtube.com/watch?v=example7",
-        image: "https://example.com/tera_hone_laga_hoon.jpg",
-        duration: "4:22"
+        url: "https://youtu.be/SxTYjptEzZs?si=y2zh46a7-Ac-POzG",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFICIglYIqu6Zk5njY11CL5Xug67vUuzmuxg&s",
+        duration: "4:43"
       },
       {
         id: "aa2",
         name: "Jeene Laga Hoon",
         artist: "Atif Aslam",
-        url: "https://www.youtube.com/watch?v=example8",
-        image: "https://example.com/jeene_laga_hoon.jpg",
+        url: "https://youtu.be/qpIdoaaPa6U?si=h0VAuNz1VRHMH60v",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSN221T63pQn0p0kPQSSgcUZI875vs7m_znQ&s",
         duration: "4:10"
       },
       {
         id: "aa3",
         name: "Dil Diyan Gallan",
         artist: "Atif Aslam",
-        url: "https://www.youtube.com/watch?v=example9",
-        image: "https://example.com/dil_diyan_gallan.jpg",
+        url: "https://youtu.be/SAcpESN_Fk4?si=259uU_Z_40gbee84",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzoCUiRECbhvlXPCLPzBfNdrFv9PZzXqyDNSUnOgL0taC5lKPacFvffXle6OKkXtinPog&usqp=CAU",
         duration: "5:00"
       }
     ]
   },
   {
     id: "4",
-    name: "Neha Kakkar",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFmW05mASF9qCURRc20Ah9mO5oO8JlTqeQtQ&s",
+    name: "Shankar Mahadevan",
+    image: "https://www.millenniumpost.in/h-upload/2022/12/01/656365-shankar.jpg",
     topSongs: [
       {
-        id: "nk1",
-        name: "Dilbar",
-        artist: "Neha Kakkar",
-        url: "https://www.youtube.com/watch?v=example10",
-        image: "https://example.com/dilbar.jpg",
-        duration: "3:50"
+        id: "sm1",
+        name: "Shiv Tandav Stotram",
+        artist: "Shankar Mahadevan",
+        url: "https://youtu.be/S980-z1qx3g?si=5EgS4seiuzwhF3gD",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBDc4TCQwZuRcXvX9BHc8qyQyxKkR3xxV16A&s",
+        duration: "9:14"
       },
       {
-        id: "nk2",
-        name: "Garmi",
-        artist: "Neha Kakkar",
-        url: "https://www.youtube.com/watch?v=example11",
-        image: "https://example.com/garmi.jpg",
-        duration: "4:00"
+        id: "sm2",
+        name: "Breathless",
+        artist: "Shankar Mahadevan",
+        url: "https://youtu.be/9tXtv8XE6lU?si=vZp7hzq3s-vtNF5T",
+        image: "https://i.ytimg.com/vi/-eFqg8JnohY/maxresdefault.jpg",
+        duration: "6:07"
       },
       {
-        id: "nk3",
-        name: "O Saki Saki",
-        artist: "Neha Kakkar",
-        url: "https://www.youtube.com/watch?v=example12",
-        image: "https://example.com/o_saki_saki.jpg",
-        duration: "3:30"
+        id: "sm3",
+        name: "Mitwa",
+        artist: "Shankar Mahadevan",
+        url: "https://youtu.be/ru_5PA8cwkE?si=YTQ1hggstwgCgoxX",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmUd5LRbK-9yf2IRtvSkIHBkvhhM4HutCU_8zZkuTZOgznCK-9yEvjrFTUgjWfzriUzKY&usqp=CAU",
+        duration: "6:01"
       }
     ]
   },
