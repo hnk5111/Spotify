@@ -3,7 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
-import { HomeIcon, Library, MessageCircle, Users, Heart, Bell, ChevronDown, ChevronRight, Album, Music } from "lucide-react";
+import { HomeIcon, Library, MessageCircle, Users, Heart, Bell, ChevronDown, ChevronRight, Album, Music, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FriendsActivity } from "./FriendsActivity";
@@ -31,6 +31,7 @@ const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
     { icon: Album, label: "Albums", path: "/albums" },
     { icon: Music, label: "Artists", path: "/artists" },
     { icon: Music, label: "Admin", path: "/admin" },
+    { icon: User, label: "Dashboard", path: "/dashboard" }
   ];
 
   const handleNavigation = () => {
