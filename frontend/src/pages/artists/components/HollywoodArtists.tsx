@@ -209,7 +209,7 @@ const hollywoodArtists: Artist[] = [
   {
     id: "7",
     name: "Dua Lipa",
-    image: "https://c.saavncdn.com/artists/Dua_Lipa_500x500.jpg",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVDD8QWlhFQttlHP6sb4KUKvwNp6iqbA8gOg&s",
     topSongs: [
       {
         id: "dl1",
@@ -240,7 +240,7 @@ const hollywoodArtists: Artist[] = [
   {
     id: "8",
     name: "SZA",
-    image: "https://c.saavncdn.com/artists/SZA_500x500.jpg",
+    image: "https://i1.sndcdn.com/avatars-000318053412-iuapx8-t1080x1080.jpg",
     topSongs: [
       {
         id: "sz1",

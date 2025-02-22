@@ -3,7 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
-import { HomeIcon, Library, MessageCircle, Users, Heart, Bell, ChevronDown, ChevronRight, Album, Music, User } from "lucide-react";
+import { HomeIcon, Library, MessageCircle, Users, Heart, Bell, ChevronDown, ChevronRight, Album, Music, User, MoreHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FriendsActivity } from "./FriendsActivity";
@@ -16,18 +16,22 @@ const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
   const { albums, fetchAlbums, isLoading } = useMusicStore();
   const location = useLocation();
   const [showPlaylists, setShowPlaylists] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     fetchAlbums();
   }, [fetchAlbums]);
 
-  const navItems = [
+  const mainNavItems = [
     { icon: HomeIcon, label: "Home", path: "/" },
     { icon: MessageCircle, label: "Messages", path: "/chat" },
     { icon: Users, label: "Search Users", path: "/users" },
     { icon: Users, label: "Friends", path: "/friends" },
     { icon: Bell, label: "Notifications", path: "/notifications" },
     { icon: Heart, label: "Mood Playlist", path: "/mood" },
+  ];
+
+  const moreNavItems = [
     { icon: Album, label: "Albums", path: "/albums" },
     { icon: Music, label: "Artists", path: "/artists" },
     { icon: Music, label: "Admin", path: "/admin" },
@@ -54,7 +58,7 @@ const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
           />
 
           <SignedIn>
-            {navItems.map((item) => (
+            {mainNavItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -73,6 +77,49 @@ const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
                 <span className="md:inline">{item.label}</span>
               </Link>
             ))}
+
+            {/* More Section */}
+            <button
+              onClick={() => setShowMore(!showMore)}
+              className={cn(
+                buttonVariants({
+                  variant: "ghost",
+                  className: "w-full justify-start text-foreground hover:bg-secondary/80 transition-all duration-200"
+                })
+              )}
+            >
+              <MoreHorizontal className="mr-2 size-5" />
+              <span className="md:inline flex-1 text-left">More</span>
+              {showMore ? (
+                <ChevronDown className="size-4" />
+              ) : (
+                <ChevronRight className="size-4" />
+              )}
+            </button>
+
+            {showMore && (
+              <div className="pl-4 space-y-1">
+                {moreNavItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={handleNavigation}
+                    className={cn(
+                      buttonVariants({
+                        variant: "ghost",
+                        className: cn(
+                          "w-full justify-start text-foreground hover:bg-secondary/80 transition-all duration-200",
+                          location.pathname === item.path && "bg-secondary"
+                        ),
+                      })
+                    )}
+                  >
+                    <item.icon className="mr-2 size-5" />
+                    <span className="md:inline">{item.label}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             {/* Playlists Section */}
             <button

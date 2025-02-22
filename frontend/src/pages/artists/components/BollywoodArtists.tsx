@@ -110,6 +110,14 @@ const bollywoodArtists: Artist[] = [
         url: "https://youtu.be/SAcpESN_Fk4?si=259uU_Z_40gbee84",
         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzoCUiRECbhvlXPCLPzBfNdrFv9PZzXqyDNSUnOgL0taC5lKPacFvffXle6OKkXtinPog&usqp=CAU",
         duration: "5:00"
+      },
+      {
+        id: "aa4",
+        name: "Tum",
+        artist: "Atif Aslam",
+        url: "https://youtu.be/PZtFYkMYyJA?si=0kuxZ2GmY0KL_MYR",
+        image: "https://c.saavncdn.com/334/Laila-Majnu-Hindi-2018-20190506111426-500x500.jpg",
+        duration: "5:00"
       }
     ]
   },
@@ -146,6 +154,53 @@ const bollywoodArtists: Artist[] = [
   },
   {
     id: "5",
+    name: "Anuv Jain",
+    image: "data:image/jpeg;base64,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",
+    topSongs: [
+      {
+        id: "aj1",
+        name: "Jo Tum Mere Ho",
+        artist: "Anuv Jain",
+        url: "https://youtu.be/wmUJwQNGK3k?si=bF-7vfUKHgpzk8GI",
+        image: "https://c.saavncdn.com/401/Jo-Tum-Mere-Ho-Hindi-2024-20240731053953-500x500.jpg",
+        duration: "4:16"
+      },
+      {
+        id: "aj2",
+        name: "HUSN",
+        artist: "Anuv Jain",
+        url: "https://youtu.be/0IIJxkDtkHY?si=a91WIDaRhTetuDwx",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFwF5VzBJz86hT86PPi_xtI4DJ_rXgUCGVDw&s",
+        duration: "3:38"
+      },
+      {
+        id: "aj3",
+        name: "Gul",
+        artist: "Anuv Jain",
+        url: "https://youtu.be/SmaY7RfBgas?si=GCzmVb6hOi_xYdW7",
+        image: "https://c.saavncdn.com/266/Gul-Hindi-2021-20210706151615-500x500.jpg",
+        duration: "3:45"
+      },
+      {
+        id: "aj4",
+        name: "Alag Aasmaan",
+        artist: "Anuv Jain",
+        url: "https://youtu.be/vA86QFrXoho?si=iQIbBTGqL5FtruX2",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRocycieuWyQsuCzams5gjm-IBnuczFTn188g&s",
+        duration: "3:46"
+      },
+      {
+        id: "aj5",
+        name: "Baarishein",
+        artist: "Anuv Jain",
+        url: "https://youtu.be/PJWemSzExXs?si=DqLCiLncgzkZt0vj",
+        image: "https://c.saavncdn.com/520/Baarishein-English-2018-20180522204131-500x500.jpg",
+        duration: "3:28"
+      }
+    ]
+  },
+  {
+    id: "6",
     name: "Kumar Sanu",
     image: "https://c.saavncdn.com/artists/Kumar_Sanu_500x500.jpg",
     topSongs: [
@@ -175,37 +230,7 @@ const bollywoodArtists: Artist[] = [
       }
     ]
   },
-  {
-    id: "6",
-    name: "Sonu Nigam",
-    image: "https://c.saavncdn.com/artists/Sonu_Nigam_500x500.jpg",
-    topSongs: [
-      {
-        id: "sn1",
-        name: "Kal Ho Naa Ho",
-        artist: "Sonu Nigam",
-        url: "https://www.youtube.com/watch?v=g0eO74UmRBs",
-        image: "https://i.ytimg.com/vi/g0eO74UmRBs/maxresdefault.jpg",
-        duration: "5:21"
-      },
-      {
-        id: "sn2",
-        name: "Suraj Hua Maddham",
-        artist: "Sonu Nigam",
-        url: "https://www.youtube.com/watch?v=L4FmY6tuCwY",
-        image: "https://i.ytimg.com/vi/L4FmY6tuCwY/maxresdefault.jpg",
-        duration: "6:22"
-      },
-      {
-        id: "sn3",
-        name: "Main Hoon Na",
-        artist: "Sonu Nigam",
-        url: "https://www.youtube.com/watch?v=OxzF5HyiUBw",
-        image: "https://i.ytimg.com/vi/OxzF5HyiUBw/maxresdefault.jpg",
-        duration: "5:03"
-      }
-    ]
-  },
+  
   {
     id: "7",
     name: "Jubin Nautiyal",
