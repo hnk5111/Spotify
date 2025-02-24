@@ -2,9 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import {
-  Laptop2,
-  ListMusic,
-  Mic2,
   Pause,
   Play,
   Repeat,
@@ -12,8 +9,18 @@ import {
   SkipBack,
   SkipForward,
   Volume1,
+  MoreHorizontal,
+  Heart,
+  ListPlus,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -115,6 +122,18 @@ export const PlaybackControls = () => {
         audio.volume = newVolume / 100;
       }
     }
+  };
+
+  const handleAddToLikedSongs = () => {
+    if (!currentSong) return;
+    // Add your liked songs logic here
+    toast.success("Added to Liked Songs");
+  };
+
+  const handleAddToPlaylist = () => {
+    if (!currentSong) return;
+    // Add your playlist logic here
+    toast.success("Added to Playlist");
   };
 
   return (
@@ -251,27 +270,28 @@ export const PlaybackControls = () => {
 
         {/* volume controls */}
         <div className="hidden sm:flex items-center gap-4 min-w-[180px] w-[30%] justify-end">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="hover:text-white text-zinc-400"
-          >
-            <Mic2 className="h-4 w-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="hover:text-white text-zinc-400"
-          >
-            <ListMusic className="h-4 w-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="hover:text-white text-zinc-400"
-          >
-            <Laptop2 className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                disabled={!currentSong}
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleAddToLikedSongs}>
+                <Heart className="h-4 w-4 mr-2" />
+                Add to Liked Songs
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleAddToPlaylist}>
+                <ListPlus className="h-4 w-4 mr-2" />
+                Add to Playlist
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <div className="flex items-center gap-2">
             <Button

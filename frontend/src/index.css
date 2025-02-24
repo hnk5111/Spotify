@@ -71,3 +71,14 @@
 		font-family: var(--font-sans);
 	}
 }
+  
+
+  
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+	}
+  body {
+    @apply bg-background text-foreground;
+	}
+}
