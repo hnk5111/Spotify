@@ -6,7 +6,6 @@ import { SignedIn, UserButton } from "@clerk/clerk-react";
 import { HomeIcon, Library, MessageCircle, Users, Heart, Bell, User, ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FriendsActivity } from "./FriendsActivity";
 
 interface LeftSidebarProps {
   onNavigate?: () => void;
@@ -127,9 +126,9 @@ const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
       </div>
 
       {/* Mobile Friends Activity */}
-      <div className="lg:hidden">
+      {/* <div className="lg:hidden">
         <FriendsActivity isMobile={true} />
-      </div>
+      </div> */}
     </div>
   );
 };
