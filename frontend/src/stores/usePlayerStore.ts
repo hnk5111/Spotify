@@ -6,6 +6,7 @@ interface PlayerStore {
 	currentSong: Song | null;
 	isPlaying: boolean;
 	queue: Song[];
+	playedSongs: Song[];
 	currentIndex: number;
 
 	initializeQueue: (songs: Song[]) => void;
@@ -20,13 +21,18 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 	currentSong: null,
 	isPlaying: false,
 	queue: [],
+	playedSongs: [],
 	currentIndex: -1,
 
 	initializeQueue: (songs: Song[]) => {
+		const currentSong = get().currentSong || songs[0];
+		const currentIndex = songs.findIndex(song => song._id === currentSong._id);
+		
 		set({
 			queue: songs,
-			currentSong: get().currentSong || songs[0],
-			currentIndex: get().currentIndex === -1 ? 0 : get().currentIndex,
+			currentSong: currentSong,
+			currentIndex: currentIndex !== -1 ? currentIndex : 0,
+			playedSongs: currentSong ? [currentSong] : [],
 		});
 	},
 
@@ -42,11 +48,13 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				activity: `Playing ${song.title} by ${song.artist}`,
 			});
 		}
+
 		set({
 			queue: songs,
 			currentSong: song,
 			currentIndex: startIndex,
 			isPlaying: true,
+			playedSongs: [song],
 		});
 	},
 
@@ -62,11 +70,12 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 		}
 
 		const songIndex = get().queue.findIndex((s) => s._id === song._id);
-		set({
+		set((state) => ({
 			currentSong: song,
 			isPlaying: true,
-			currentIndex: songIndex !== -1 ? songIndex : get().currentIndex,
-		});
+			currentIndex: songIndex !== -1 ? songIndex : state.currentIndex,
+			playedSongs: [...state.playedSongs, song],
+		}));
 	},
 
 	togglePlay: () => {
@@ -88,10 +97,9 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 	},
 
 	playNext: () => {
-		const { currentIndex, queue } = get();
+		const { currentIndex, queue, currentSong } = get();
 		const nextIndex = currentIndex + 1;
 
-		// if there is a next song to play, let's play it
 		if (nextIndex < queue.length) {
 			const nextSong = queue[nextIndex];
 
@@ -103,29 +111,49 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				});
 			}
 
-			set({
+			set((state) => ({
 				currentSong: nextSong,
 				currentIndex: nextIndex,
 				isPlaying: true,
-			});
+				playedSongs: currentSong ? [...state.playedSongs, nextSong] : [nextSong],
+			}));
 		} else {
-			// no next song
-			set({ isPlaying: false });
+			// No next song, loop back to the first song
+			if (queue.length > 0) {
+				const firstSong = queue[0];
+				
+				const socket = useChatStore.getState().socket;
+				if (socket.auth) {
+					socket.emit("update_activity", {
+						userId: socket.auth.userId,
+						activity: `Playing ${firstSong.title} by ${firstSong.artist}`,
+					});
+				}
 
-			const socket = useChatStore.getState().socket;
-			if (socket.auth) {
-				socket.emit("update_activity", {
-					userId: socket.auth.userId,
-					activity: `Idle`,
-				});
+				set((state) => ({
+					currentSong: firstSong,
+					currentIndex: 0,
+					isPlaying: true,
+					playedSongs: currentSong ? [...state.playedSongs, firstSong] : [firstSong],
+				}));
+			} else {
+				set({ isPlaying: false });
+				
+				const socket = useChatStore.getState().socket;
+				if (socket.auth) {
+					socket.emit("update_activity", {
+						userId: socket.auth.userId,
+						activity: `Idle`,
+					});
+				}
 			}
 		}
 	},
+
 	playPrevious: () => {
-		const { currentIndex, queue } = get();
+		const { currentIndex, queue, currentSong } = get();
 		const prevIndex = currentIndex - 1;
 
-		// theres a prev song
 		if (prevIndex >= 0) {
 			const prevSong = queue[prevIndex];
 
@@ -137,21 +165,41 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				});
 			}
 
-			set({
+			set((state) => ({
 				currentSong: prevSong,
 				currentIndex: prevIndex,
 				isPlaying: true,
-			});
+				playedSongs: currentSong ? [...state.playedSongs, prevSong] : [prevSong],
+			}));
 		} else {
-			// no prev song
-			set({ isPlaying: false });
+			// If at the start, loop to the last song
+			if (queue.length > 0) {
+				const lastSong = queue[queue.length - 1];
+				
+				const socket = useChatStore.getState().socket;
+				if (socket.auth) {
+					socket.emit("update_activity", {
+						userId: socket.auth.userId,
+						activity: `Playing ${lastSong.title} by ${lastSong.artist}`,
+					});
+				}
 
-			const socket = useChatStore.getState().socket;
-			if (socket.auth) {
-				socket.emit("update_activity", {
-					userId: socket.auth.userId,
-					activity: `Idle`,
-				});
+				set((state) => ({
+					currentSong: lastSong,
+					currentIndex: queue.length - 1,
+					isPlaying: true,
+					playedSongs: currentSong ? [...state.playedSongs, lastSong] : [lastSong],
+				}));
+			} else {
+				set({ isPlaying: false });
+				
+				const socket = useChatStore.getState().socket;
+				if (socket.auth) {
+					socket.emit("update_activity", {
+						userId: socket.auth.userId,
+						activity: `Idle`,
+					});
+				}
 			}
 		}
 	},

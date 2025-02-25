@@ -17,6 +17,7 @@ import FriendsActivityPage from "./pages/friends/FriendsActivityPage";
 import { ThemeProvider } from "./providers/theme-provider";
 import NotificationsPage from "./pages/notifications/NotificationsPage";
 import MoodPlaylist from "./components/MoodPlaylist";
+import DashboardPage from "./pages/dashboard/DashboardPage";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/users" element={<UserSearchPage />} />
           <Route path="/profile/:userId" element={<UserProfilePage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/albums/:albumId" element={<AlbumPage />} />
           <Route path="/friends" element={<FriendsActivityPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
