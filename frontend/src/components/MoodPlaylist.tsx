@@ -218,8 +218,11 @@ const MoodPlaylist = () => {
       if (currentSong?._id === song._id) {
         togglePlay();
       } else {
-        const songIndex = songs.findIndex((s: Song) => s._id === song._id);
-        playAlbum(songs, songIndex);
+        const songIndex = songs.findIndex((s) => s._id === song._id);
+        playAlbum(songs.map(s => ({
+          ...s,
+          albumId: s.albumId || undefined
+        })), songIndex);
       }
     } catch (error) {
       console.error('Error playing song:', error);

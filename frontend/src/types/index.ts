@@ -12,6 +12,7 @@ export interface Song {
 }
 
 export interface Album {
+	releaseYear: ReactNode;
 	_id: string;
 	title: string;
 	artist: string;

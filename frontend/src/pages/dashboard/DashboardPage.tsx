@@ -5,7 +5,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUser } from "@clerk/clerk-react";
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import { useMusicStore } from "@/stores/useMusicStore";
-import { Song } from "@/types";
 
 interface DashboardStats {
   hoursListened: number;
