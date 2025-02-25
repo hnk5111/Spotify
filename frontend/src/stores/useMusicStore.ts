@@ -23,6 +23,7 @@ interface MusicStore {
 	fetchSongs: () => Promise<void>;
 	deleteSong: (id: string) => Promise<void>;
 	deleteAlbum: (id: string) => Promise<void>;
+	toggleLike: (id: string) => Promise<void>;
 }
 
 export const useMusicStore = create<MusicStore>((set) => ({
@@ -39,6 +40,21 @@ export const useMusicStore = create<MusicStore>((set) => ({
 		totalAlbums: 0,
 		totalUsers: 0,
 		totalArtists: 0,
+	},
+
+	toggleLike: async (id) => {
+		try {
+			const response = await axiosInstance.post(`/songs/${id}/toggle-like`);
+			set((state) => ({
+				songs: state.songs.map((song) =>
+					song._id === id ? { ...song, isLiked: response.data.isLiked } : song
+				),
+			}));
+			toast.success(response.data.isLiked ? "Added to Liked Songs" : "Removed from Liked Songs");
+		} catch (error: any) {
+			console.error("Error toggling like:", error);
+			toast.error("Failed to update like status");
+		}
 	},
 
 	deleteSong: async (id) => {

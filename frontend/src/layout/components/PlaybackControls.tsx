@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useMusicStore } from "@/stores/useMusicStore";
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -126,8 +127,7 @@ export const PlaybackControls = () => {
 
   const handleAddToLikedSongs = () => {
     if (!currentSong) return;
-    // Add your liked songs logic here
-    toast.success("Added to Liked Songs");
+    useMusicStore.getState().toggleLike(currentSong._id);
   };
 
   const handleAddToPlaylist = () => {

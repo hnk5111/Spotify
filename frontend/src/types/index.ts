@@ -2,10 +2,11 @@ export interface Song {
 	_id: string;
 	title: string;
 	artist: string;
-	albumId: string | null;
+	albumId?: string;
 	imageUrl: string;
 	audioUrl: string;
 	duration: number;
+	isLiked?: boolean;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -15,8 +16,9 @@ export interface Album {
 	title: string;
 	artist: string;
 	imageUrl: string;
-	releaseYear: number;
 	songs: Song[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Stats {
