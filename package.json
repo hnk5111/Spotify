@@ -17,6 +17,7 @@
 		"tailwind-scrollbar": "^4.0.0"
 	},
 	"devDependencies": {
+		"@types/node": "^22.13.5",
 		"@types/prismjs": "^1.26.5"
 	}
 }
