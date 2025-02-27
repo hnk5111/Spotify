@@ -2,7 +2,7 @@ import PlaylistSkeleton from "@/components/skeletons/PlaylistSkeleton";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMusicStore } from "@/stores/useMusicStore";
-import { SignedIn, SignedOut, UserButton, useClerk } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useClerk } from "@clerk/clerk-react";
 import { HomeIcon, Library, MessageCircle, Users, Heart, Bell, User, ChevronDown, ChevronRight, LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -53,13 +53,13 @@ const LeftSidebar = ({ onNavigate }: LeftSidebarProps) => {
       {/* Navigation menu */}
       <div className="rounded-lg bg-card/50 p-4 border border-border/50 shadow-sm">
         <div className="space-y-2">
-          <UserButton
+          {/* <UserButton
             appearance={{
               elements: {
                 avatarBox: "h-10 w-10 lg:hidden",
               },
             }}
-          />
+          /> */}
 
           <SignedOut>
             <div className="flex flex-col items-center gap-4 py-8">

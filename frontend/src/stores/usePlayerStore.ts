@@ -8,6 +8,8 @@ interface PlayerStore {
 	queue: Song[];
 	playedSongs: Song[];
 	currentIndex: number;
+	progress: number;
+	duration: number;
 
 	initializeQueue: (songs: Song[]) => void;
 	playAlbum: (songs: Song[], startIndex?: number) => void;
@@ -15,6 +17,8 @@ interface PlayerStore {
 	togglePlay: () => void;
 	playNext: () => void;
 	playPrevious: () => void;
+	setProgress: (time: number) => void;
+	setDuration: (time: number) => void;
 }
 
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
@@ -23,6 +27,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 	queue: [],
 	playedSongs: [],
 	currentIndex: -1,
+	progress: 0,
+	duration: 0,
 
 	initializeQueue: (songs: Song[]) => {
 		const currentSong = get().currentSong || songs[0];
@@ -33,6 +39,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 			currentSong: currentSong,
 			currentIndex: currentIndex !== -1 ? currentIndex : 0,
 			playedSongs: currentSong ? [currentSong] : [],
+			progress: 0,
+			duration: currentSong?.duration || 0,
 		});
 	},
 
@@ -55,6 +63,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 			currentIndex: startIndex,
 			isPlaying: true,
 			playedSongs: [song],
+			progress: 0,
+			duration: song.duration || 0,
 		});
 	},
 
@@ -75,6 +85,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 			isPlaying: true,
 			currentIndex: songIndex !== -1 ? songIndex : state.currentIndex,
 			playedSongs: [...state.playedSongs, song],
+			progress: 0,
+			duration: song.duration || 0,
 		}));
 	},
 
@@ -116,6 +128,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				currentIndex: nextIndex,
 				isPlaying: true,
 				playedSongs: currentSong ? [...state.playedSongs, nextSong] : [nextSong],
+				progress: 0,
+				duration: nextSong.duration || 0,
 			}));
 		} else {
 			// No next song, loop back to the first song
@@ -135,6 +149,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 					currentIndex: 0,
 					isPlaying: true,
 					playedSongs: currentSong ? [...state.playedSongs, firstSong] : [firstSong],
+					progress: 0,
+					duration: firstSong.duration || 0,
 				}));
 			} else {
 				set({ isPlaying: false });
@@ -170,6 +186,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				currentIndex: prevIndex,
 				isPlaying: true,
 				playedSongs: currentSong ? [...state.playedSongs, prevSong] : [prevSong],
+				progress: 0,
+				duration: prevSong.duration || 0,
 			}));
 		} else {
 			// If at the start, loop to the last song
@@ -189,6 +207,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 					currentIndex: queue.length - 1,
 					isPlaying: true,
 					playedSongs: currentSong ? [...state.playedSongs, lastSong] : [lastSong],
+					progress: 0,
+					duration: lastSong.duration || 0,
 				}));
 			} else {
 				set({ isPlaying: false });
@@ -202,5 +222,13 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				}
 			}
 		}
+	},
+
+	setProgress: (time: number) => {
+		set({ progress: time });
+	},
+
+	setDuration: (time: number) => {
+		set({ duration: time });
 	},
 }));

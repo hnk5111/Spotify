@@ -18,10 +18,25 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useMusicStore } from "@/stores/useMusicStore";
+import { usePlaylistStore } from "@/stores/usePlaylistStore";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SongDetailsModal } from "@/components/SongDetailsModal";
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -31,10 +46,14 @@ const formatTime = (seconds: number) => {
 
 export const PlaybackControls = () => {
   const { currentSong, isPlaying, togglePlay, playNext, playPrevious } = usePlayerStore();
+  const { playlists, createPlaylist, addSongToPlaylist } = usePlaylistStore();
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(75);
-  const progressInterval = useRef<NodeJS.Timeout | null>(null);
+  const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSongDetailsOpen, setIsSongDetailsOpen] = useState(false);
+  const progressInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     // Clear existing interval when song changes
@@ -130,188 +149,268 @@ export const PlaybackControls = () => {
     useMusicStore.getState().toggleLike(currentSong._id);
   };
 
-  const handleAddToPlaylist = () => {
+  const handleCreateAndAddToPlaylist = () => {
+    if (newPlaylistName.trim() && currentSong) {
+      createPlaylist(newPlaylistName.trim(), currentSong._id);
+      setNewPlaylistName("");
+      setIsDialogOpen(false);
+      toast.success("Created playlist and added song");
+    }
+  };
+
+  const handleAddToPlaylist = (playlistId: string) => {
     if (!currentSong) return;
-    // Add your playlist logic here
-    toast.success("Added to Playlist");
+    addSongToPlaylist(playlistId, currentSong);
+    toast.success("Added to playlist");
   };
 
   return (
-    <footer className="h-auto sm:h-24 bg-background border-t border-border px-4 shadow-sm">
-      <div className="flex flex-col sm:flex-row justify-between items-center h-full max-w-[1800px] mx-auto">
-        {/* Mobile Song Details and Controls */}
-        {currentSong && (
-          <div className="w-full sm:hidden py-2 px-2">
-            <div className="flex items-center gap-3">
-              <img
-                src={currentSong.imageUrl}
-                alt={currentSong.title}
-                className="w-12 h-12 object-cover rounded-lg shadow-sm"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="font-medium truncate text-foreground">
-                  {currentSong.title}
-                </div>
-                <div className="text-sm text-muted-foreground truncate">
-                  {currentSong.artist}
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Slider */}
-            <div className="mt-3 flex flex-col w-full px-1">
-              <Slider
-                value={[progress]}
-                max={duration || 100}
-                step={1}
-                className="w-full hover:cursor-grab active:cursor-grabbing"
-                onValueChange={handleSeek}
-              />
-              <div className="flex justify-between mt-1">
-                <div className="text-xs text-muted-foreground">
-                  {formatTime(progress)}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {formatTime(duration)}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Desktop Song Details */}
-        <div className="hidden sm:flex items-center gap-4 min-w-[180px] w-[30%]">
+    <>
+      <footer className="h-auto sm:h-24 bg-black/90 border-t border-white/10 px-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center h-full max-w-[1800px] mx-auto">
+          {/* Mobile Song Details and Controls */}
           {currentSong && (
-            <>
-              <img
-                src={currentSong.imageUrl}
-                alt={currentSong.title}
-                className="w-14 h-14 object-cover rounded-lg shadow-sm"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="font-medium truncate hover:underline cursor-pointer text-foreground">
-                  {currentSong.title}
-                </div>
-                <div className="text-sm text-muted-foreground truncate hover:underline cursor-pointer">
-                  {currentSong.artist}
+            <div className="w-full sm:hidden py-2 px-2">
+              <div className="flex items-center gap-3">
+                <img
+                  src={currentSong.imageUrl}
+                  alt={currentSong.title}
+                  className="w-12 h-12 object-cover rounded-md shadow-md"
+                />
+                <div className="flex-1 min-w-0">
+                  <div 
+                    className="font-medium truncate text-white hover:underline cursor-pointer"
+                    onClick={() => setIsSongDetailsOpen(true)}
+                  >
+                    {currentSong.title}
+                  </div>
+                  <div className="text-sm text-white/60 truncate">
+                    {currentSong.artist}
+                  </div>
                 </div>
               </div>
-            </>
-          )}
-        </div>
 
-        {/* Player Controls */}
-        <div className="flex flex-col items-center gap-2 flex-1 max-w-full sm:max-w-[45%] py-2">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="sm:inline-flex text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Shuffle className="h-4 w-4" />
-            </Button>
-
-            <Button
-              size="icon"
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              onClick={playPrevious}
-              disabled={!currentSong}
-            >
-              <SkipBack className="h-4 w-4" />
-            </Button>
-
-            <Button
-              size="icon"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full h-8 w-8 transition-all duration-200 shadow-sm"
-              onClick={togglePlay}
-              disabled={!currentSong}
-            >
-              {isPlaying ? (
-                <Pause className="h-5 w-5" />
-              ) : (
-                <Play className="h-5 w-5" />
-              )}
-            </Button>
-
-            <Button
-              size="icon"
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              onClick={playNext}
-              disabled={!currentSong}
-            >
-              <SkipForward className="h-4 w-4" />
-            </Button>
-
-            <Button
-              size="icon"
-              variant="ghost"
-              className="sm:inline-flex text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Repeat className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-2 w-full">
-            <div className="text-xs text-muted-foreground">
-              {formatTime(progress)}
+              {/* Mobile Slider */}
+              <div className="mt-3 flex flex-col w-full px-1">
+                <div className="relative w-full h-1 bg-white/10 rounded-full">
+                  <Slider
+                    value={[progress]}
+                    max={duration || 100}
+                    step={1}
+                    className="absolute inset-0 w-full hover:cursor-grab active:cursor-grabbing"
+                    onValueChange={handleSeek}
+                  />
+                </div>
+                <div className="flex justify-between mt-1">
+                  <div className="text-xs text-white/60">
+                    {formatTime(progress)}
+                  </div>
+                  <div className="text-xs text-white/60">
+                    {formatTime(duration)}
+                  </div>
+                </div>
+              </div>
             </div>
-            <Slider
-              value={[progress]}
-              max={duration || 100}
-              step={1}
-              className="w-full hover:cursor-grab active:cursor-grabbing"
-              onValueChange={handleSeek}
-            />
-            <div className="text-xs text-zinc-400">{formatTime(duration)}</div>
-          </div>
-        </div>
+          )}
 
-        {/* volume controls */}
-        <div className="hidden sm:flex items-center gap-4 min-w-[180px] w-[30%] justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          {/* Desktop Song Details */}
+          <div className="hidden sm:flex items-center gap-4 min-w-[180px] w-[30%]">
+            {currentSong && (
+              <>
+                <img
+                  src={currentSong.imageUrl}
+                  alt={currentSong.title}
+                  className="w-14 h-14 object-cover rounded-md shadow-md"
+                />
+                <div className="flex-1 min-w-0">
+                  <div 
+                    className="font-medium truncate hover:underline cursor-pointer text-white"
+                    onClick={() => setIsSongDetailsOpen(true)}
+                  >
+                    {currentSong.title}
+                  </div>
+                  <div className="text-sm text-white/60 truncate hover:underline cursor-pointer">
+                    {currentSong.artist}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Player Controls */}
+          <div className="flex flex-col items-center gap-2 flex-1 max-w-full sm:max-w-[45%] py-2">
+            <div className="flex items-center gap-4 sm:gap-6">
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-white/60 hover:text-white transition-colors"
+              >
+                <Shuffle className="h-4 w-4" />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-white/60 hover:text-white transition-colors"
+                onClick={playPrevious}
                 disabled={!currentSong}
               >
-                <MoreHorizontal className="h-4 w-4" />
+                <SkipBack className="h-4 w-4" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleAddToLikedSongs}>
-                <Heart className="h-4 w-4 mr-2" />
-                Add to Liked Songs
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleAddToPlaylist}>
-                <ListPlus className="h-4 w-4 mr-2" />
-                Add to Playlist
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
 
-          <div className="flex items-center gap-2">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="hover:text-white text-zinc-400"
-            >
-              <Volume1 className="h-4 w-4" />
-            </Button>
+              <Button
+                size="icon"
+                className="bg-white hover:bg-white/90 text-black rounded-full h-8 w-8 transition-all duration-200 shadow-md flex items-center justify-center"
+                onClick={togglePlay}
+                disabled={!currentSong}
+              >
+                {isPlaying ? (
+                  <Pause className="h-5 w-5" />
+                ) : (
+                  <Play className="h-5 w-5" />
+                )}
+              </Button>
 
-            <Slider
-              value={[volume]}
-              max={100}
-              step={1}
-              className="w-24 hover:cursor-grab active:cursor-grabbing"
-              onValueChange={handleVolumeChange}
-            />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-white/60 hover:text-white transition-colors"
+                onClick={playNext}
+                disabled={!currentSong}
+              >
+                <SkipForward className="h-4 w-4" />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-white/60 hover:text-white transition-colors"
+              >
+                <Repeat className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-2 w-full">
+              <div className="text-xs text-white/60">
+                {formatTime(progress)}
+              </div>
+              <div className="relative flex-1 h-1 bg-white/10 rounded-full">
+                <Slider
+                  value={[progress]}
+                  max={duration || 100}
+                  step={1}
+                  className="absolute inset-0 w-full hover:cursor-grab active:cursor-grabbing"
+                  onValueChange={handleSeek}
+                />
+              </div>
+              <div className="text-xs text-white/60">{formatTime(duration)}</div>
+            </div>
+          </div>
+
+          {/* Volume Controls */}
+          <div className="hidden sm:flex items-center gap-4 min-w-[180px] w-[30%] justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="text-white/60 hover:text-white transition-colors"
+                  disabled={!currentSong}
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-zinc-900 border-white/10">
+                <DropdownMenuItem 
+                  onClick={handleAddToLikedSongs}
+                  className="text-white/80 focus:text-white focus:bg-white/10"
+                >
+                  <Heart className="h-4 w-4 mr-2" />
+                  Add to Liked Songs
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className="text-white/80 focus:text-white focus:bg-white/10">
+                    <ListPlus className="h-4 w-4 mr-2" />
+                    Add to Playlist
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-zinc-900 border-white/10">
+                    {playlists.map((playlist) => (
+                      <DropdownMenuItem
+                        key={playlist.id}
+                        onClick={() => handleAddToPlaylist(playlist.id)}
+                        className="text-white/80 focus:text-white focus:bg-white/10"
+                      >
+                        {playlist.name}
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator className="bg-white/10" />
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogTrigger asChild>
+                        <DropdownMenuItem 
+                          onSelect={(e) => e.preventDefault()}
+                          className="text-white/80 focus:text-white focus:bg-white/10"
+                        >
+                          Create New Playlist
+                        </DropdownMenuItem>
+                      </DialogTrigger>
+                      <DialogContent className="bg-zinc-900 border-white/10">
+                        <DialogHeader>
+                          <DialogTitle className="text-white">Create New Playlist</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 pt-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="new-playlist-name" className="text-white/80">Playlist Name</Label>
+                            <Input
+                              id="new-playlist-name"
+                              placeholder="Enter playlist name"
+                              value={newPlaylistName}
+                              onChange={(e) => setNewPlaylistName(e.target.value)}
+                              className="bg-white/5 border-white/10 text-white"
+                            />
+                          </div>
+                          <Button
+                            onClick={handleCreateAndAddToPlaylist}
+                            className="w-full bg-white text-black hover:bg-white/90"
+                          >
+                            Create and Add Song
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <div className="flex items-center gap-2">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-white/60 hover:text-white transition-colors"
+              >
+                <Volume1 className="h-4 w-4" />
+              </Button>
+
+              <div className="relative w-24 h-1 bg-white/10 rounded-full">
+                <Slider
+                  value={[volume]}
+                  max={100}
+                  step={1}
+                  className="absolute inset-0 w-full hover:cursor-grab active:cursor-grabbing"
+                  onValueChange={handleVolumeChange}
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+
+      {/* Song Details Modal */}
+      <SongDetailsModal 
+        isOpen={isSongDetailsOpen} 
+        onClose={() => setIsSongDetailsOpen(false)} 
+      />
+    </>
   );
 };

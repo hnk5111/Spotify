@@ -1,6 +1,9 @@
 import { ReactNode } from "react";
 
 export interface Song {
+  genre: any;
+  playedAt: string;
+  userId: string | undefined;
 	_id: string;
 	title: string;
 	artist: string;

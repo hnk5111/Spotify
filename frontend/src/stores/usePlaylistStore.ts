@@ -1,38 +1,69 @@
 import { create } from "zustand";
-
-interface Song {
-  _id: string;
-  title: string;
-  artist: string;
-  imageUrl: string;
-  audioUrl: string;
-}
+import { Song } from "@/types";
 
 interface Playlist {
-  _id: string;
-  title: string;
-  imageUrl: string;
+  id: string;
+  name: string;
   songs: Song[];
+  createdAt: Date;
+  userId: string;
 }
 
 interface PlaylistStore {
   playlists: Playlist[];
-  currentPlaylist: Playlist | null;
-  setPlaylists: (playlists: Playlist[]) => void;
-  setCurrentPlaylist: (playlist: Playlist | null) => void;
-  addPlaylist: (playlist: Playlist) => void;
-  removePlaylist: (playlistId: string) => void;
+  createPlaylist: (name: string, userId: string) => void;
+  addSongToPlaylist: (playlistId: string, song: Song) => void;
+  removeSongFromPlaylist: (playlistId: string, songId: string) => void;
+  deletePlaylist: (playlistId: string) => void;
 }
 
 export const usePlaylistStore = create<PlaylistStore>((set) => ({
   playlists: [],
-  currentPlaylist: null,
-  setPlaylists: (playlists) => set({ playlists }),
-  setCurrentPlaylist: (playlist) => set({ currentPlaylist: playlist }),
-  addPlaylist: (playlist) => 
-    set((state) => ({ playlists: [...state.playlists, playlist] })),
-  removePlaylist: (playlistId) =>
+
+  createPlaylist: (name: string, userId: string) => {
     set((state) => ({
-      playlists: state.playlists.filter((p) => p._id !== playlistId),
-    })),
+      playlists: [
+        ...state.playlists,
+        {
+          id: crypto.randomUUID(),
+          name,
+          songs: [],
+          createdAt: new Date(),
+          userId,
+        },
+      ],
+    }));
+  },
+
+  addSongToPlaylist: (playlistId: string, song: Song) => {
+    set((state) => ({
+      playlists: state.playlists.map((playlist) =>
+        playlist.id === playlistId
+          ? {
+              ...playlist,
+              songs: [...playlist.songs, song],
+            }
+          : playlist
+      ),
+    }));
+  },
+
+  removeSongFromPlaylist: (playlistId: string, songId: string) => {
+    set((state) => ({
+      playlists: state.playlists.map((playlist) =>
+        playlist.id === playlistId
+          ? {
+              ...playlist,
+              songs: playlist.songs.filter((song) => song._id !== songId),
+            }
+          : playlist
+      ),
+    }));
+  },
+
+  deletePlaylist: (playlistId: string) => {
+    set((state) => ({
+      playlists: state.playlists.filter((playlist) => playlist.id !== playlistId),
+    }));
+  },
 })); 
