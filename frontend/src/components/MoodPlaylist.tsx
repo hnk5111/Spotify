@@ -221,7 +221,10 @@ const MoodPlaylist = () => {
         const songIndex = songs.findIndex((s) => s._id === song._id);
         playAlbum(songs.map(s => ({
           ...s,
-          albumId: s.albumId || undefined
+          albumId: s.albumId || undefined,
+          genre: '',
+          playedAt: new Date().toISOString(),
+          userId: ''
         })), songIndex);
       }
     } catch (error) {

@@ -6,7 +6,6 @@ import MainLayout from "./layout/MainLayout";
 import ChatPage from "./pages/chat/ChatPage";
 import AlbumPage from "./pages/album/AlbumPage";
 import AdminPage from "./pages/admin/AdminPage";
-import ArtistsPage from "./pages/artists/ArtistsPage";
 
 import { Toaster } from "react-hot-toast";
 import NotFoundPage from "./pages/404/NotFoundPage";
@@ -45,7 +44,6 @@ function App() {
           <Route path="/friends" element={<FriendsActivityPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/mood" element={<MoodPlaylist />} />
-          <Route path="/artists" element={<ArtistsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
