@@ -224,7 +224,8 @@ const MoodPlaylist = () => {
           albumId: s.albumId || undefined,
           genre: '',
           playedAt: new Date().toISOString(),
-          userId: ''
+          userId: '',
+          videoUrl: s.audioUrl // Add videoUrl field to match Song type
         })), songIndex);
       }
     } catch (error) {

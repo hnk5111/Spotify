@@ -19,6 +19,8 @@ interface PlayerStore {
 	playPrevious: () => void;
 	setProgress: (time: number) => void;
 	setDuration: (time: number) => void;
+	setQueue: (songs: Song[]) => void;
+	removeFromQueue: (index: number) => void;
 }
 
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
@@ -33,7 +35,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 	initializeQueue: (songs: Song[]) => {
 		const currentSong = get().currentSong || songs[0];
 		const currentIndex = songs.findIndex(song => song._id === currentSong._id);
-		
+
 		set({
 			queue: songs,
 			currentSong: currentSong,
@@ -135,7 +137,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 			// No next song, loop back to the first song
 			if (queue.length > 0) {
 				const firstSong = queue[0];
-				
+
 				const socket = useChatStore.getState().socket;
 				if (socket.auth) {
 					socket.emit("update_activity", {
@@ -154,7 +156,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				}));
 			} else {
 				set({ isPlaying: false });
-				
+
 				const socket = useChatStore.getState().socket;
 				if (socket.auth) {
 					socket.emit("update_activity", {
@@ -193,7 +195,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 			// If at the start, loop to the last song
 			if (queue.length > 0) {
 				const lastSong = queue[queue.length - 1];
-				
+
 				const socket = useChatStore.getState().socket;
 				if (socket.auth) {
 					socket.emit("update_activity", {
@@ -212,7 +214,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				}));
 			} else {
 				set({ isPlaying: false });
-				
+
 				const socket = useChatStore.getState().socket;
 				if (socket.auth) {
 					socket.emit("update_activity", {
@@ -230,5 +232,15 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 
 	setDuration: (time: number) => {
 		set({ duration: time });
+	},
+
+	setQueue: (songs: Song[]) => {
+		set({ queue: songs });
+	},
+
+	removeFromQueue: (index: number) => {
+		set((state) => ({
+			queue: state.queue.filter((_, i) => i !== index),
+		}));
 	},
 }));

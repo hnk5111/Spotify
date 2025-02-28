@@ -137,6 +137,7 @@ const Topbar = () => {
                             title: song.name,
                             artist: song.artists?.all?.[0]?.name || "Unknown Artist",
                             genre: "",
+                            videoUrl: "",
                             playedAt: "",
                             userId: "",
                             imageUrl:
@@ -254,6 +255,7 @@ const Topbar = () => {
                           title: song.name,
                           artist: song.artists?.all?.[0]?.name || "Unknown Artist",
                           genre: "",
+                          videoUrl: "",
                           playedAt: "",
                           userId: "",
                           imageUrl:

@@ -1,17 +1,20 @@
 import { ReactNode } from "react";
 
 export interface Song {
-  genre: any;
-  playedAt: string;
-  userId: string | undefined;
+	videoUrl: string | null;
+	genre: string;
+	playedAt: string;
+	userId: string | undefined;
 	_id: string;
 	title: string;
 	artist: string;
 	albumId?: string;
 	imageUrl: string;
 	audioUrl: string;
+	url?: string;
 	duration: number;
 	isLiked?: boolean;
+	lyrics?: string;
 	createdAt: string;
 	updatedAt: string;
 }
