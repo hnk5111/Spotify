@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import { Song } from "@/types";
+import { Key, ReactNode } from "react";
 
 interface Playlist {
+  title: ReactNode;
+  _id: Key | null | undefined;
   id: string;
   name: string;
   songs: Song[];
@@ -19,13 +22,14 @@ interface PlaylistStore {
 
 export const usePlaylistStore = create<PlaylistStore>((set) => ({
   playlists: [],
-
   createPlaylist: (name: string, userId: string) => {
     set((state) => ({
       playlists: [
         ...state.playlists,
         {
           id: crypto.randomUUID(),
+          _id: crypto.randomUUID(),
+          title: name,
           name,
           songs: [],
           createdAt: new Date(),

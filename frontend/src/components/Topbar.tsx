@@ -135,8 +135,10 @@ const Topbar = () => {
                           song={{
                             _id: song.id,
                             title: song.name,
-                            artist:
-                              song.artists?.all?.[0]?.name || "Unknown Artist",
+                            artist: song.artists?.all?.[0]?.name || "Unknown Artist",
+                            genre: "",
+                            playedAt: "",
+                            userId: "",
                             imageUrl:
                               song.image?.[2]?.url ||
                               song.image?.[1]?.url ||
@@ -250,8 +252,10 @@ const Topbar = () => {
                         song={{
                           _id: song.id,
                           title: song.name,
-                          artist:
-                            song.artists?.all?.[0]?.name || "Unknown Artist",
+                          artist: song.artists?.all?.[0]?.name || "Unknown Artist",
+                          genre: "",
+                          playedAt: "",
+                          userId: "",
                           imageUrl:
                             song.image?.[2]?.url ||
                             song.image?.[1]?.url ||
