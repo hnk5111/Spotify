@@ -70,7 +70,6 @@ export const SongDetailsModal = ({
     setProgress,
     setDuration,
     queue,
-    setQueue,
     removeFromQueue,
   } = usePlayerStore();
   const toggleLike = useMusicStore((state) => state.toggleLike);
