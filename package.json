@@ -1,15 +1,5 @@
 {
-  "name": "spotify-clone",
-  "version": "1.0.0",
-  "description": "A Spotify clone application",
-  "scripts": {
-    "install-all": "cd frontend && npm install && cd ../backend && npm install",
-    "build": "cd frontend && npm run build",
-    "start": "cd backend && npm start",
-    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\""
-  },
   "devDependencies": {
-    "@types/prismjs": "^1.26.5",
-    "concurrently": "^8.2.2"
+    "@types/prismjs": "^1.26.5"
   }
 }
