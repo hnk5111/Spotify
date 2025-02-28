@@ -1,23 +1,5 @@
 {
-	"name": "spotify-clone",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
-		"start": "npm start --prefix backend"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"dependencies": {
-		"axios": "^1.7.9",
-		"emoji-picker-react": "^4.12.0",
-		"svix": "^1.57.0",
-		"tailwind-scrollbar": "^4.0.0"
-	},
-	"devDependencies": {
-		"@types/node": "^22.13.5",
-		"@types/prismjs": "^1.26.5"
-	}
+  "devDependencies": {
+    "@types/prismjs": "^1.26.5"
+  }
 }
