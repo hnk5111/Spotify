@@ -12,6 +12,7 @@ interface MusicStore {
 	featuredSongs: Song[];
 	madeForYouSongs: Song[];
 	trendingSongs: Song[];
+	likedSongs: Song[];
 	stats: Stats;
 
 	fetchAlbums: () => Promise<void>;
@@ -19,6 +20,7 @@ interface MusicStore {
 	fetchFeaturedSongs: () => Promise<void>;
 	fetchMadeForYouSongs: () => Promise<void>;
 	fetchTrendingSongs: () => Promise<void>;
+	fetchLikedSongs: () => Promise<void>;
 	fetchStats: () => Promise<void>;
 	fetchSongs: () => Promise<void>;
 	deleteSong: (id: string) => Promise<void>;
@@ -35,6 +37,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
 	madeForYouSongs: [],
 	featuredSongs: [],
 	trendingSongs: [],
+	likedSongs: [],
 	stats: {
 		totalSongs: 0,
 		totalAlbums: 0,
@@ -42,18 +45,53 @@ export const useMusicStore = create<MusicStore>((set) => ({
 		totalArtists: 0,
 	},
 
+	fetchLikedSongs: async () => {
+		try {
+			const response = await axiosInstance.get('/songs/liked');
+			set({ likedSongs: response.data });
+		} catch (error) {
+			console.error('Error fetching liked songs:', error);
+			toast.error('Failed to fetch liked songs');
+		}
+	},
+
 	toggleLike: async (id) => {
 		try {
 			const response = await axiosInstance.post(`/songs/${id}/toggle-like`);
+			
+			// Update the song in all relevant lists
 			set((state) => ({
 				songs: state.songs.map((song) =>
-					song._id === id ? { ...song, isLiked: response.data.isLiked } : song
+					song._id === id ? { ...song, isLiked: response.data.isLiked, userId: response.data.userId } : song
+				),
+				featuredSongs: state.featuredSongs.map((song) =>
+					song._id === id ? { ...song, isLiked: response.data.isLiked, userId: response.data.userId } : song
+				),
+				madeForYouSongs: state.madeForYouSongs.map((song) =>
+					song._id === id ? { ...song, isLiked: response.data.isLiked, userId: response.data.userId } : song
+				),
+				trendingSongs: state.trendingSongs.map((song) =>
+					song._id === id ? { ...song, isLiked: response.data.isLiked, userId: response.data.userId } : song
 				),
 			}));
+
+			// Refresh liked songs after toggling
+			const likedSongsResponse = await axiosInstance.get('/songs/liked');
+			set({ likedSongs: likedSongsResponse.data });
+
 			toast.success(response.data.isLiked ? "Added to Liked Songs" : "Removed from Liked Songs");
 		} catch (error: any) {
 			console.error("Error toggling like:", error);
-			toast.error("Failed to update like status");
+			const errorMessage = error.response?.data?.message || "Failed to update like status";
+			toast.error(errorMessage);
+			
+			// Refresh songs to ensure UI is in sync with server
+			try {
+				const response = await axiosInstance.get("/songs");
+				set({ songs: response.data });
+			} catch (refreshError) {
+				console.error("Error refreshing songs:", refreshError);
+			}
 		}
 	},
 

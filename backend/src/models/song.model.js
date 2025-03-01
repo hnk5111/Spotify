@@ -31,6 +31,10 @@ const songSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		userId: {
+			type: String,
+			required: false,
+		},
 	},
 	{ timestamps: true }
 );

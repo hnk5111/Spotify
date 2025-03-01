@@ -86,7 +86,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 			currentSong: song,
 			isPlaying: true,
 			currentIndex: songIndex !== -1 ? songIndex : state.currentIndex,
-			playedSongs: [...state.playedSongs, song],
+			playedSongs: [...state.playedSongs, { ...song, playedAt: new Date().toISOString() }],
 			progress: 0,
 			duration: song.duration || 0,
 		}));
@@ -94,8 +94,8 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 
 	togglePlay: () => {
 		const willStartPlaying = !get().isPlaying;
-
 		const currentSong = get().currentSong;
+
 		const socket = useChatStore.getState().socket;
 		if (socket.auth) {
 			socket.emit("update_activity", {
@@ -129,7 +129,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				currentSong: nextSong,
 				currentIndex: nextIndex,
 				isPlaying: true,
-				playedSongs: currentSong ? [...state.playedSongs, nextSong] : [nextSong],
+				playedSongs: currentSong ? [...state.playedSongs, { ...nextSong, playedAt: new Date().toISOString() }] : [{ ...nextSong, playedAt: new Date().toISOString() }],
 				progress: 0,
 				duration: nextSong.duration || 0,
 			}));
@@ -150,7 +150,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 					currentSong: firstSong,
 					currentIndex: 0,
 					isPlaying: true,
-					playedSongs: currentSong ? [...state.playedSongs, firstSong] : [firstSong],
+					playedSongs: currentSong ? [...state.playedSongs, { ...firstSong, playedAt: new Date().toISOString() }] : [{ ...firstSong, playedAt: new Date().toISOString() }],
 					progress: 0,
 					duration: firstSong.duration || 0,
 				}));
@@ -187,7 +187,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 				currentSong: prevSong,
 				currentIndex: prevIndex,
 				isPlaying: true,
-				playedSongs: currentSong ? [...state.playedSongs, prevSong] : [prevSong],
+				playedSongs: currentSong ? [...state.playedSongs, { ...prevSong, playedAt: new Date().toISOString() }] : [{ ...prevSong, playedAt: new Date().toISOString() }],
 				progress: 0,
 				duration: prevSong.duration || 0,
 			}));
@@ -208,7 +208,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 					currentSong: lastSong,
 					currentIndex: queue.length - 1,
 					isPlaying: true,
-					playedSongs: currentSong ? [...state.playedSongs, lastSong] : [lastSong],
+					playedSongs: currentSong ? [...state.playedSongs, { ...lastSong, playedAt: new Date().toISOString() }] : [{ ...lastSong, playedAt: new Date().toISOString() }],
 					progress: 0,
 					duration: lastSong.duration || 0,
 				}));

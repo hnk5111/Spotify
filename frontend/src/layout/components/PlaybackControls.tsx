@@ -166,7 +166,7 @@ export const PlaybackControls = () => {
 
   return (
     <>
-      <footer className="h-auto sm:h-24 bg-black/90 border-t border-white/10 px-4">
+      <footer className="h-auto sm:h-24 bg-background/95 border-t border-border px-4">
         <div className="flex flex-col sm:flex-row justify-between items-center h-full max-w-[1800px] mx-auto">
           {/* Mobile Song Details and Controls */}
           {currentSong && (
@@ -179,12 +179,12 @@ export const PlaybackControls = () => {
                 />
                 <div className="flex-1 min-w-0">
                   <div 
-                    className="font-medium truncate text-white hover:underline cursor-pointer"
+                    className="font-medium truncate text-foreground hover:underline cursor-pointer"
                     onClick={() => setIsSongDetailsOpen(true)}
                   >
                     {currentSong.title}
                   </div>
-                  <div className="text-sm text-white/60 truncate">
+                  <div className="text-sm text-muted-foreground truncate">
                     {currentSong.artist}
                   </div>
                 </div>
@@ -192,7 +192,7 @@ export const PlaybackControls = () => {
 
               {/* Mobile Slider */}
               <div className="mt-3 flex flex-col w-full px-1">
-                <div className="relative w-full h-1 bg-white/10 rounded-full">
+                <div className="relative w-full h-1 bg-secondary rounded-full">
                   <Slider
                     value={[progress]}
                     max={duration || 100}
@@ -202,10 +202,10 @@ export const PlaybackControls = () => {
                   />
                 </div>
                 <div className="flex justify-between mt-1">
-                  <div className="text-xs text-white/60">
+                  <div className="text-xs text-muted-foreground">
                     {formatTime(progress)}
                   </div>
-                  <div className="text-xs text-white/60">
+                  <div className="text-xs text-muted-foreground">
                     {formatTime(duration)}
                   </div>
                 </div>
@@ -224,12 +224,12 @@ export const PlaybackControls = () => {
                 />
                 <div className="flex-1 min-w-0">
                   <div 
-                    className="font-medium truncate hover:underline cursor-pointer text-white"
+                    className="font-medium truncate hover:underline cursor-pointer text-foreground"
                     onClick={() => setIsSongDetailsOpen(true)}
                   >
                     {currentSong.title}
                   </div>
-                  <div className="text-sm text-white/60 truncate hover:underline cursor-pointer">
+                  <div className="text-sm text-muted-foreground truncate hover:underline cursor-pointer">
                     {currentSong.artist}
                   </div>
                 </div>
@@ -243,7 +243,7 @@ export const PlaybackControls = () => {
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-white/60 hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Shuffle className="h-4 w-4" />
               </Button>
@@ -251,7 +251,7 @@ export const PlaybackControls = () => {
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-white/60 hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={playPrevious}
                 disabled={!currentSong}
               >
@@ -260,7 +260,7 @@ export const PlaybackControls = () => {
 
               <Button
                 size="icon"
-                className="bg-white hover:bg-white/90 text-black rounded-full h-8 w-8 transition-all duration-200 shadow-md flex items-center justify-center"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full h-8 w-8 transition-all duration-200 shadow-md flex items-center justify-center"
                 onClick={togglePlay}
                 disabled={!currentSong}
               >
@@ -274,7 +274,7 @@ export const PlaybackControls = () => {
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-white/60 hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={playNext}
                 disabled={!currentSong}
               >
@@ -284,17 +284,17 @@ export const PlaybackControls = () => {
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-white/60 hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Repeat className="h-4 w-4" />
               </Button>
             </div>
 
             <div className="hidden sm:flex items-center gap-2 w-full">
-              <div className="text-xs text-white/60">
+              <div className="text-xs text-muted-foreground">
                 {formatTime(progress)}
               </div>
-              <div className="relative flex-1 h-1 bg-white/10 rounded-full">
+              <div className="relative flex-1 h-1 bg-secondary rounded-full">
                 <Slider
                   value={[progress]}
                   max={duration || 100}
@@ -303,7 +303,7 @@ export const PlaybackControls = () => {
                   onValueChange={handleSeek}
                 />
               </div>
-              <div className="text-xs text-white/60">{formatTime(duration)}</div>
+              <div className="text-xs text-muted-foreground">{formatTime(duration)}</div>
             </div>
           </div>
 
@@ -314,64 +314,64 @@ export const PlaybackControls = () => {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="text-white/60 hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                   disabled={!currentSong}
                 >
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-zinc-900 border-white/10">
+              <DropdownMenuContent align="end" className="bg-popover border-border">
                 <DropdownMenuItem 
                   onClick={handleAddToLikedSongs}
-                  className="text-white/80 focus:text-white focus:bg-white/10"
+                  className="text-foreground/80 focus:text-foreground focus:bg-accent"
                 >
                   <Heart className="h-4 w-4 mr-2" />
                   Add to Liked Songs
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="text-white/80 focus:text-white focus:bg-white/10">
+                  <DropdownMenuSubTrigger className="text-foreground/80 focus:text-foreground focus:bg-accent">
                     <ListPlus className="h-4 w-4 mr-2" />
                     Add to Playlist
                   </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="bg-zinc-900 border-white/10">
+                  <DropdownMenuSubContent className="bg-popover border-border">
                     {playlists.map((playlist) => (
                       <DropdownMenuItem
                         key={playlist.id}
                         onClick={() => handleAddToPlaylist(playlist.id)}
-                        className="text-white/80 focus:text-white focus:bg-white/10"
+                        className="text-foreground/80 focus:text-foreground focus:bg-accent"
                       >
                         {playlist.name}
                       </DropdownMenuItem>
                     ))}
-                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuSeparator className="bg-border" />
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                       <DialogTrigger asChild>
                         <DropdownMenuItem 
                           onSelect={(e) => e.preventDefault()}
-                          className="text-white/80 focus:text-white focus:bg-white/10"
+                          className="text-foreground/80 focus:text-foreground focus:bg-accent"
                         >
                           Create New Playlist
                         </DropdownMenuItem>
                       </DialogTrigger>
-                      <DialogContent className="bg-zinc-900 border-white/10">
+                      <DialogContent className="bg-background border-border">
                         <DialogHeader>
-                          <DialogTitle className="text-white">Create New Playlist</DialogTitle>
+                          <DialogTitle className="text-foreground">Create New Playlist</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4 pt-4">
                           <div className="space-y-2">
-                            <Label htmlFor="new-playlist-name" className="text-white/80">Playlist Name</Label>
+                            <Label htmlFor="new-playlist-name" className="text-foreground/80">Playlist Name</Label>
                             <Input
                               id="new-playlist-name"
                               placeholder="Enter playlist name"
                               value={newPlaylistName}
                               onChange={(e) => setNewPlaylistName(e.target.value)}
-                              className="bg-white/5 border-white/10 text-white"
+                              className="bg-input border-input text-foreground"
                             />
                           </div>
                           <Button
                             onClick={handleCreateAndAddToPlaylist}
-                            className="w-full bg-white text-black hover:bg-white/90"
+                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                           >
                             Create and Add Song
                           </Button>
@@ -387,12 +387,12 @@ export const PlaybackControls = () => {
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-white/60 hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Volume1 className="h-4 w-4" />
               </Button>
 
-              <div className="relative w-24 h-1 bg-white/10 rounded-full">
+              <div className="relative w-24 h-1 bg-secondary rounded-full">
                 <Slider
                   value={[volume]}
                   max={100}

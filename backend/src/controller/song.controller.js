@@ -101,18 +101,51 @@ export const getMoodSongs = async (req, res) => {
 export const toggleLike = async (req, res) => {
 	try {
 		const { id } = req.params;
+		const userId = req.auth?.userId; // Get the user ID from the auth object
+
+		if (!userId) {
+			return res.status(401).json({ message: 'Unauthorized - you must be logged in' });
+		}
+
 		const song = await Song.findById(id);
 		
 		if (!song) {
 			return res.status(404).json({ message: 'Song not found' });
 		}
 
+		// Toggle like status and update userId
 		song.isLiked = !song.isLiked;
+		song.userId = song.isLiked ? userId : undefined; // Set or remove userId based on like status
+
 		await song.save();
 
-		res.json(song);
+		res.json({
+			...song.toJSON(),
+			isLiked: song.isLiked,
+			userId: song.userId
+		});
 	} catch (error) {
 		console.error('Error in toggleLike:', error);
 		res.status(500).json({ message: 'Failed to toggle like status' });
+	}
+};
+
+export const getLikedSongs = async (req, res) => {
+	try {
+		const userId = req.auth?.userId;
+
+		if (!userId) {
+			return res.status(401).json({ message: 'Unauthorized - you must be logged in' });
+		}
+
+		const likedSongs = await Song.find({ 
+			isLiked: true,
+			userId: userId 
+		}).select('title artist imageUrl audioUrl duration isLiked userId');
+
+		res.json(likedSongs);
+	} catch (error) {
+		console.error('Error in getLikedSongs:', error);
+		res.status(500).json({ message: 'Failed to fetch liked songs' });
 	}
 };
