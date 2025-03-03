@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
-import { MapPin, ZoomIn, Navigation } from 'lucide-react';
+import { MapPin,  Navigation } from 'lucide-react';
 
 const MapPage = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -78,35 +78,8 @@ const MapPage = () => {
     }
   };
 
-  const createMarker = (mapInstance: any, location: {lat: number; lng: number}, popupContent: string) => {
-    try {
-      // Remove existing marker if any
-      if (userMarker) {
-        userMarker.remove();
-      }
 
-      // Create a new marker using the correct MapmyIndia syntax
-      const marker = new (window as any).MapmyIndia.marker({
-        map: mapInstance,
-        position: {
-          lat: location.lat,
-          lng: location.lng
-        },
-        draggable: false,
-        popup: popupContent
-      });
-
-      // Store the marker reference
-      setUserMarker(marker);
-
-      return marker;
-    } catch (err) {
-      console.error('Error creating marker:', err);
-      return null;
-    }
-  };
-
-  const updateUserLocation = async (mapInstance: any, shouldZoom: boolean = true) => {
+  const updateUserLocation = async (mapInstance: any, _shouldZoom: boolean = true) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
