@@ -2,12 +2,14 @@ import { Song } from "@/types";
 import SectionGridSkeleton from "./SectionGridSkeleton";
 import { Button } from "@/components/ui/button";
 import PlayButton from "./PlayButton";
+import { motion } from "framer-motion";
 
 type SectionGridProps = {
   title: string;
   songs: Song[];
   isLoading: boolean;
 };
+
 const SectionGrid = ({ songs, title, isLoading }: SectionGridProps) => {
   if (isLoading) return <SectionGridSkeleton />;
 
@@ -26,9 +28,18 @@ const SectionGrid = ({ songs, title, isLoading }: SectionGridProps) => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {songs.map((song) => (
-          <div
+        {songs.map((song, index) => (
+          <motion.div
             key={song._id}
+            initial={{ opacity: 0 }}
+            whileInView={{ 
+              opacity: 1,
+              transition: {
+                duration: 0.5,
+                delay: window.innerWidth > 768 ? index * 0.1 : 0
+              }
+            }}
+            viewport={{ once: true, amount: 0.3 }}
             className="bg-card/50 p-4 rounded-lg hover:bg-secondary/50 
                      transition-all duration-200 group cursor-pointer
                      border border-border/50 shadow-sm hover:shadow-md"
@@ -50,10 +61,11 @@ const SectionGrid = ({ songs, title, isLoading }: SectionGridProps) => {
             <p className="text-sm text-muted-foreground truncate">
               {song.artist}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
   );
 };
+
 export default SectionGrid;

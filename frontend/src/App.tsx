@@ -48,27 +48,34 @@ function App() {
         </Route>
       </Routes>
       <Toaster
-        position="bottom-center"
+        position="bottom-right"
         toastOptions={{
-          className: "",
+          className: "bg-card/95 backdrop-blur-sm border border-border/50",
           style: {
             background: "hsl(var(--card))",
             color: "hsl(var(--card-foreground))",
             border: "1px solid hsl(var(--border))",
             fontSize: "14px",
-            boxShadow:
-              "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
           },
           success: {
             iconTheme: {
               primary: "hsl(var(--primary))",
               secondary: "hsl(var(--primary-foreground))",
             },
+            duration: 4000,
           },
           error: {
             iconTheme: {
               primary: "hsl(var(--destructive))",
               secondary: "hsl(var(--destructive-foreground))",
+            },
+            duration: 4000,
+          },
+          loading: {
+            iconTheme: {
+              primary: "hsl(var(--muted-foreground))",
+              secondary: "hsl(var(--background))",
             },
           },
         }}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, Music2, Heart, Play, Calendar } from "lucide-react";
+import { Clock , Heart, Play, Calendar } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUser } from "@clerk/clerk-react";
 import { usePlayerStore } from "@/stores/usePlayerStore";
