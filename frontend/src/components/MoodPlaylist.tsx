@@ -45,37 +45,37 @@ interface Song {
 type Mood = "happy" | "sad" | "romantic" | "party" | null;
 
 const moods = [
-  { 
-    id: "happy", 
-    icon: Smile, 
-    label: "Happy", 
+  {
+    id: "happy",
+    icon: Smile,
+    label: "Happy",
     color: "from-yellow-500/80 via-yellow-400/80 to-yellow-300/80",
     bgColor: "bg-yellow-500",
-    description: "Upbeat and cheerful tunes to lift your spirits"
+    description: "Upbeat and cheerful tunes to lift your spirits",
   },
-  { 
-    id: "sad", 
-    icon: Frown, 
-    label: "Sad", 
+  {
+    id: "sad",
+    icon: Frown,
+    label: "Sad",
     color: "from-blue-500/80 via-blue-400/80 to-blue-300/80",
     bgColor: "bg-blue-500",
-    description: "Melancholic melodies for emotional moments"
+    description: "Melancholic melodies for emotional moments",
   },
-  { 
-    id: "romantic", 
-    icon: Heart, 
-    label: "Romantic", 
+  {
+    id: "romantic",
+    icon: Heart,
+    label: "Romantic",
     color: "from-red-500/80 via-red-400/80 to-red-300/80",
     bgColor: "bg-red-500",
-    description: "Love songs and romantic ballads"
+    description: "Love songs and romantic ballads",
   },
-  { 
-    id: "party", 
-    icon: PartyPopper, 
-    label: "Party", 
+  {
+    id: "party",
+    icon: PartyPopper,
+    label: "Party",
     color: "from-purple-500/80 via-purple-400/80 to-purple-300/80",
     bgColor: "bg-purple-500",
-    description: "High-energy tracks to get the party started"
+    description: "High-energy tracks to get the party started",
   },
 ];
 
@@ -148,59 +148,65 @@ const MoodPlaylist = () => {
     setSelectedMood(null);
   };
 
-  const { data: songs = [], isLoading, error } = useQuery({
+  const {
+    data: songs = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["mood-songs", selectedMood],
     queryFn: async () => {
       if (!selectedMood) return [];
       try {
         const { data } = await axiosInstance.get(`/songs/mood/${selectedMood}`);
-        
+
         // Create a Map to track unique songs by their ID
         const uniqueSongs = new Map<string, boolean>();
-        
+
         const processedSongs = (data as any[])
           .filter((song: any) => {
-            const videoId = song.url.split('v=')[1];
+            const videoId = song.url.split("v=")[1];
             // Basic validation
             if (!videoId || !song.name || !song.primaryArtists) {
               return false;
             }
-            
+
             // Check if we've already seen this song
             if (uniqueSongs.has(song.id)) {
               return false;
             }
-            
+
             // Add to our tracking Map
             uniqueSongs.set(song.id, true);
             return true;
           })
-          .map((song: any): Song => ({
-            _id: song.id,
-            title: song.name.trim(),
-            artist: song.primaryArtists.trim(),
-            imageUrl: song.image,
-            audioUrl: song.url.includes('youtube.com') ? song.url : `https://www.youtube.com/watch?v=${song.url}`,
-            albumId: null,
-            duration: song.duration ? parseInt(song.duration.split(':')[0]) * 60 + parseInt(song.duration.split(':')[1]) : 0,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          }))
+          .map(
+            (song: any): Song => ({
+              _id: song.id,
+              title: song.name.trim(),
+              artist: song.primaryArtists.trim(),
+              imageUrl: song.image,
+              audioUrl: song.url.includes("youtube.com")
+                ? song.url
+                : `https://www.youtube.com/watch?v=${song.url}`,
+              albumId: null,
+              duration: song.duration
+                ? parseInt(song.duration.split(":")[0]) * 60 +
+                  parseInt(song.duration.split(":")[1])
+                : 0,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            })
+          )
           .filter((song: Song) => {
             // Additional validation for mapped data
-            return (
-              song.title && 
-              song.artist && 
-              song.audioUrl && 
-              song._id
-            );
+            return song.title && song.artist && song.audioUrl && song._id;
           });
 
         const shuffledSongs = shuffleArray(processedSongs);
         return shuffledSongs;
       } catch (error) {
-        console.error('Error fetching songs:', error);
-        toast.error('Failed to fetch songs. Please try again.');
+        console.error("Error fetching songs:", error);
+        toast.error("Failed to fetch songs. Please try again.");
         throw error;
       }
     },
@@ -209,7 +215,7 @@ const MoodPlaylist = () => {
 
   const handlePlayPause = async (song: Song) => {
     try {
-      const videoId = song.audioUrl.split('v=')[1];
+      const videoId = song.audioUrl.split("v=")[1];
       if (!videoId) {
         toast.error("Invalid video URL. Please try another song.");
         return;
@@ -219,17 +225,20 @@ const MoodPlaylist = () => {
         togglePlay();
       } else {
         const songIndex = songs.findIndex((s) => s._id === song._id);
-        playAlbum(songs.map(s => ({
-          ...s,
-          albumId: s.albumId || undefined,
-          genre: '',
-          playedAt: new Date().toISOString(),
-          userId: '',
-          videoUrl: s.audioUrl // Add videoUrl field to match Song type
-        })), songIndex);
+        playAlbum(
+          songs.map((s) => ({
+            ...s,
+            albumId: s.albumId || undefined,
+            genre: "",
+            playedAt: new Date().toISOString(),
+            userId: "",
+            videoUrl: s.audioUrl, // Add videoUrl field to match Song type
+          })),
+          songIndex
+        );
       }
     } catch (error) {
-      console.error('Error playing song:', error);
+      console.error("Error playing song:", error);
       toast.error("Unable to play this song. Please try another.");
     }
   };
@@ -248,14 +257,14 @@ const MoodPlaylist = () => {
                 className="h-full flex flex-col items-center justify-center gap-6"
               >
                 <motion.div
-                  animate={{ 
+                  animate={{
                     scale: [1, 1.2, 1],
-                    rotate: [0, 180, 360] 
+                    rotate: [0, 180, 360],
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2,
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: "easeInOut",
                   }}
                   className="relative"
                 >
@@ -283,16 +292,20 @@ const MoodPlaylist = () => {
                 transition={{ duration: 0.5 }}
                 className={cn(
                   "grid h-full transition-all duration-500 gap-2 md:gap-8",
-                  selectedMood ? "md:grid-cols-[380px,1fr] grid-cols-1" : "grid-cols-1"
+                  selectedMood
+                    ? "md:grid-cols-[380px,1fr] grid-cols-1"
+                    : "grid-cols-1"
                 )}
               >
                 {/* Mood Selection Container */}
-                <div className={cn(
-                  "transition-all duration-500",
-                  isExpanded ? "max-w-4xl mx-auto w-full" : "w-full",
-                  selectedMood && "h-fit"
-                )}>
-                  <motion.div 
+                <div
+                  className={cn(
+                    "transition-all duration-500",
+                    isExpanded ? "max-w-4xl mx-auto w-full" : "w-full",
+                    selectedMood && "h-fit"
+                  )}
+                >
+                  <motion.div
                     className="flex items-center gap-2 md:gap-4 mb-3 md:mb-8 bg-background/80 backdrop-blur-md p-2 md:p-4 relative"
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -310,12 +323,18 @@ const MoodPlaylist = () => {
                     )}
                     <div className="flex items-center justify-between w-full">
                       <div className="flex-1 flex justify-center">
-                        <h2 className={cn(
-                          "font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50 text-center",
-                          !isExpanded ? "text-lg md:text-2xl" : "text-xl md:text-4xl lg:text-5xl",
-                          selectedMood ? "md:ml-16" : ""
-                        )}>
-                          {selectedMood ? "Your Mood Playlist" : "How are you feeling today?"}
+                        <h2
+                          className={cn(
+                            "font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50 text-center",
+                            !isExpanded
+                              ? "text-lg md:text-2xl"
+                              : "text-xl md:text-4xl lg:text-5xl",
+                            selectedMood ? "md:ml-16" : ""
+                          )}
+                        >
+                          {selectedMood
+                            ? "Your Mood Playlist"
+                            : "How are you feeling today?"}
                         </h2>
                       </div>
                       {showAIButton && (
@@ -340,11 +359,13 @@ const MoodPlaylist = () => {
                     </div>
                   </motion.div>
 
-                  <div className={cn(
-                    "grid gap-2 md:gap-6 px-2",
-                    isExpanded ? "grid-cols-2 md:grid-cols-2" : "grid-cols-1",
-                    selectedMood && "md:max-h-[calc(100vh-250px)]"
-                  )}>
+                  <div
+                    className={cn(
+                      "grid gap-2 md:gap-6 px-2",
+                      isExpanded ? "grid-cols-2 md:grid-cols-2" : "grid-cols-1",
+                      selectedMood && "md:max-h-[calc(100vh-250px)]"
+                    )}
+                  >
                     {moods.map((mood, index) => {
                       const Icon = mood.icon;
                       const isSelected = selectedMood === mood.id;
@@ -353,9 +374,9 @@ const MoodPlaylist = () => {
                           key={mood.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ 
-                            delay: 0.5 + (index * 0.1),
-                            duration: 0.3
+                          transition={{
+                            delay: 0.5 + index * 0.1,
+                            duration: 0.3,
                           }}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -370,28 +391,41 @@ const MoodPlaylist = () => {
                               mood.color,
                               "hover:shadow-xl hover:shadow-accent/20",
                               "group relative overflow-hidden",
-                              isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                              isSelected &&
+                                "ring-2 ring-primary ring-offset-2 ring-offset-background",
                               !isExpanded && "p-2 md:p-4"
                             )}
                           >
                             <div className="absolute inset-0 bg-gradient-to-br from-black/50 to-transparent opacity-20" />
                             <div className="relative z-10">
-                              <div className={cn(
-                                "rounded-full flex items-center justify-center",
-                                "bg-white/10 backdrop-blur-sm",
-                                "transition-transform duration-300",
-                                "group-hover:scale-110",
-                                isExpanded ? "w-8 h-8 md:w-12 md:h-12 mb-2 md:mb-4" : "w-6 h-6 md:w-10 md:h-10 mb-1.5 md:mb-3"
-                              )}>
-                                <Icon className={cn(
-                                  "text-white",
-                                  isExpanded ? "h-4 w-4 md:h-6 md:w-6" : "h-3 w-3 md:h-5 md:w-5"
-                                )} />
+                              <div
+                                className={cn(
+                                  "rounded-full flex items-center justify-center",
+                                  "bg-white/10 backdrop-blur-sm",
+                                  "transition-transform duration-300",
+                                  "group-hover:scale-110",
+                                  isExpanded
+                                    ? "w-8 h-8 md:w-12 md:h-12 mb-2 md:mb-4"
+                                    : "w-6 h-6 md:w-10 md:h-10 mb-1.5 md:mb-3"
+                                )}
+                              >
+                                <Icon
+                                  className={cn(
+                                    "text-white",
+                                    isExpanded
+                                      ? "h-4 w-4 md:h-6 md:w-6"
+                                      : "h-3 w-3 md:h-5 md:w-5"
+                                  )}
+                                />
                               </div>
-                              <h3 className={cn(
-                                "font-semibold text-white",
-                                isExpanded ? "text-base md:text-2xl mb-0.5 md:mb-2" : "text-sm md:text-lg mb-0.5"
-                              )}>
+                              <h3
+                                className={cn(
+                                  "font-semibold text-white",
+                                  isExpanded
+                                    ? "text-base md:text-2xl mb-0.5 md:mb-2"
+                                    : "text-sm md:text-lg mb-0.5"
+                                )}
+                              >
                                 {mood.label}
                               </h3>
                               {isExpanded && (
@@ -418,7 +452,9 @@ const MoodPlaylist = () => {
                     <div className="flex items-center justify-between p-4 md:p-6 bg-background/80 backdrop-blur-md sticky top-0 z-10">
                       <div>
                         <h3 className="text-xl md:text-2xl font-bold mb-1">
-                          {selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1)} Playlist
+                          {selectedMood.charAt(0).toUpperCase() +
+                            selectedMood.slice(1)}{" "}
+                          Playlist
                         </h3>
                         <p className="text-sm md:text-base text-muted-foreground">
                           {songs?.length || 0} curated songs for your mood
@@ -431,37 +467,44 @@ const MoodPlaylist = () => {
                         {isLoading ? (
                           <div className="flex flex-col items-center justify-center py-12 gap-4">
                             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                            <p className="text-muted-foreground">Loading your mood playlist...</p>
+                            <p className="text-muted-foreground">
+                              Loading your mood playlist...
+                            </p>
                           </div>
                         ) : error ? (
                           <div className="text-center py-12 space-y-2">
                             <Frown className="h-12 w-12 mx-auto text-muted-foreground" />
-                            <p className="text-muted-foreground">Failed to load songs. Please try again.</p>
+                            <p className="text-muted-foreground">
+                              Failed to load songs. Please try again.
+                            </p>
                           </div>
                         ) : songs.length === 0 ? (
                           <div className="text-center py-12 space-y-2">
                             <Music className="h-12 w-12 mx-auto text-muted-foreground" />
-                            <p className="text-muted-foreground">No songs found for this mood.</p>
+                            <p className="text-muted-foreground">
+                              No songs found for this mood.
+                            </p>
                           </div>
                         ) : (
                           <div className="space-y-2">
                             {songs.map((song: Song, index: number) => (
                               <motion.div
                                 initial={{ opacity: 0, y: 20 }}
-                                animate={{ 
-                                  opacity: 1, 
+                                animate={{
+                                  opacity: 1,
                                   y: 0,
-                                  transition: { delay: index * 0.05 }
+                                  transition: { delay: index * 0.05 },
                                 }}
                                 key={song._id}
                                 className={cn(
                                   "flex items-center gap-3 md:gap-4 p-2 md:p-3 rounded-lg md:rounded-xl",
                                   "hover:bg-white/5 transition-colors group",
                                   "border border-transparent hover:border-accent",
-                                  currentSong?._id === song._id && "bg-accent/30 border-accent"
+                                  currentSong?._id === song._id &&
+                                    "bg-accent/30 border-accent"
                                 )}
                               >
-                                <div 
+                                <div
                                   className="relative w-10 h-10 md:w-12 md:h-12 rounded-lg overflow-hidden cursor-pointer group"
                                   onClick={() => handlePlayPause(song)}
                                 >
@@ -476,13 +519,18 @@ const MoodPlaylist = () => {
                                       <Music className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
                                     </div>
                                   )}
-                                  <div className={cn(
-                                    "absolute inset-0 bg-black/60",
-                                    "flex items-center justify-center",
-                                    "transition-opacity",
-                                    currentSong?._id === song._id ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                                  )}>
-                                    {currentSong?._id === song._id && isPlaying ? (
+                                  <div
+                                    className={cn(
+                                      "absolute inset-0 bg-black/60",
+                                      "flex items-center justify-center",
+                                      "transition-opacity",
+                                      currentSong?._id === song._id
+                                        ? "opacity-100"
+                                        : "opacity-0 group-hover:opacity-100"
+                                    )}
+                                  >
+                                    {currentSong?._id === song._id &&
+                                    isPlaying ? (
                                       <Pause className="h-4 w-4 md:h-5 md:w-5 text-white" />
                                     ) : (
                                       <Play className="h-4 w-4 md:h-5 md:w-5 text-white" />
@@ -490,10 +538,13 @@ const MoodPlaylist = () => {
                                   </div>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className={cn(
-                                    "font-medium truncate text-sm md:text-base",
-                                    currentSong?._id === song._id && "text-primary"
-                                  )}>
+                                  <p
+                                    className={cn(
+                                      "font-medium truncate text-sm md:text-base",
+                                      currentSong?._id === song._id &&
+                                        "text-primary"
+                                    )}
+                                  >
                                     {song.title}
                                   </p>
                                   <p className="text-xs md:text-sm text-muted-foreground truncate">
@@ -527,14 +578,17 @@ const MoodPlaylist = () => {
       <Dialog open={showChatDialog} onOpenChange={setShowChatDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Would you like to talk about why you're feeling this way?</DialogTitle>
+            <DialogTitle>
+              Would you like to talk about why you're feeling this way?
+            </DialogTitle>
             <DialogDescription>
-              Vent to us instead of venting to a human who isn't as smart as us. xD
+              Vent to us instead of venting to a human who isn't as smart as us.
+              xD
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end space-x-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
                 setShowChatDialog(false);
                 setShowAIButton(true);
@@ -557,7 +611,7 @@ const MoodPlaylist = () => {
       </Dialog>
 
       {showChat && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -586,4 +640,4 @@ const MoodPlaylist = () => {
   );
 };
 
-export default MoodPlaylist; 
+export default MoodPlaylist;

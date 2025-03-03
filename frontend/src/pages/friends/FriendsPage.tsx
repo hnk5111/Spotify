@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useUser } from '@/hooks/useUser';
+import { useUser } from '@clerk/clerk-react';
 
 const FriendsPage = () => {
-  const { user } = useUser();
+  useUser();
   const {
     friends,
     friendLocations,

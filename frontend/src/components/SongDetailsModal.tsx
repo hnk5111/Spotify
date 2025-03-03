@@ -4,9 +4,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Heart,
-  Share2,
+import { 
+  Heart, 
+  Share2, 
   Play,
   Pause,
   SkipBack,
@@ -59,11 +59,11 @@ export const SongDetailsModal = ({
   isOpen,
   onClose,
 }: SongDetailsModalProps) => {
-  const {
-    currentSong,
-    isPlaying,
-    togglePlay,
-    playNext,
+  const { 
+    currentSong, 
+    isPlaying, 
+    togglePlay, 
+    playNext, 
     playPrevious,
     progress,
     duration,
@@ -104,15 +104,15 @@ export const SongDetailsModal = ({
     if (!audio || !isOpen) return;
 
     const updateProgress = () => {
-      setProgress(audio.currentTime);
-      setDuration(audio.duration || 0);
+        setProgress(audio.currentTime);
+        setDuration(audio.duration || 0);
     };
 
-    // Set initial volume
-    audio.volume = volume / 100;
+      // Set initial volume
+      audio.volume = volume / 100;
 
-    // Update progress more frequently for smoother updates
-    progressInterval.current = setInterval(updateProgress, 100);
+      // Update progress more frequently for smoother updates
+      progressInterval.current = setInterval(updateProgress, 100);
 
     // Add event listeners
     audio.addEventListener("timeupdate", updateProgress);
@@ -120,10 +120,10 @@ export const SongDetailsModal = ({
     audio.addEventListener("seeking", updateProgress);
     audio.addEventListener("seeked", updateProgress);
 
-    return () => {
-      if (progressInterval.current) {
-        clearInterval(progressInterval.current);
-      }
+      return () => {
+        if (progressInterval.current) {
+          clearInterval(progressInterval.current);
+        }
       // Clean up event listeners
       audio.removeEventListener("timeupdate", updateProgress);
       audio.removeEventListener("loadedmetadata", updateProgress);
@@ -268,7 +268,7 @@ export const SongDetailsModal = ({
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-full w-full h-[100dvh] p-0 overflow-hidden bg-gradient-to-b from-black/95 to-zinc-900/95 border-none">
           <DialogTitle className="sr-only">
             Now Playing: {currentSong.title} by {currentSong.artist}
@@ -276,7 +276,7 @@ export const SongDetailsModal = ({
           <DialogDescription className="sr-only">
             Music player controls and song details for {currentSong.title}
           </DialogDescription>
-          <div className="relative h-full flex flex-col">
+        <div className="relative h-full flex flex-col">
             {/* Video Background */}
             {currentSong?.videoUrl && !videoError && (
               <div className="absolute inset-0 bg-black">
@@ -305,13 +305,13 @@ export const SongDetailsModal = ({
             {(!currentSong?.videoUrl || !isVideoLoaded) && (
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-50"
-                style={{
+            style={{ 
                   backgroundImage: `url(${currentSong?.imageUrl})`,
                   filter: "blur(80px) brightness(0.3)",
-                }}
-              />
+            }}
+          />
             )}
-
+          
             {/* Header - Updated with queue functionality */}
             <div className="relative z-10 flex items-center justify-between px-4 py-3">
               <Button
@@ -331,8 +331,8 @@ export const SongDetailsModal = ({
               >
                 <ListMusic className="h-6 w-6" />
               </Button>
-            </div>
-
+          </div>
+          
             {/* Main Content - Updated for mobile */}
             <div className="relative z-10 flex-1 flex flex-col items-center px-4 pt-8 pb-4">
               {/* Circular Album Art */}
@@ -351,15 +351,15 @@ export const SongDetailsModal = ({
                     <source src={currentSong.videoUrl} type="video/webm" />
                   </video>
                 ) : (
-                  <img
-                    src={currentSong.imageUrl}
-                    alt={currentSong.title}
+              <img
+                src={currentSong.imageUrl}
+                alt={currentSong.title}
                     className="w-full h-full object-cover"
-                  />
+              />
                 )}
-              </div>
+            </div>
 
-              {/* Song Info */}
+            {/* Song Info */}
               <div className="w-full text-center mb-6">
                 <h2 className="text-2xl font-bold text-white mb-2 line-clamp-1">
                   {currentSong.title}
@@ -386,60 +386,60 @@ export const SongDetailsModal = ({
 
               {/* Playback Controls */}
               <div className="w-full flex items-center justify-center gap-8 mb-8">
-                <Button
-                  variant="ghost"
-                  size="icon"
+                  <Button
+                    variant="ghost"
+                    size="icon"
                   className="text-white/60 hover:text-white"
-                >
+                  >
                   <Shuffle className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={playPrevious}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={playPrevious}
                   className="text-white/60 hover:text-white"
-                >
+                  >
                   <SkipBack className="h-6 w-6" />
-                </Button>
-                <Button
-                  size="icon"
-                  onClick={togglePlay}
+                  </Button>
+                  <Button
+                    size="icon"
+                    onClick={togglePlay}
                   className="bg-white hover:bg-white/90 text-black rounded-full h-14 w-14 flex items-center justify-center shadow-lg"
-                >
-                  {isPlaying ? (
+                  >
+                    {isPlaying ? (
                     <Pause className="h-7 w-7" />
-                  ) : (
+                    ) : (
                     <Play className="h-7 w-7" />
-                  )}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={playNext}
+                    )}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={playNext}
                   className="text-white/60 hover:text-white"
-                >
+                  >
                   <SkipForward className="h-6 w-6" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
                   className="text-white/60 hover:text-white"
-                >
+                  >
                   <Repeat className="h-5 w-5" />
-                </Button>
-              </div>
+                  </Button>
+          </div>
 
               {/* Action Buttons - Updated with loading state */}
               <div className="w-full flex items-center justify-center gap-4">
-                <Button
-                  onClick={() => toggleLike(currentSong._id)}
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "hover:text-white transition-colors",
-                    isLiked ? "text-green-500" : "text-white/60"
-                  )}
-                >
+            <Button
+              onClick={() => toggleLike(currentSong._id)}
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "hover:text-white transition-colors",
+                isLiked ? "text-green-500" : "text-white/60"
+              )}
+            >
                   <Heart className={cn("h-6 w-6", isLiked && "fill-current")} />
                 </Button>
 
@@ -456,7 +456,7 @@ export const SongDetailsModal = ({
                     )}
                   />
                   {isDownloading ? "Downloading..." : "Download Song"}
-                </Button>
+            </Button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -648,11 +648,11 @@ export const SongDetailsModal = ({
                     </Button>
                   </div>
                 ))}
-              </div>
+          </div>
             ) : (
               <div className="text-center text-white/60 mt-8">
                 No songs in queue
-              </div>
+        </div>
             )}
           </ScrollArea>
         </SheetContent>

@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { UserLocation } from '@/types';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Card } from './ui/card';
-import { useUser } from '@/hooks/useUser';
+import { useUser } from '@clerk/clerk-react';
 
 const mapContainerStyle = {
   width: '100%',
@@ -15,8 +14,8 @@ interface FriendsMapProps {
 
 const FriendsMap = ({ friendLocations }: FriendsMapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { user } = useUser();
-  const [selectedFriend, setSelectedFriend] = useState<UserLocation | null>(null);
+  useUser();
+  const [] = useState<UserLocation | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number }>({ lat: 20.5937, lng: 78.9629 }); // Default to India's center
 
   useEffect(() => {

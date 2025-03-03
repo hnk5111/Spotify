@@ -17,21 +17,21 @@ import { Song } from "@/types";
 import { toast } from "react-hot-toast";
 
 export const formatDuration = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+	const minutes = Math.floor(seconds / 60);
+	const remainingSeconds = seconds % 60;
+	return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 };
 
 const AlbumPage = () => {
-  const { albumId } = useParams();
+	const { albumId } = useParams();
   const { fetchAlbumById, currentAlbum, isLoading, toggleLike } =
     useMusicStore();
-  const { currentSong, isPlaying, playAlbum, togglePlay } = usePlayerStore();
+	const { currentSong, isPlaying, playAlbum, togglePlay } = usePlayerStore();
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (albumId) fetchAlbumById(albumId);
-  }, [fetchAlbumById, albumId]);
+	useEffect(() => {
+		if (albumId) fetchAlbumById(albumId);
+	}, [fetchAlbumById, albumId]);
 
   if (isLoading || !currentAlbum)
     return (
@@ -40,24 +40,24 @@ const AlbumPage = () => {
       </div>
     );
 
-  const handlePlayAlbum = () => {
-    if (!currentAlbum) return;
+	const handlePlayAlbum = () => {
+		if (!currentAlbum) return;
 
     const isCurrentAlbumPlaying = currentAlbum?.songs.some(
       (song) => song._id === currentSong?._id
     );
-    if (isCurrentAlbumPlaying) togglePlay();
-    else {
-      // start playing the album from the beginning
-      playAlbum(currentAlbum?.songs, 0);
-    }
-  };
+		if (isCurrentAlbumPlaying) togglePlay();
+		else {
+			// start playing the album from the beginning
+			playAlbum(currentAlbum?.songs, 0);
+		}
+	};
 
-  const handlePlaySong = (index: number) => {
-    if (!currentAlbum) return;
+	const handlePlaySong = (index: number) => {
+		if (!currentAlbum) return;
 
-    playAlbum(currentAlbum?.songs, index);
-  };
+		playAlbum(currentAlbum?.songs, index);
+	};
 
   const handleDownload = async (song: Song) => {
     if (!song?.audioUrl) return;
@@ -89,12 +89,12 @@ const AlbumPage = () => {
     } finally {
       setIsDownloading(null);
     }
-  };
+	};
 
-  return (
+	return (
     <div className="h-full">
       <ScrollArea className="h-full rounded-md">
-        {/* Main Content */}
+				{/* Main Content */}
         <div className="relative min-h-full">
           {/* Background with gradient overlay */}
           <div className="absolute inset-0 overflow-hidden">
@@ -110,14 +110,14 @@ const AlbumPage = () => {
             />
           </div>
 
-          {/* Content */}
+					{/* Content */}
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row p-4 md:p-6 gap-4 md:gap-6 pb-4 md:pb-8">
               {/* Album Cover with shadow and hover effect */}
               <div className="relative group mx-auto md:mx-0">
-                <img
-                  src={currentAlbum?.imageUrl}
-                  alt={currentAlbum?.title}
+							<img
+								src={currentAlbum?.imageUrl}
+								alt={currentAlbum?.title}
                   className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] shadow-2xl rounded-lg 
 									transition-transform duration-300 group-hover:scale-[1.02] object-cover"
                 />
@@ -154,16 +154,16 @@ const AlbumPage = () => {
                   <span className="font-medium text-white">
                     {currentAlbum?.artist}
                   </span>
-                  <span>• {currentAlbum?.songs.length} songs</span>
-                  <span>• {currentAlbum?.releaseYear}</span>
-                </div>
-              </div>
-            </div>
+									<span>• {currentAlbum?.songs.length} songs</span>
+									<span>• {currentAlbum?.releaseYear}</span>
+								</div>
+							</div>
+						</div>
 
             {/* Play button and actions */}
             <div className="px-4 md:px-6 pb-4 md:pb-6 flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4">
-              <Button
-                onClick={handlePlayAlbum}
+							<Button
+								onClick={handlePlayAlbum}
                 className="rounded-full px-6 md:px-8 py-5 md:py-6 bg-gradient-to-r from-fuchsia-600 to-purple-700 hover:from-fuchsia-500 hover:to-purple-600
                 border-none shadow-md hover:shadow-lg hover:scale-[1.02] transition-all text-white text-sm md:text-base font-medium"
               >
@@ -180,8 +180,8 @@ const AlbumPage = () => {
                     <Play className="h-4 w-4 md:h-5 md:w-5 mr-2 ml-1" />
                     Play
                   </>
-                )}
-              </Button>
+								)}
+							</Button>
 
               <Button
                 variant="outline"
@@ -201,33 +201,33 @@ const AlbumPage = () => {
                   )}
                 />
                 {isDownloading ? "Downloading..." : "Download"}
-              </Button>
-            </div>
+							</Button>
+						</div>
 
-            {/* Table Section */}
+						{/* Table Section */}
             <div className="bg-black/20 backdrop-blur-sm rounded-t-xl">
-              {/* table header */}
-              <div
+							{/* table header */}
+							<div
                 className="grid grid-cols-[16px_4fr_1fr_80px] md:grid-cols-[16px_4fr_2fr_1fr_80px] gap-2 md:gap-4 px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm 
 								text-zinc-400 border-b border-white/5"
-              >
-                <div>#</div>
-                <div>Title</div>
+							>
+								<div>#</div>
+								<div>Title</div>
                 <div className="hidden md:block">Released Date</div>
-                <div>
+								<div>
                   <Clock className="h-3 w-3 md:h-4 md:w-4" />
-                </div>
+								</div>
                 <div></div> {/* Actions column */}
-              </div>
+							</div>
 
-              {/* songs list */}
+							{/* songs list */}
               <div className="px-2 md:px-4">
                 <div className="space-y-1 py-2">
-                  {currentAlbum?.songs.map((song, index) => {
-                    const isCurrentSong = currentSong?._id === song._id;
-                    return (
-                      <div
-                        key={song._id}
+									{currentAlbum?.songs.map((song, index) => {
+										const isCurrentSong = currentSong?._id === song._id;
+										return (
+											<div
+												key={song._id}
                         className={cn(
                           `grid grid-cols-[16px_4fr_1fr_80px] md:grid-cols-[16px_4fr_2fr_1fr_80px] gap-2 md:gap-4 px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm 
 													text-zinc-400 hover:bg-white/10 rounded-md group cursor-pointer transition-colors`,
@@ -236,21 +236,21 @@ const AlbumPage = () => {
                       >
                         <div
                           className="flex items-center justify-center"
-                          onClick={() => handlePlaySong(index)}
-                        >
-                          {isCurrentSong && isPlaying ? (
+												onClick={() => handlePlaySong(index)}
+											>
+													{isCurrentSong && isPlaying ? (
                             <div className="size-3 md:size-4 text-fuchsia-500 animate-pulse">
                               ♫
                             </div>
-                          ) : (
+													) : (
                             <span className="group-hover:hidden">
                               {index + 1}
                             </span>
-                          )}
-                          {!isCurrentSong && (
+													)}
+													{!isCurrentSong && (
                             <Play className="h-3 w-3 md:h-4 md:w-4 hidden group-hover:block text-white" />
-                          )}
-                        </div>
+													)}
+												</div>
 
                         <div
                           className="flex items-center gap-2 md:gap-3"
@@ -269,7 +269,7 @@ const AlbumPage = () => {
                             )}
                           </div>
 
-                          <div>
+													<div>
                             <div
                               className={cn(
                                 `font-medium truncate max-w-[120px] sm:max-w-[180px] md:max-w-[300px]`,
@@ -283,8 +283,8 @@ const AlbumPage = () => {
                             <div className="truncate max-w-[120px] sm:max-w-[180px] md:max-w-[300px]">
                               {song.artist}
                             </div>
-                          </div>
-                        </div>
+													</div>
+												</div>
 
                         <div
                           className="hidden md:flex items-center"
@@ -345,22 +345,22 @@ const AlbumPage = () => {
                             <MoreVertical className="h-3 w-3 md:h-4 md:w-4" />
                           </Button>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+											</div>
+										);
+									})}
+								</div>
+							</div>
 
               {/* Album info footer */}
               <div className="px-4 md:px-6 py-6 md:py-8 text-xs md:text-sm text-zinc-400">
                 <p>Released: {currentAlbum?.releaseYear}</p>
                 <p className="mt-1">© {currentAlbum?.artist}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ScrollArea>
-    </div>
-  );
+							</div>
+						</div>
+					</div>
+				</div>
+			</ScrollArea>
+		</div>
+	);
 };
 export default AlbumPage;
