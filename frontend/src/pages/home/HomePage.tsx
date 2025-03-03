@@ -50,10 +50,10 @@ const HomePage = () => {
       <ScrollArea className="h-[calc(100vh-180px)]">
         <div className="p-4 sm:p-6">
           <h1 className="text-foreground mb-8">
-            <AnimatedText 
+            <AnimatedText
               staticText="One spot for"
-              texts={getGreetings()} 
-              interval={4000} 
+              texts={getGreetings()}
+              interval={4000}
             />
           </h1>
           <FeaturedSection />
