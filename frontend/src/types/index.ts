@@ -52,3 +52,28 @@ export interface User {
 	fullName: string;
 	imageUrl: string;
 }
+
+export interface Location {
+	userId: string;
+	latitude: number;
+	longitude: number;
+	lastUpdated: Date;
+}
+
+export interface Friend {
+	_id: string;
+	userId: string;
+	friendId: string;
+	status: 'pending' | 'accepted' | 'rejected';
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+export interface UserLocation {
+	user: {
+		_id: string;
+		name: string;
+		image?: string;
+	};
+	location: Location;
+}

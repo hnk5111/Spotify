@@ -6,6 +6,7 @@ import MainLayout from "./layout/MainLayout";
 import ChatPage from "./pages/chat/ChatPage";
 import AlbumPage from "./pages/album/AlbumPage";
 import AdminPage from "./pages/admin/AdminPage";
+import MapPage from "./pages/map/MapPage";
 
 import { Toaster } from "react-hot-toast";
 import NotFoundPage from "./pages/404/NotFoundPage";
@@ -44,38 +45,32 @@ function App() {
           <Route path="/friends" element={<FriendsActivityPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/mood" element={<MoodPlaylist />} />
+          <Route path="/map" element={<MapPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
       <Toaster
-        position="bottom-right"
+        position="bottom-center"
         toastOptions={{
-          className: "bg-card/95 backdrop-blur-sm border border-border/50",
+          className: "",
           style: {
             background: "hsl(var(--card))",
             color: "hsl(var(--card-foreground))",
             border: "1px solid hsl(var(--border))",
             fontSize: "14px",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            boxShadow:
+              "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
           },
           success: {
             iconTheme: {
               primary: "hsl(var(--primary))",
               secondary: "hsl(var(--primary-foreground))",
             },
-            duration: 4000,
           },
           error: {
             iconTheme: {
               primary: "hsl(var(--destructive))",
               secondary: "hsl(var(--destructive-foreground))",
-            },
-            duration: 4000,
-          },
-          loading: {
-            iconTheme: {
-              primary: "hsl(var(--muted-foreground))",
-              secondary: "hsl(var(--background))",
             },
           },
         }}

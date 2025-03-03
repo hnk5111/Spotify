@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { toast } from "react-hot-toast";
 
 interface Notification {
   id: string;
@@ -33,14 +32,6 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
       ],
       unreadCount: state.unreadCount + 1,
     }));
-
-    // Show toast notification
-    toast(notification.message, {
-      icon: notification.type === "message" ? "💬" : "ℹ️",
-      position: "bottom-right",
-      duration: 4000,
-      className: "bg-card/95 backdrop-blur-sm border border-border/50",
-    });
   },
 
   markAsRead: (id) => {
